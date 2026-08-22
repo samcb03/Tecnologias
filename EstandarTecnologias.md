@@ -488,11 +488,1051 @@ public sealed class DamageReceivedData : EventArgs
 }
 ```
 
-## 6. Estilo de código
+## 6 Estilo de código
+
+El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos C# del videojuego.
+
+Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las [convenciones de código oficiales de C#](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
+
+Las reglas relacionadas con números mágicos, complejidad ciclomática, cantidad de parámetros y operadores lógicos se establecerán en la sección 9 del estándar.
+
 ### 6.1 Formato general (indentación, límite de columnas)
+
+**Indentación de cuatro espacios**
+
+Por cada nivel de indentación se utilizarán cuatro espacios.
+
+**Con estándar**
+
+```csharp
+if (player.IsAlive)
+{
+    player.Attack();
+}
+```
+
+**Sin estándar**
+
+```csharp
+if (player.IsAlive)
+{
+  player.Attack();
+}
+```
+
+**Uso de espacios en lugar de tabuladores**
+
+La indentación deberá realizarse con espacios. No se utilizarán tabuladores, ya que su anchura puede cambiar entre editores.
+
+**Con estándar**
+
+```csharp
+while (enemy.IsAlive)
+{
+    enemy.UpdateBehavior();
+}
+```
+
+**Sin estándar**
+
+```csharp
+while (enemy.IsAlive)
+{
+	enemy.UpdateBehavior();
+}
+```
+
+**Colocación de llaves**
+
+Las llaves deberán seguir el estilo Allman. La llave de apertura y la llave de cierre se colocarán en líneas independientes y alineadas con la declaración correspondiente.
+
+**Con estándar**
+
+```csharp
+public void HealPlayer()
+{
+    player.RestoreHealth();
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void HealPlayer() {
+    player.RestoreHealth();
+}
+```
+
+**Una instrucción por línea**
+
+Cada línea deberá contener una sola instrucción.
+
+**Con estándar**
+
+```csharp
+player.ReceiveDamage(damage);
+enemy.StartAttack();
+```
+
+**Sin estándar**
+
+```csharp
+player.ReceiveDamage(damage); enemy.StartAttack();
+```
+
+**Una declaración por línea**
+
+Cada variable deberá declararse en una línea independiente.
+
+**Con estándar**
+
+```csharp
+int currentHealth = player.Health;
+int maximumHealth = player.MaximumHealth;
+```
+
+**Sin estándar**
+
+```csharp
+int currentHealth = player.Health, maximumHealth = player.MaximumHealth;
+```
+
+**Límite de 120 caracteres**
+
+Ninguna línea deberá superar los 120 caracteres. Cuando una instrucción exceda el límite, deberá dividirse en varias líneas.
+
+**Con estándar**
+
+```csharp
+BattleResult battleResult = battleService.ResolveBattle(
+    player,
+    enemy,
+    selectedDifficulty,
+    currentLevel,
+    battleRules);
+```
+
+**Sin estándar**
+
+```csharp
+BattleResult battleResult = battleService.ResolveBattle(player, enemy, selectedDifficulty, currentLevel, battleRules, availableRewards);
+```
+
+**Indentación de líneas de continuación**
+
+Las líneas de continuación deberán indentarse cuatro espacios adicionales respecto de la línea original. Cuando una expresión se divida antes de un operador, todos los operadores deberán mantener la misma alineación.
+
+**Con estándar**
+
+```csharp
+int totalDamage = baseDamage
+    + criticalDamage
+    + elementalDamage;
+```
+
+**Sin estándar**
+
+```csharp
+int totalDamage = baseDamage
++ criticalDamage
++ elementalDamage;
+```
+
+**Distribución de argumentos**
+
+Cuando una llamada deba dividirse por superar el límite de columna, se colocará un argumento por línea. El paréntesis de cierre se alineará con el inicio de la instrucción.
+
+**Con estándar**
+
+```csharp
+Enemy enemy = enemyFactory.Create(
+    enemyType,
+    spawnPosition,
+    initialHealth,
+    attackPower);
+```
+
+**Sin estándar**
+
+```csharp
+Enemy enemy = enemyFactory.Create(enemyType,
+    spawnPosition, initialHealth,
+        attackPower);
+```
+
 ### 6.2 Espacios en blanco (vertical/horizontal)
-### 6.3 Organización del archivo (orden de using)
-### 6.4 Orden de miembros de la clase (incluye orden de métodos de ciclo de vida: Awake, OnEnable, Start, Update, FixedUpdate, LateUpdate, OnDisable, OnDestroy)
+
+**Separación entre secciones del archivo**
+
+Se dejará una línea en blanco entre el bloque de directivas `using`, la declaración del espacio de nombres y la declaración del tipo.
+
+**Con estándar**
+
+```csharp
+using System.Collections.Generic;
+
+namespace AdventureGame.Characters;
+
+public sealed class Player
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+using System.Collections.Generic;
+namespace AdventureGame.Characters;
+public sealed class Player
+{
+}
+```
+
+**Separación entre grupos de miembros**
+
+Se dejará una línea en blanco entre campos, constructores, propiedades y métodos cuando pertenezcan a grupos distintos.
+
+**Con estándar**
+
+```csharp
+private int _health;
+
+public Player(int initialHealth)
+{
+    _health = initialHealth;
+}
+```
+
+**Sin estándar**
+
+```csharp
+private int _health;
+public Player(int initialHealth)
+{
+    _health = initialHealth;
+}
+```
+
+**Separación entre métodos**
+
+Se dejará una línea en blanco entre dos métodos consecutivos.
+
+**Con estándar**
+
+```csharp
+public void Attack()
+{
+    weapon.Use();
+}
+
+public void Defend()
+{
+    shield.Activate();
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void Attack()
+{
+    weapon.Use();
+}
+public void Defend()
+{
+    shield.Activate();
+}
+```
+
+**Separación de etapas lógicas**
+
+Dentro de un método se utilizará una línea en blanco cuando sea necesario distinguir dos etapas lógicas de una operación.
+
+**Con estándar**
+
+```csharp
+public void CompleteLevel()
+{
+    int earnedScore = scoreCalculator.Calculate(player, level);
+    player.AddScore(earnedScore);
+
+    rewardService.GrantRewards(player, level);
+    level.MarkAsCompleted();
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void CompleteLevel()
+{
+    int earnedScore = scoreCalculator.Calculate(player, level);
+    player.AddScore(earnedScore);
+    rewardService.GrantRewards(player, level);
+    level.MarkAsCompleted();
+}
+```
+
+**Cantidad de líneas en blanco**
+
+No se utilizarán varias líneas en blanco consecutivas. Una sola línea será suficiente para separar bloques relacionados.
+
+**Con estándar**
+
+```csharp
+private int _health;
+
+public int Health
+{
+    get
+    {
+        return _health;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+private int _health;
+
+
+
+public int Health
+{
+    get
+    {
+        return _health;
+    }
+}
+```
+
+**Espacio después de palabras clave**
+
+Se colocará un espacio después de las palabras clave `if`, `for`, `foreach`, `while`, `switch`, `catch` y `using` cuando estén seguidas de una expresión.
+
+**Con estándar**
+
+```csharp
+if (player.IsAlive)
+{
+    player.Update();
+}
+```
+
+**Sin estándar**
+
+```csharp
+if(player.IsAlive)
+{
+    player.Update();
+}
+```
+
+**Espacios alrededor de operadores binarios**
+
+Se colocará un espacio a cada lado de los operadores binarios, como `=`, `+`, `-`, `==`, `!=`, `&&` y `||`.
+
+**Con estándar**
+
+```csharp
+int totalDamage = baseDamage + bonusDamage;
+```
+
+**Sin estándar**
+
+```csharp
+int totalDamage=baseDamage+bonusDamage;
+```
+
+**Espacio entre un método y su paréntesis**
+
+No se colocará un espacio entre el nombre de un método y el paréntesis de apertura.
+
+**Con estándar**
+
+```csharp
+player.RestoreHealth();
+```
+
+**Sin estándar**
+
+```csharp
+player.RestoreHealth ();
+```
+
+**Espacios dentro de paréntesis**
+
+No se colocarán espacios inmediatamente después de un paréntesis de apertura ni antes de uno de cierre.
+
+**Con estándar**
+
+```csharp
+enemy.ReceiveDamage(damage);
+```
+
+**Sin estándar**
+
+```csharp
+enemy.ReceiveDamage( damage );
+```
+
+**Espacio después de comas**
+
+Se colocará un espacio después de cada coma que separe argumentos, parámetros o elementos.
+
+**Con estándar**
+
+```csharp
+MovePlayer(horizontalDirection, verticalDirection);
+```
+
+**Sin estándar**
+
+```csharp
+MovePlayer(horizontalDirection,verticalDirection);
+```
+
+**Espaciado de operadores unarios**
+
+Los operadores unarios, como `!`, `++` y `--`, no se separarán de su operando.
+
+**Con estándar**
+
+```csharp
+remainingEnemies--;
+```
+
+**Sin estándar**
+
+```csharp
+remainingEnemies --;
+```
+
+**Alineación manual con espacios**
+
+No se agregarán espacios adicionales para alinear declaraciones manualmente. Cada elemento deberá conservar únicamente el espacio requerido por la sintaxis.
+
+**Con estándar**
+
+```csharp
+int currentHealth = player.Health;
+string playerName = player.Name;
+```
+
+**Sin estándar**
+
+```csharp
+int    currentHealth = player.Health;
+string playerName    = player.Name;
+```
+
+### 6.3 Organización del archivo (orden de `using`)
+
+**Ubicación de las directivas `using`**
+
+Las directivas `using` deberán colocarse fuera de la declaración del espacio de nombres.
+
+**Con estándar**
+
+```csharp
+using System.Collections.Generic;
+
+namespace AdventureGame.Inventory;
+
+public sealed class Inventory
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+namespace AdventureGame.Inventory
+{
+    using System.Collections.Generic;
+
+    public sealed class Inventory
+    {
+    }
+}
+```
+
+**Orden de los grupos de directivas `using`**
+
+Primero se colocarán los espacios de nombres del sistema, después los de bibliotecas externas y finalmente los pertenecientes al proyecto.
+
+**Con estándar**
+
+```csharp
+using System.Collections.Generic;
+
+using PathfindingLibrary;
+
+using AdventureGame.Characters;
+```
+
+**Sin estándar**
+
+```csharp
+using AdventureGame.Characters;
+
+using System.Collections.Generic;
+
+using PathfindingLibrary;
+```
+
+**Orden alfabético dentro de cada grupo**
+
+Las directivas `using` deberán ordenarse alfabéticamente dentro del grupo al que pertenezcan.
+
+**Con estándar**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+```
+
+**Sin estándar**
+
+```csharp
+using System.Linq;
+using System;
+using System.Collections.Generic;
+```
+
+**Separación entre grupos de directivas `using`**
+
+Los grupos de directivas `using` deberán separarse mediante una línea en blanco.
+
+**Con estándar**
+
+```csharp
+using System.Collections.Generic;
+
+using PathfindingLibrary;
+
+using AdventureGame.Characters;
+```
+
+**Sin estándar**
+
+```csharp
+using System.Collections.Generic;
+using PathfindingLibrary;
+using AdventureGame.Characters;
+```
+
+**Directivas duplicadas o sin utilizar**
+
+No se conservarán directivas `using` duplicadas ni directivas que no sean utilizadas por el archivo.
+
+**Con estándar**
+
+```csharp
+using System.Collections.Generic;
+
+namespace AdventureGame.Inventory;
+
+public sealed class Inventory
+{
+    private readonly List<Item> _items = new List<Item>();
+}
+```
+
+**Sin estándar**
+
+```csharp
+using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Text;
+
+namespace AdventureGame.Inventory;
+
+public sealed class Inventory
+{
+    private readonly List<Item> _items = new List<Item>();
+}
+```
+
+**Alias y directivas `using static`**
+
+Los alias y las directivas `using static` se colocarán después de las directivas ordinarias. Solo se utilizarán cuando eviten una ambigüedad o mejoren claramente la lectura.
+
+**Con estándar**
+
+```csharp
+using System;
+
+using AdventureGame.Characters;
+using DamageCalculator = AdventureGame.Combat.DamageCalculator;
+using static AdventureGame.Combat.DamageConstants;
+```
+
+**Sin estándar**
+
+```csharp
+using static AdventureGame.Combat.DamageConstants;
+using DamageCalculator = AdventureGame.Combat.DamageCalculator;
+using AdventureGame.Characters;
+using System;
+```
+
+**Declaración del espacio de nombres**
+
+Se utilizará una declaración de espacio de nombres con ámbito de archivo para evitar un nivel de indentación innecesario.
+
+**Con estándar**
+
+```csharp
+namespace AdventureGame.Characters;
+
+public sealed class Enemy
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+namespace AdventureGame.Characters
+{
+    public sealed class Enemy
+    {
+    }
+}
+```
+
+**Cantidad de tipos públicos por archivo**
+
+Cada archivo deberá contener un único tipo público principal. El nombre del archivo deberá coincidir con el nombre de ese tipo.
+
+**Con estándar — archivo `EnemyManager.cs`**
+
+```csharp
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyManager
+{
+}
+```
+
+**Sin estándar — archivo `EnemyManager.cs`**
+
+```csharp
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyManager
+{
+}
+
+public sealed class EnemyFactory
+{
+}
+```
+
+### 6.4 Orden de miembros de la clase
+
+Los miembros de una clase deberán conservar el siguiente orden general:
+
+1. Constantes.
+2. Campos estáticos.
+3. Campos de instancia.
+4. Constructores.
+5. Eventos.
+6. Propiedades.
+7. Métodos de ciclo de vida.
+8. Métodos públicos.
+9. Métodos protegidos.
+10. Métodos privados.
+11. Tipos anidados.
+
+**Posición de las constantes**
+
+Las constantes deberán colocarse antes de los campos estáticos y de instancia.
+
+**Con estándar**
+
+```csharp
+private const int DefaultHealth = 100;
+private static int s_activePlayers;
+private int _currentHealth;
+```
+
+**Sin estándar**
+
+```csharp
+private static int s_activePlayers;
+private int _currentHealth;
+private const int DefaultHealth = 100;
+```
+
+**Posición de los campos estáticos**
+
+Los campos estáticos deberán colocarse después de las constantes y antes de los campos de instancia.
+
+**Con estándar**
+
+```csharp
+private static int s_activeEnemies;
+private readonly EnemyFactory _enemyFactory;
+```
+
+**Sin estándar**
+
+```csharp
+private readonly EnemyFactory _enemyFactory;
+private static int s_activeEnemies;
+```
+
+**Posición de los campos de instancia**
+
+Los campos de instancia deberán colocarse antes de los constructores.
+
+**Con estándar**
+
+```csharp
+private readonly Player _player;
+
+public PlayerController(Player player)
+{
+    _player = player;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public PlayerController(Player player)
+{
+    _player = player;
+}
+
+private readonly Player _player;
+```
+
+**Posición de los constructores**
+
+Los constructores deberán colocarse después de los campos y antes de los eventos y propiedades.
+
+**Con estándar**
+
+```csharp
+private readonly Player _player;
+
+public PlayerController(Player player)
+{
+    _player = player;
+}
+
+public event Action? PlayerDefeated;
+```
+
+**Sin estándar**
+
+```csharp
+public event Action? PlayerDefeated;
+
+public PlayerController(Player player)
+{
+    _player = player;
+}
+
+private readonly Player _player;
+```
+
+**Posición de los eventos**
+
+Los eventos deberán colocarse después de los constructores y antes de las propiedades.
+
+**Con estándar**
+
+```csharp
+public event Action? PlayerDefeated;
+
+public int CurrentHealth { get; private set; }
+```
+
+**Sin estándar**
+
+```csharp
+public int CurrentHealth { get; private set; }
+
+public event Action? PlayerDefeated;
+```
+
+**Posición de las propiedades**
+
+Las propiedades deberán colocarse después de los eventos y antes de los métodos de ciclo de vida.
+
+**Con estándar**
+
+```csharp
+public int CurrentHealth { get; private set; }
+
+private void Awake()
+{
+    InitializePlayer();
+}
+```
+
+**Sin estándar**
+
+```csharp
+private void Awake()
+{
+    InitializePlayer();
+}
+
+public int CurrentHealth { get; private set; }
+```
+
+**Posición de los métodos de ciclo de vida**
+
+Los métodos de ciclo de vida deberán colocarse después de las propiedades y antes de los demás métodos, aunque su nivel de acceso sea privado.
+
+**Con estándar**
+
+```csharp
+public int CurrentHealth { get; private set; }
+
+private void Update()
+{
+    ProcessPlayerInput();
+}
+
+public void ReceiveDamage(int damage)
+{
+    CurrentHealth -= damage;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void ReceiveDamage(int damage)
+{
+    CurrentHealth -= damage;
+}
+
+private void Update()
+{
+    ProcessPlayerInput();
+}
+
+public int CurrentHealth { get; private set; }
+```
+
+**Orden de los métodos de ciclo de vida**
+
+Cuando existan, los métodos de ciclo de vida deberán mantener el siguiente orden: `Awake`, `OnEnable`, `Start`, `Update`, `FixedUpdate`, `LateUpdate`, `OnDisable` y `OnDestroy`.
+
+**Con estándar**
+
+```csharp
+private void Awake()
+{
+    InitializePlayer();
+}
+
+private void OnEnable()
+{
+    SubscribeToEvents();
+}
+
+private void Start()
+{
+    SpawnPlayer();
+}
+
+private void Update()
+{
+    ProcessPlayerInput();
+}
+
+private void FixedUpdate()
+{
+    ApplyPlayerMovement();
+}
+
+private void LateUpdate()
+{
+    UpdateViewTarget();
+}
+
+private void OnDisable()
+{
+    UnsubscribeFromEvents();
+}
+
+private void OnDestroy()
+{
+    ReleasePlayerResources();
+}
+```
+
+**Sin estándar**
+
+```csharp
+private void Update()
+{
+    ProcessPlayerInput();
+}
+
+private void Awake()
+{
+    InitializePlayer();
+}
+
+private void OnDestroy()
+{
+    ReleasePlayerResources();
+}
+
+private void Start()
+{
+    SpawnPlayer();
+}
+
+private void OnEnable()
+{
+    SubscribeToEvents();
+}
+
+private void LateUpdate()
+{
+    UpdateViewTarget();
+}
+
+private void FixedUpdate()
+{
+    ApplyPlayerMovement();
+}
+
+private void OnDisable()
+{
+    UnsubscribeFromEvents();
+}
+```
+
+**Declaración de métodos de ciclo de vida necesarios**
+
+No se declararán métodos de ciclo de vida vacíos únicamente para completar la lista. Solo deberán incluirse los que realicen una operación necesaria.
+
+**Con estándar**
+
+```csharp
+private void Awake()
+{
+    InitializePlayer();
+}
+
+private void Update()
+{
+    ProcessPlayerInput();
+}
+```
+
+**Sin estándar**
+
+```csharp
+private void Awake()
+{
+    InitializePlayer();
+}
+
+private void OnEnable()
+{
+}
+
+private void Start()
+{
+}
+
+private void Update()
+{
+    ProcessPlayerInput();
+}
+```
+
+**Orden de métodos según su visibilidad**
+
+Después de los métodos de ciclo de vida se colocarán primero los métodos públicos, después los protegidos y finalmente los privados.
+
+**Con estándar**
+
+```csharp
+public void Attack()
+{
+    ExecuteAttack();
+}
+
+protected void PrepareAttack()
+{
+    weapon.Prepare();
+}
+
+private void ExecuteAttack()
+{
+    weapon.Use();
+}
+```
+
+**Sin estándar**
+
+```csharp
+private void ExecuteAttack()
+{
+    weapon.Use();
+}
+
+public void Attack()
+{
+    ExecuteAttack();
+}
+
+protected void PrepareAttack()
+{
+    weapon.Prepare();
+}
+```
+
+**Posición de los tipos anidados**
+
+Las clases, estructuras, enumeraciones o interfaces anidadas deberán colocarse después de todos los demás miembros de la clase.
+
+**Con estándar**
+
+```csharp
+private void ChangeState(EnemyState state)
+{
+    _currentState = state;
+}
+
+private enum EnemyState
+{
+    Idle,
+    Chasing,
+    Attacking
+}
+```
+
+**Sin estándar**
+
+```csharp
+private enum EnemyState
+{
+    Idle,
+    Chasing,
+    Attacking
+}
+
+private void ChangeState(EnemyState state)
+{
+    _currentState = state;
+}
+```
 
 ## 7. Estructuras de control
 ### 7.1 Llaves
@@ -793,9 +1833,7 @@ public void EquipWeapon(WeaponData weapon)
 ## 11. Comentarios y documentación
 
 Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente.
-
 ### 11.1 Comentarios de bloque
-
 ### 11.2 Comentarios de línea
 
 Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código.
@@ -822,9 +1860,6 @@ if (_currentHealth > MinimumHealth) // skip regeneration once the player has alr
     RegenerateHealth();
 }
 ```
-
----
-
 ### 11.3 Comentarios de documentación XML (///)
 
 Todo miembro público (clases, métodos, propiedades) debe documentarse con comentarios de documentación XML (`///`), como mínimo con la etiqueta `<summary>`, y con una etiqueta `<param>` por cada parámetro. Estos comentarios se colocan inmediatamente arriba del elemento que documentan, sin línea en blanco entre ambos.
@@ -855,9 +1890,6 @@ public void ApplyDamage(int amount)
     _currentHealth -= amount;
 }
 ```
-
----
-
 ### 11.4 Comentarios especiales (TODO, FIXME)
 
 `TODO` marca funcionalidad pendiente de implementar; `FIXME` marca un comportamiento incorrecto conocido que debe corregirse. Ambos se escriben en mayúsculas, se colocan inmediatamente antes de la sección de código correspondiente, y deben ir acompañados de una descripción clara del pendiente. Todo comentario `TODO` o `FIXME` debe resolverse antes de la entrega final.
@@ -875,8 +1907,6 @@ ActivateSpecialAbility();
 // todo fix
 ActivateSpecialAbility();
 ```
-
----
 
 ## 12. Manejo de logs y categorización de errores
 ### 12.1 Sistema/herramienta de logging
