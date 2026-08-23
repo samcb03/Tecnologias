@@ -5,8 +5,35 @@
 ### 1.1 Problemática
 
 ### 1.2 Propósito
-E
+
+En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado.
+
 ### 1.3 Idioma del código
+
+El código fuente (nombres de clases, métodos, variables, constantes y comentarios) se escribe en inglés. Esta regla aplica específicamente al código fuente; las convenciones para otros elementos del proyecto (textos de interfaz, base de datos, mensajes de commit) se abordan en sus secciones correspondientes.
+Las guías de nombrado de Microsoft para C# incluyen, dentro de sus convenciones generales, una recomendación específica sobre evitar nombres de identificadores ligados a un idioma en particular (Microsoft, s. f.). Escribir el código en inglés, en lugar de español, hace que sea comprensible para cualquier desarrollador que lo revise en el futuro, independientemente de su idioma nativo, y mantiene el código consistente con el idioma en el que están documentadas tanto la API de C# como la de Unity que el equipo consulta constantemente.
+
+**Con estándar**
+
+```csharp
+private int _remainingLives;
+
+public void LoseLife()
+{
+    _remainingLives--;
+}
+```
+
+**Sin estándar**
+
+```csharp
+private int _vidasRestantes;
+
+public void PerderVida()
+{
+    _vidasRestantes--;
+}
+```
 
 ## 2. Organización del proyecto
 
