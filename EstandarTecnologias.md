@@ -1,25 +1,32 @@
 # Estándar de codificación
 
 ## 1. Introducción
+
 ### 1.1 Problemática
+
 ### 1.2 Propósito
+
 ### 1.3 Idioma del código
 
 ## 2. Organización del proyecto
+
 ### 2.1 Stack tecnológico y entorno de desarrollo
-### 2.2 Arquitectura general (patrones: MVC/MVP, Observer, Singleton para managers, ECS si aplica)
+
+### 2.2 Arquitectura general y patrones aplicables
+
 ### 2.3 Estructura de carpetas y namespaces
-### 2.4 Separación MonoBehaviour / clases puras (POCO) / ScriptableObjects
+
+### 2.4 Separación entre lógica de dominio, infraestructura y presentación
 
 ## 3. Control de versiones
-### 3.1 Commits
-### 3.2 .gitignore y Git LFS (assets binarios)
 
-## 4. Formato general de cada regla (aplica a las secciones 5–15)
+### 3.1 Commits
+
+### 3.2 .gitignore y Git LFS (assets binarios)
 
 ## 5 Reglas de nombrado
 
-Los identificadores deberán escribirse en inglés y describir claramente su propósito. Se priorizará la claridad sobre la brevedad y se evitarán abreviaturas, palabras reservadas y nombres de un solo carácter, excepto en contadores de ciclos de alcance menor a 3 lineas.
+Los identificadores deberán escribirse en inglés y describir claramente su propósito. Se priorizará la claridad sobre la brevedad y se evitarán abreviaturas, palabras reservadas y nombres de un solo carácter. Se permitirán identificadores de una letra únicamente en contadores de ciclos, excepciones capturadas y parámetros de eventos cuando su alcance sea menor o igual a tres líneas. También se permitirá el parámetro `e` cuando forme parte de la firma convencional de un manejador de eventos.
 
 No se utilizarán dos guiones bajos consecutivos, ya que estos nombres están reservados para identificadores generados por el compilador.
 
@@ -30,12 +37,13 @@ C# utiliza principalmente:
 - `_camelCase` para campos de instancia privados o internos.
 - `s_camelCase` para campos estáticos privados o internos.
 
-Estas reglas corresponden a las [convenciones oficiales para identificadores de C#](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names).
+Estas reglas corresponden a las convenciones oficiales para identificadores de C# (Microsoft, 2026b).
+
 ### 5.1 Variables y parámetros
 
 Las variables locales y los parámetros deberán escribirse utilizando `camelCase`. Sus nombres deberán ser sustantivos o frases nominales que permitan comprender qué información almacenan.
 
-Se evitarán nombres de un solo carácter, excepto en contadores de ciclos simples como `i`, `j` o `k` o en excepciones como `e`.
+Se evitarán nombres de un solo carácter, excepto en contadores de ciclos simples como `i`, `j` o `k`, en excepciones capturadas como `e` y en parámetros de eventos convencionales, siempre que su alcance sea menor o igual a tres líneas.
 
 **Con estándar**
 
@@ -66,6 +74,7 @@ public void AddExperience(int exp)
 { 
 }
 ```
+
 ### 5.2 Colecciones
 
 Las variables y propiedades que representen colecciones deberán utilizar nombres en plural para indicar que contienen varios elementos.
@@ -83,6 +92,7 @@ List<Enemy> activeEnemy = new();
 ```
 
 El nombre no deberá incluir palabras como `List` o `Collection` cuando el plural ya permita identificar claramente su contenido.
+
 ### 5.3 Booleanos
 
 Los identificadores booleanos deberán expresar una condición afirmativa. Cuando ayude a comprender su significado, se utilizarán prefijos como `Is`, `Has` o `Can`, respetando el tipo de capitalización correspondiente.
@@ -102,6 +112,7 @@ bool gameOverFlag = false;
 bool ability = true;
 bool cannotAttack = false;
 ```
+
 ### 5.4 Declaración y sombreado de variables
 
 Se deberá declarar una sola variable por línea para mejorar la claridad del código.
@@ -143,6 +154,7 @@ public void AddScore(int earnedPoints)
     int _score = earnedPoints;
 }
 ```
+
 ### 5.5 Campos privados e internos
 
 Los campos de instancia privados o internos deberán escribirse utilizando `_camelCase`.
@@ -174,6 +186,7 @@ private static int s_activeEnemyCount;
 ```csharp
 private static int activeEnemyCount;
 ```
+
 ### 5.6 Propiedades
 
 Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado.
@@ -194,7 +207,8 @@ public string character_name { get; private set; }
 public bool InvulnerabilityFlag { get; private set; }
 ```
 
-Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las [convenciones oficiales para miembros de tipos](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members).
+Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023).
+
 ### 5.7 Constantes
 
 Las constantes de C# deberán escribirse en `PascalCase`. Esta regla se aplicará tanto a constantes públicas como privadas y locales.
@@ -212,6 +226,7 @@ private const int MAXIMUM_LIVES = 3;
 ```
 
 Las constantes deberán representar valores que no cambien durante la ejecución.
+
 ### 5.8 Métodos
 
 Los métodos y las funciones locales deberán escribirse utilizando `PascalCase`. Sus nombres deberán ser verbos o frases verbales que indiquen claramente la acción que realizan.
@@ -251,6 +266,7 @@ public int calculateDamage(int baseDamage, int defensePoints)
     return calculatedDamage;
 }
 ```
+
 ### 5.9 Eventos
 
 Los eventos deberán escribirse utilizando `PascalCase` y nombrarse con verbos o frases verbales. Se utilizará el presente para eventos que ocurren antes de una acción y el pasado para los que ocurren después.
@@ -282,12 +298,13 @@ protected virtual void RaiseDeath(PlayerDiedEventArgs data)
 }
 ```
 
-Los métodos protegidos que disparen un evento deberán comenzar con `On`, seguido del nombre del evento. Los parámetros de un manejador de eventos deberán llamarse `sender` y `e`, de acuerdo con las [convenciones oficiales de eventos de .NET](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/event).
+Los métodos protegidos que disparen un evento deberán comenzar con `On`, seguido del nombre del evento. Los parámetros de un manejador de eventos deberán llamarse `sender` y `e`, de acuerdo con las convenciones oficiales para miembros de tipos de .NET (Microsoft, 2023).
+
 ### 5.10 Métodos de prueba unitaria
 
 Los métodos de prueba deberán utilizar el siguiente formato:
 
-```text
+```csharp
 Test_NombreMetodo_Flujo_Resultado
 ```
 
@@ -316,7 +333,8 @@ public void testDamage1()
 }
 ```
 
-Este formato coincide con las [prácticas oficiales de Microsoft para nombrar pruebas unitarias](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices).
+Las partes `NombreMetodo`, `Flujo` y `Resultado` coinciden con las prácticas recomendadas por Microsoft para nombrar pruebas unitarias. El prefijo `Test` es una convención propia del equipo (Microsoft, 2025b).
+
 ### 5.11 Clases, estructuras y registros
 
 Los nombres de clases, estructuras y registros deberán escribirse utilizando `PascalCase`. Deberán ser sustantivos o frases nominales que describan la entidad o concepto que representan.
@@ -344,6 +362,7 @@ public struct damage_result
 { 
 }
 ```
+
 ### 5.12 Interfaces
 
 Las interfaces deberán escribirse utilizando `PascalCase` y comenzar con la letra mayúscula `I`.
@@ -390,7 +409,8 @@ public class DefaultEnemyGenerator : SpawnerInterface
 }
 ```
 
-Las reglas para clases e interfaces están recogidas en las [guías oficiales de diseño de .NET](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces).
+Las reglas para clases e interfaces están recogidas en las guías oficiales de diseño de .NET (Microsoft, 2025e).
+
 ### 5.13 Parámetros de tipo genérico
 
 Los parámetros genéricos deberán comenzar con la letra mayúscula `T`. Se podrá utilizar únicamente `T` cuando el significado sea evidente o un nombre descriptivo como `TEntity` cuando proporcione mayor claridad.
@@ -410,11 +430,12 @@ public class ObjectPool<EntityType>
 { 
 }
 ```
+
 ### 5.14 Enumeraciones
 
 Los nombres de las enumeraciones y sus valores deberán escribirse utilizando `PascalCase`.
 
-Las enumeraciones normales deberán utilizar un nombre singular. Las enumeraciones que representen una combinación de indicadores deberán utilizar un nombre plural. No se agregarán los sufijos `Enum`, `Flag` o `Flags`.
+Las enumeraciones normales deberán utilizar un nombre singular. Las enumeraciones que representen una combinación de indicadores deberán utilizar un nombre plural. No se agregarán los sufijos `Enum`,`Flag` o `Flags`.
 
 **Con estándar**
 
@@ -437,6 +458,7 @@ public enum EnemyStateEnum
     ATTACKING
 }
 ```
+
 ### 5.15 Espacios de nombres
 
 Los espacios de nombres deberán utilizar `PascalCase`. Sus componentes se separarán mediante puntos y deberán representar de forma clara el proyecto y la funcionalidad agrupada.
@@ -452,6 +474,7 @@ namespace CompanyName.GameName.Combat;
 ```csharp
 namespace company_name.game_name.combat;
 ```
+
 ### 5.16 Sufijos oficiales por responsabilidad
 
 Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la responsabilidad correspondiente:
@@ -492,7 +515,8 @@ public sealed class DamageReceivedData : EventArgs
 
 El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos.
 
-Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las [convenciones de código oficiales de C#](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
+Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las convenciones de código oficiales de C# (Microsoft, 2025d).
+
 ### 6.1 Formato general (indentación, límite de columnas)
 
 **Indentación de cuatro espacios**
@@ -520,7 +544,6 @@ if (player.IsAlive)
 **Uso de espacios en lugar de tabuladores**
 
 La indentación deberá realizarse con espacios. No se utilizarán tabuladores, ya que su anchura puede cambiar entre editores.
-
 
 **Colocación de llaves**
 
@@ -635,6 +658,7 @@ Enemy enemy = enemyFactory.Create(
 Enemy enemy = enemyFactory.Create(enemyType,
     spawnPosition, initialHealth);
 ```
+
 ### 6.2 Espacios en blanco (vertical/horizontal)
 
 **Separación entre secciones del archivo**
@@ -806,7 +830,7 @@ if(player.IsAlive)
 
 **Espacios alrededor de operadores binarios**
 
-Se colocará un espacio a cada lado de los operadores binarios, como `=`, `+`, `-`, `==`, `!=`, `&&` y `||`.
+Se colocará un espacio a cada lado de los operadores binarios, como `=`, `+`, `-`,`==`, `!=`, `&&` y `||`.
 
 **Con estándar**
 
@@ -901,6 +925,7 @@ string playerName = player.Name;
 int    currentHealth = player.Health;
 string playerName    = player.Name;
 ```
+
 ### 6.3 Organización del archivo (orden de `using`)
 
 **Ubicación de las directivas `using`**
@@ -1105,6 +1130,7 @@ public sealed class EnemyFactory
 {
 }
 ```
+
 ### 6.4 Orden de miembros de la clase
 
 Los miembros de una clase deberán conservar el siguiente orden general:
@@ -1115,11 +1141,10 @@ Los miembros de una clase deberán conservar el siguiente orden general:
 4. Constructores.
 5. Eventos.
 6. Propiedades.
-7. Métodos de ciclo de vida.
-8. Métodos públicos.
-9. Métodos protegidos.
-10. Métodos privados.
-11. Tipos anidados.
+7. Métodos públicos.
+8. Métodos protegidos.
+9. Métodos privados.
+10. Tipos anidados.
 
 **Posición de las constantes**
 
@@ -1237,43 +1262,12 @@ public event Action? PlayerDefeated;
 
 **Posición de las propiedades**
 
-Las propiedades deberán colocarse después de los eventos y antes de los métodos de ciclo de vida.
+Las propiedades deberán colocarse después de los eventos y antes de los métodos.
 
 **Con estándar**
 
 ```csharp
 public int CurrentHealth { get; private set; }
-
-private void Awake()
-{
-    InitializePlayer();
-}
-```
-
-**Sin estándar**
-
-```csharp
-private void Awake()
-{
-    InitializePlayer();
-}
-
-public int CurrentHealth { get; private set; }
-```
-
-**Posición de los métodos de ciclo de vida**
-
-Los métodos de ciclo de vida deberán colocarse después de las propiedades y antes de los demás métodos, aunque su nivel de acceso sea privado.
-
-**Con estándar**
-
-```csharp
-public int CurrentHealth { get; private set; }
-
-private void Update()
-{
-    ProcessPlayerInput();
-}
 
 public void ReceiveDamage(int damage)
 {
@@ -1289,149 +1283,12 @@ public void ReceiveDamage(int damage)
     CurrentHealth -= damage;
 }
 
-private void Update()
-{
-    ProcessPlayerInput();
-}
-
 public int CurrentHealth { get; private set; }
-```
-
-**Orden de los métodos de ciclo de vida**
-
-Cuando existan, los métodos de ciclo de vida deberán mantener el siguiente orden: `Awake`, `OnEnable`, `Start`, `Update`, `FixedUpdate`, `LateUpdate`, `OnDisable` y `OnDestroy`.
-
-**Con estándar**
-
-```csharp
-private void Awake()
-{
-    InitializePlayer();
-}
-
-private void OnEnable()
-{
-    SubscribeToEvents();
-}
-
-private void Start()
-{
-    SpawnPlayer();
-}
-
-private void Update()
-{
-    ProcessPlayerInput();
-}
-
-private void FixedUpdate()
-{
-    ApplyPlayerMovement();
-}
-
-private void LateUpdate()
-{
-    UpdateViewTarget();
-}
-
-private void OnDisable()
-{
-    UnsubscribeFromEvents();
-}
-
-private void OnDestroy()
-{
-    ReleasePlayerResources();
-}
-```
-
-**Sin estándar**
-
-```csharp
-private void Update()
-{
-    ProcessPlayerInput();
-}
-
-private void Awake()
-{
-    InitializePlayer();
-}
-
-private void OnDestroy()
-{
-    ReleasePlayerResources();
-}
-
-private void Start()
-{
-    SpawnPlayer();
-}
-
-private void OnEnable()
-{
-    SubscribeToEvents();
-}
-
-private void LateUpdate()
-{
-    UpdateViewTarget();
-}
-
-private void FixedUpdate()
-{
-    ApplyPlayerMovement();
-}
-
-private void OnDisable()
-{
-    UnsubscribeFromEvents();
-}
-```
-
-**Declaración de métodos de ciclo de vida necesarios**
-
-No se declararán métodos de ciclo de vida vacíos únicamente para completar la lista. Solo deberán incluirse los que realicen una operación necesaria.
-
-**Con estándar**
-
-```csharp
-private void Awake()
-{
-    InitializePlayer();
-}
-
-private void Update()
-{
-    ProcessPlayerInput();
-}
-```
-
-**Sin estándar**
-
-```csharp
-private void Awake()
-{
-    InitializePlayer();
-}
-
-private void OnEnable()
-{
-}
-
-private void Start()
-{
-}
-
-private void Update()
-{
-    ProcessPlayerInput();
-}
 ```
 
 **Orden de métodos según su visibilidad**
 
-Después de los métodos de ciclo de vida se colocarán primero los métodos públicos, después los protegidos y finalmente los privados.
+Después de las propiedades se colocarán primero los métodos públicos, después los protegidos y finalmente los privados.
 
 **Con estándar**
 
@@ -1508,11 +1365,12 @@ private void ChangeState(EnemyState state)
 ```
 
 ## 7. Estructuras de control
+
 ### 7.1 Llaves
 
 El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción. Siguiendo el estilo de indentación definido, la llave de apertura deberá posicionarse en una línea independiente, alineada con el inicio de la instrucción precedente; de igual manera, la llave de cierre ocupará su propia línea en el mismo nivel jerárquico.
 
-Bajo las directrices oficiales de desarrollo para C#, se adopta el estilo Allman, el cual ubica la llave de apertura en una nueva línea para bloques lógicos, métodos y definiciones de tipos ([Microsoft, 2024](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)). Se mantiene la restricción de omitir llaves en cuerpos simples como una medida preventiva de seguridad técnica; esta práctica mitiga el riesgo de introducir errores lógicos al añadir instrucciones adicionales de manera accidental, garantizando que la estructura sintáctica sea explícita y no dependa únicamente de la indentación visual del código.
+Bajo las directrices oficiales de desarrollo para C#, se adopta el estilo Allman, el cual ubica la llave de apertura en una nueva línea para bloques lógicos, métodos y definiciones de tipos (Microsoft, 2025d). Se mantiene la restricción de omitir llaves en cuerpos simples como una medida preventiva de seguridad técnica; esta práctica mitiga el riesgo de introducir errores lógicos al añadir instrucciones adicionales de manera accidental, garantizando que la estructura sintáctica sea explícita y no dependa únicamente de la indentación visual del código.
 
 **Con estándar**
 
@@ -1531,16 +1389,17 @@ if (amount > NoDamage)
 if (amount > 0)
     _currentHealth -= amount;
 ```
+
 ### 7.2 Condicionales
 
-La palabra clave if y su expresión condicional deben ir en la misma línea. Cuando exista un else o else if, la palabra clave else se escribe en su propia línea nueva, nunca compartiendo línea con la llave de cierre del bloque anterior.Esta regla diverge deliberadamente de la versión Java del estándar, donde else comparte línea con la llave de cierre (} else {). La configuración oficial de formato de C# que documenta Microsoft define como valor predeterminado que la palabra clave else inicie en una línea nueva, igual que ocurre con catch y finally (Microsoft, s. f.-a). Mantener esta regla alineada con el estilo Allman adoptado en 7.1 evita mezclar dos convenciones de llaves distintas dentro del mismo archivo.
+La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior. La configuración oficial de formato de C# define como valor predeterminado que `else`, `catch` y `finally` inicien en una línea nueva (Microsoft, 2025c). Mantener esta regla alineada con el estilo Allman adoptado en 7.1 evita mezclar convenciones de llaves distintas dentro del mismo archivo.
 
 **Con estándar**
 
 ```csharp
-private const int MINIMUM_HEALTH = 0;
+private const int MinimumHealth = 0;
 
-if (_currentHealth <= MINIMUM_HEALTH)
+if (_currentHealth <= MinimumHealth)
 {
     TriggerDefeat();
 }
@@ -1561,11 +1420,12 @@ if (_currentHealth <= 0)
     TriggerAlive();
 }
 ```
+
 ### 7.3 Bucles
 
-La cláusula de inicialización de un bucle for no deberá declarar ni actualizar más de tres variables. Adicionalmente, el cuerpo de cualquier bucle que se ejecute con frecuencia dentro del ciclo de juego (por ejemplo, dentro de Update o FixedUpdate) deberá evitar operaciones que generen asignaciones de memoria en el heap (creación de objetos, cadenas o colecciones nuevas, consultas LINQ) en cada iteración.
+La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas, colecciones o consultas LINQ nuevas en cada iteración cuando esas asignaciones puedan reutilizarse.
 
-El límite de variables en la cláusula de inicialización es una política de legibilidad propia del equipo, equivalente a la ya aplicada en la versión Java del estándar. La segunda parte de la regla sí responde a una recomendación documentada específicamente para Unity: el Manual de Unity explica que los tipos por referencia se alojan en el heap administrado y quedan sujetos al recolector de basura, y advierte que generar objetos temporales de forma repetida — su propio ejemplo ilustra esto con concatenaciones de cadenas dentro de un bucle — produce basura que eventualmente debe recolectarse, afectando el rendimiento (Unity Technologies, s. f.). Dado que un bucle dentro de `Update` puede ejecutarse decenas de veces por segundo, cualquier asignación evitable dentro de su cuerpo multiplica ese costo. Las estrategias concretas de reutilización de objetos (object pooling) se documentan en la sección 10.3.
+El límite de variables y la restricción de asignaciones evitables son políticas del equipo orientadas a conservar la legibilidad y reducir trabajo innecesario en rutas de ejecución frecuentes. Las estrategias concretas de reutilización de objetos se documentan en la sección 10.3.
 
 **Con estándar**
 
@@ -1584,11 +1444,12 @@ for (int enemyIndex = 0, tickCount = 0, totalDamage = 0, poisonStacks = 0; enemy
     ApplyPoisonTick(activeEnemies[enemyIndex]);
 }
 ```
-### 7.4 Switch / switch expression
 
-Todo switch deberá incluir una etiqueta default, incluso si su cuerpo queda vacío. Cada sección del switch que contenga al menos una instrucción debe terminar explícitamente con break, return, throw o goto case.
+### 7.4 Sentencia `switch` y expresión `switch`
 
-La etiqueta default obligatoria es una política de legibilidad propia del equipo, igual que en la versión Java del estándar. La segunda parte de la regla, en cambio, ya no es una convención de estilo sino un requisito impuesto por el propio compilador de C#: a diferencia de Java, donde omitir un break provoca que la ejecución continúe silenciosamente hacia el siguiente case, el compilador de C# genera el error CS0163 cuando una sección de un switch con instrucciones no termina de forma explícita, y exige usar goto case si realmente se desea continuar hacia la siguiente sección (Microsoft, s. f.-b). Esto significa que la regla del estándar Java sobre marcar con un comentario los fall through intencionales deja de aplicar en C# de la misma forma: el propio lenguaje obliga a declarar esa intención explícitamente, sin depender de un comentario que alguien podría omitir u olvidar actualizar.
+**Sentencia `switch`**
+
+Toda sentencia `switch` deberá incluir una etiqueta `default`. Cada sección con instrucciones deberá terminar explícitamente con `break`, `return`, `throw` o `goto case`. La etiqueta `default` obligatoria es una política de legibilidad del equipo; la terminación explícita de cada sección con instrucciones es un requisito del lenguaje C# (Microsoft, 2026c).
 
 **Con estándar**
 
@@ -1620,11 +1481,47 @@ switch (currentGameState)
         break;
 }
 ```
+
+**Expresión `switch`**
+
+Una expresión `switch` deberá contener únicamente brazos formados por un patrón, el operador `=>` y una expresión de resultado. Cuando los casos anteriores no cubran todos los valores posibles, se agregará un brazo final con el patrón de descarte `_`. Los brazos se separarán mediante comas y no utilizarán `case`, `default` ni `break` (Microsoft, 2026d).
+
+**Con estándar**
+
+```csharp
+private string GetGameStateLabel(GameState gameState)
+{
+    string stateLabel = gameState switch
+    {
+        GameState.Menu => "Menu",
+        GameState.Playing => "Playing",
+        _ => "Unknown"
+    };
+
+    return stateLabel;
+}
+```
+
+**Sin estándar**
+
+```csharp
+private string GetGameStateLabel(GameState gameState)
+{
+    string stateLabel = gameState switch
+    {
+        GameState.Menu => "Menu",
+        GameState.Playing => "Playing"
+    };
+
+    return stateLabel;
+}
+```
+
 ### 7.5 Operador ternario
 
 El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá utilizarse cuando la condición sea una única expresión booleana simple, sin más de un operador lógico. Ambas ramas deben ser expresiones del mismo tipo que retornen un valor; no se permite invocar métodos void en ninguna rama. Se prohíbe anidar operadores ternarios.
 
-Esta regla es una política de legibilidad propia del equipo, trasladada sin cambios de espíritu desde la versión Java del estándar. A nivel de lenguaje, C#  impone además una restricción que refuerza esta regla de forma estructural: ambas ramas del operador condicional deben poder convertirse a un tipo común, o el compilador rechaza la expresión, lo que en la práctica ya impide mezclar una rama que retorna un valor con otra que invoque un método void.
+Esta regla es una política de legibilidad propia del equipo, trasladada sin cambios de espíritu desde la versión Java del estándar. A nivel de lenguaje, C# impone además una restricción que refuerza esta regla de forma estructural: ambas ramas del operador condicional deben poder convertirse a un tipo común, o el compilador rechaza la expresión, lo que en la práctica ya impide mezclar una rama que retorna un valor con otra que invoque un método void.
 
 **Con estándar**
 
@@ -1639,11 +1536,12 @@ string statusLabel = (_isGameOver && _livesRemaining <= 0 && !_isRespawning) ? "
 ```
 
 ## 8. Manejo de errores y excepciones
+
 ### 8.1 Jerarquía de excepciones propias del dominio del juego
 
 Las excepciones personalizadas deben derivar directamente de Exception (nunca de ApplicationException), terminar su nombre con el sufijo Exception, evitar jerarquías profundas, y proveer como mínimo los tres constructores estándar: sin parámetros, con mensaje, y con mensaje más excepción interna. Solo se crea un tipo de excepción nuevo cuando el código que captura necesita manejarla de forma distinta a las excepciones ya existentes.
 
-La prohibición de heredar de ApplicationException y la exigencia de derivar directamente de Exception, evitando jerarquías profundas y usando el sufijo Exception, están documentadas en la guía de diseño de excepciones que forma parte de los mismos lineamientos de diseño de frameworks ya citados en la sección 5.5 (Cwalina et al., 2020). La página de referencia vigente de la propia clase ApplicationException confirma que esta recomendación se mantiene: Microsoft advierte ahí que las excepciones personalizadas deben derivarse de la clase Exception (Microsoft, s. f.-a). La exigencia de los tres constructores estándar, con los mismos nombres y tipos de parámetro en cada uno, está documentada en la guía vigente de buenas prácticas para excepciones de .NET (Microsoft, s. f.-c).
+La prohibición de heredar de `ApplicationException`, la recomendación de derivar de `Exception`, el uso del sufijo `Exception` y los tres constructores comunes están documentados en las guías de diseño y buenas prácticas de .NET (Cwalina et al., 2020; Microsoft, 2025a). Esta regla se relaciona con los sufijos definidos en la sección 5.16.
 
 **Con estándar**
 
@@ -1682,11 +1580,12 @@ public class SaveLoadException : ApplicationException
     }
 }
 ```
+
 ### 8.2 Try-catch y prohibición de catch vacíos
 
-Los bloques catch nunca deben quedar vacíos. Debe capturarse el tipo de excepción más específico posible, no Exception o SystemException de forma genérica, y la excepción capturada debe manejarse, registrarse o volver a lanzarse envuelta en una excepción de dominio.
+Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo de excepción más específico posible. La excepción capturada deberá manejarse, registrarse, volver a lanzarse mediante `throw;` o envolverse en una excepción de dominio que conserve la excepción original como excepción interna.
 
-La prohibición de bloques catch vacíos se mantiene como política propia del equipo, por continuidad con la versión Java del estándar. La exigencia de capturar el tipo más específico posible sí corresponde a una regla de análisis de código vigente y numerada: CA1031 señala que las excepciones generales no deben capturarse, y que debe capturarse una excepción más específica o volver a lanzar la excepción general como última instrucción del bloque catch (Microsoft, s. f.-d).
+Solo se permitirá capturar `Exception` o `SystemException` en un límite claramente definido de la aplicación y cuando el bloque termine volviendo a lanzar la excepción mediante `throw;`. CA1031 recomienda capturar una excepción más específica o volver a lanzar la excepción general como última instrucción del bloque `catch` (Microsoft, 2026a).
 
 **Con estándar**
 
@@ -1718,11 +1617,12 @@ private void LoadCheckpoint(string checkpointPath)
     }
 }
 ```
+
 ### 8.3 Null-checking (?., ??, tipos de referencia anulables)
 
-El proyecto habilita los tipos de referencia anulables (<Nullable>enable</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible.
+El proyecto habilita los tipos de referencia anulables (\<Nullable>enable\</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible.
 
-Los tipos de referencia anulables reducen la probabilidad de que el código lance una System.NullReferenceException: el desarrollador declara qué variables pueden contener null, y el compilador advierte cuando el uso del código no coincide con esa declaración, sin alterar el comportamiento en tiempo de ejecución del programa (Microsoft, s. f.-e). Esta característica está desactivada por defecto y se controla a nivel de proyecto mediante la configuración de compilación (Microsoft, s. f.-f). Declarar explícitamente qué campos pueden estar ausentes, en lugar de tratarlos como implícitamente anulables, sustituye en C# el uso de Optional<T> de la versión Java del estándar.
+Los tipos de referencia anulables permiten declarar qué variables pueden contener `null` y hacen que el compilador advierta cuando el uso del código no coincide con esa declaración, sin alterar el comportamiento en tiempo de ejecución. El contexto anulable se habilita mediante la opción `<Nullable>enable</Nullable>` del proyecto (Microsoft, 2024).
 
 **Con estándar**
 
@@ -1760,11 +1660,12 @@ private int GetEquippedAmmo()
     return ammoCount;
 }
 ```
+
 ### 8.4 Guard clauses / validación temprana de parámetros
 
-Todo método público valida sus parámetros de tipo referencia como primera instrucción del cuerpo del método, antes de usarlos para cualquier otro propósito, lanzando inmediatamente mediante ArgumentNullException.ThrowIfNull (u otro método Throw... equivalente).
+Todo método público valida sus parámetros de tipo referencia como primera instrucción del cuerpo del método, antes de usarlos para cualquier otro propósito, lanzando inmediatamente mediante ArgumentNullException.ThrowIfNull (u otro método Throw… equivalente).
 
-ArgumentNullException.ThrowIfNull, disponible desde .NET 6, valida un argumento y lanza ArgumentNullException si es null, infiriendo automáticamente el nombre del parámetro sin necesidad de pasarlo de forma explícita (Microsoft, s. f.-b). Colocar esta validación como primera instrucción del método es lo que distingue una validación temprana real de una tardía: si la comprobación ocurre después de que el parámetro ya fue utilizado, parte del daño potencial de recibir un valor inválido pudo haber ocurrido antes de que la excepción se lance.
+`ArgumentNullException.ThrowIfNull`, disponible desde .NET 6, valida un argumento y lanza `ArgumentNullException` si es `null`, infiriendo automáticamente el nombre del parámetro sin necesidad de pasarlo de forma explícita. Microsoft incluye este método entre los métodos auxiliares recomendados para lanzar excepciones de validación (Microsoft, 2025a).
 
 **Con estándar**
 
@@ -1789,59 +1690,70 @@ public void EquipWeapon(WeaponData weapon)
 ```
 
 ## 9. Complejidad
+
 ### 9.1 Números mágicos
+
 ### 9.2 Complejidad ciclomática máxima
+
 ### 9.3 Número máximo de parámetros por método
+
 ### 9.4 Número máximo de operadores lógicos por expresión
 
-## 10. Prácticas específicas de C# / Unity
+## 10. Prácticas específicas de C#
+
 ### 10.1 Propiedades vs. campos públicos
-### 10.2 Uso de LINQ (restricciones por rendimiento en bucles de juego)
-### 10.3 Cacheo de referencias y Object Pooling
-### 10.4 ScriptableObjects para datos/configuración
-### 10.5 Serialización ([SerializeField], [System.Serializable])
-### 10.6 Eventos (UnityEvent, event, Action)
+
+### 10.2 Uso de LINQ (restricciones en rutas de ejecución frecuentes)
+
+### 10.3 Reutilización de referencias y Object Pooling
+
+### 10.4 Objetos para datos y configuración
+
+### 10.5 Serialización (`[System.Serializable]` y serializador seleccionado)
+
+### 10.6 Eventos (`event`, `EventHandler` y `Action`)
+
 ### 10.7 Structs vs. classes vs. records (posiciones, stats, DTOs de guardado)
 
 ## 11. Comentarios y documentación
 
 Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente.
+
 ### 11.1 Comentarios de bloque
 
-Los comentarios de bloque (`/* ... */`) se utilizarán para justificar brevemente una decisión de diseño no evidente. Se colocarán antes de la línea de código a la que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación que el código.
+Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 11.2.
 
 Los comentarios de bloque nunca deberán utilizarse para construir separadores decorativos mediante líneas de asteriscos.
 
-Microsoft indica en sus [convenciones de codificación de C#](https://learn.microsoft.com/es-es/dotnet/csharp/fundamentals/coding-style/coding-conventions) que, para explicaciones extensas, se deberá utilizar una secuencia de comentarios de una sola línea (`//`) en lugar de un comentario de bloque. Por lo tanto, los comentarios `/* ... */` se reservarán para justificaciones breves y autocontenidas (Microsoft, s. f.-a).
-
-La misma fuente establece que no deberán crearse bloques de asteriscos alrededor de los comentarios. Esta prohibición reemplaza, en la versión de C#, la regla equivalente de la versión de Java del estándar.
+Las convenciones de Microsoft utilizan comentarios `//` para explicaciones breves y desaconsejan los comentarios de bloque para explicaciones extensas. Por ello, `/* ... */` se mantiene como una excepción limitada del equipo y nunca se utilizará como separador decorativo (Microsoft, 2025d).
 
 **Con estándar**
 
 ```csharp
-private const int MinimumHealth = 0;
-
-/* Clamped to prevent negative health when multiple damage sources land in the same frame. */
-_currentHealth = Math.Max(_currentHealth, MinimumHealth);
+/*
+The field order is preserved because existing save files use positional serialization.
+Changing it would make saved games unreadable.
+*/
+_saveSerializer.Write(saveData);
 ```
 
 **Sin estándar**
 
 ```csharp
-private const int MinimumHealth = 0;
-
 /****************************************
- * HEALTH SECTION
+ * SAVE SECTION
  ****************************************/
-_currentHealth = Math.Max(_currentHealth, MinimumHealth);
+_saveSerializer.Write(saveData);
 ```
+
 ### 11.2 Comentarios de línea
 
 Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código.
 
-Esta regla diverge deliberadamente de la versión Java del estándar, que sí permitía el comentario al final de la línea. La convención oficial de C# que documenta Microsoft es explícita en los cuatro puntos: el comentario se coloca en una línea separada y no al final de una línea de código, inicia con mayúscula, termina con punto, y lleva un espacio después del delimitador (Microsoft, s. f.-a).
+Los comentarios de línea constituyen el formato habitual para justificar decisiones no evidentes. La convención oficial de C# indica que el comentario se coloca en una línea separada, inicia con mayúscula, termina con punto y lleva un espacio después del delimitador (Microsoft, 2025d).
 
 **Con estándar**
+
 ```csharp
 private const int MinimumHealth = 0;
 
@@ -1853,6 +1765,7 @@ if (_currentHealth > MinimumHealth)
 ```
 
 **Sin estándar**
+
 ```csharp
 private const int MinimumHealth = 0;
 
@@ -1861,13 +1774,17 @@ if (_currentHealth > MinimumHealth) // skip regeneration once the player has alr
     RegenerateHealth();
 }
 ```
+
 ### 11.3 Comentarios de documentación XML (///)
 
-Todo miembro público (clases, métodos, propiedades) debe documentarse con comentarios de documentación XML (`///`), como mínimo con la etiqueta `<summary>`, y con una etiqueta `<param>` por cada parámetro. Estos comentarios se colocan inmediatamente arriba del elemento que documentan, sin línea en blanco entre ambos.
+Todo tipo o miembro que forme parte de la API pública del código de producción deberá documentarse con comentarios de documentación XML (`///`), como mínimo con la etiqueta `<summary>` y con una etiqueta `<param>` por cada parámetro. Estos comentarios se colocarán inmediatamente arriba del elemento que documentan, sin una línea en blanco entre ambos.
 
-Los comentarios de documentación XML, delimitados por triple diagonal (`///`) y colocados directamente antes del bloque de código al que describen, son el mecanismo oficial de C# para documentación de API, y el compilador puede generar un archivo de documentación a partir de ellos mediante la opción `GenerateDocumentationFile` (Microsoft, s. f.-b). La misma fuente señala que, si esta opción está habilitada, el compilador emite la advertencia CS1591 para cualquier miembro público sin comentario de documentación, lo que en la práctica hace de esta regla algo verificable automáticamente por el propio compilador. A diferencia del comentario de bloque de la sección 11.1, no puede existir una línea en blanco entre el comentario `///` y el miembro que documenta: el compilador asocia el comentario con el elemento inmediatamente posterior, por lo que una línea en blanco de por medio deja al miembro sin documentación asociada, aunque el texto siga presente en el archivo.
+Las clases y los métodos de los proyectos de prueba estarán exentos, salvo que el equipo decida documentarlos. Los fragmentos del presente estándar también podrán omitir la documentación XML cuando la regla ilustrada no sea la documentación. Esta excepción evita que los ejemplos marcados como “Con estándar” contradigan esta sección.
+
+Los comentarios `///` son el mecanismo oficial de C# para documentar una API. Cuando se habilita `GenerateDocumentationFile`, el compilador genera la advertencia CS1591 para los miembros públicamente visibles que no tengan documentación XML (Microsoft, 2026e).
 
 **Con estándar**
+
 ```csharp
 /// <summary>
 /// Applies damage to the player and triggers defeat once health reaches the minimum threshold.
@@ -1880,6 +1797,7 @@ public void ApplyDamage(int amount)
 ```
 
 **Sin estándar**
+
 ```csharp
 /// <summary>
 /// Applies damage to the player and triggers defeat once health reaches the minimum threshold.
@@ -1891,39 +1809,53 @@ public void ApplyDamage(int amount)
     _currentHealth -= amount;
 }
 ```
+
 ### 11.4 Comentarios especiales (TODO, FIXME)
 
 `TODO` marca funcionalidad pendiente de implementar; `FIXME` marca un comportamiento incorrecto conocido que debe corregirse. Ambos se escriben en mayúsculas, se colocan inmediatamente antes de la sección de código correspondiente, y deben ir acompañados de una descripción clara del pendiente. Todo comentario `TODO` o `FIXME` debe resolverse antes de la entrega final.
 
-`TODO` es uno de los tokens que Visual Studio reconoce de forma nativa y añade automáticamente a la ventana Task List para dar seguimiento a pendientes dentro del código (Microsoft, s. f.-c). Cabe aclarar una diferencia entre plataformas: los tokens predeterminados de Visual Studio para Windows son `HACK`, `TODO`, `UNDONE` y `UnresolvedMergeConflict` —`FIXME` no está incluido por defecto y debe añadirse como token personalizado—, mientras que Visual Studio para Mac sí incluye `FIXME` entre sus tokens predeterminados. El equipo mantiene `FIXME` como token del estándar, junto a `TODO`, por continuidad con la versión Java; quienes usen Visual Studio en Windows deberán agregarlo manualmente como token personalizado para que aparezca en su Task List.
+El reconocimiento automático de estos tokens dependerá del editor utilizado. La obligación de resolverlos antes de la entrega se mantiene independientemente de que el editor los muestre en una lista de tareas.
 
 **Con estándar**
+
 ```csharp
 // TODO: Add a cooldown so this ability cannot be reused every frame.
 ActivateSpecialAbility();
 ```
 
 **Sin estándar**
+
 ```csharp
 // todo fix
 ActivateSpecialAbility();
 ```
 
 ## 12. Manejo de logs y categorización de errores
-### 12.1 Sistema/herramienta de logging
-### 12.2 Niveles de log: Trace, Debug, Info, Warning, Error
-### 12.3 Criterio de aplicación por nivel (contexto de juego)
-### 12.4 Formato del mensaje
-### 12.5 Logs en editor vs. build final
 
-## 13. Gestión de escenas y UI
-### 13.1 Navegación entre escenas (SceneManager centralizado)
+### 12.1 Sistema/herramienta de logging
+
+### 12.2 Niveles de log: Trace, Debug, Info, Warning, Error
+
+### 12.3 Criterio de aplicación por nivel (contexto de juego)
+
+### 12.4 Formato del mensaje
+
+### 12.5 Logs en entornos de desarrollo y versiones finales
+
+## 13. Gestión de estados, pantallas y UI
+
+### 13.1 Navegación centralizada entre estados o pantallas
+
 ### 13.2 Mensajes/feedback al jugador (HUD, popups, pantallas de carga)
 
 ## 14. Validación de entradas y seguridad
+
 ### 14.1 Validación de inputs del jugador
+
 ### 14.2 Autoridad del servidor (si el proyecto es multijugador)
+
 ### 14.3 Manejo de datos sensibles
+
 ### 14.4 Persistencia de partidas (save/load) e integridad de datos
 
 ## 15. Pruebas unitarias
@@ -1932,13 +1864,13 @@ Las pruebas unitarias deberán verificar comportamientos individuales del códig
 
 Las pruebas se escribirán utilizando NUnit como framework de referencia. Las dependencias podrán sustituirse mediante NSubstitute o Moq, pero el equipo deberá seleccionar una sola biblioteca de mocking y utilizarla consistentemente en todo el proyecto.
 
-Estas reglas se basan en las [prácticas recomendadas para pruebas unitarias de .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices) y en la [documentación oficial de NUnit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html).
+Estas reglas se basan en las prácticas recomendadas para pruebas unitarias de .NET y en la documentación oficial de NUnit (Microsoft, 2025b; NUnit Project, s. f.-c).
 
 ### 15.1 Framework y ubicación (Unit / Integration)
 
 **Framework de pruebas**
 
-Las pruebas se escribirán utilizando NUnit. Las clases de prueba deberán utilizar `[TestFixture]` y los métodos de prueba individuales deberán marcarse con `[Test]`.
+Las pruebas se escribirán utilizando NUnit. Por convención del equipo, las clases de prueba utilizarán `[TestFixture]`, aunque NUnit permite omitirlo en clases no genéricas y no parametrizadas. Los métodos sin parámetros deberán marcarse con `[Test]`; los métodos parametrizados deberán utilizar `[TestCase]` o `[TestCaseSource]` (NUnit Project, s. f.-c, s. f.-d, s. f.-e).
 
 **Con estándar**
 
@@ -1949,7 +1881,7 @@ using NUnit.Framework;
 public sealed class DamageCalculatorTests
 {
     [Test]
-    public void Test_CalculateDamage_ValidValues_ReturnsDamageAfterDefense()
+    public void Test_CalculateDamage_AttackExceedsDefense_ReturnsDamageAfterDefense()
     {
         const int AttackPower = 30;
         const int Defense = 10;
@@ -1986,7 +1918,7 @@ Las pruebas unitarias se colocarán en `tests/AdventureGame.Tests.Unit`. Las pru
 
 **Con estándar**
 
-```text
+```csharp
 tests/AdventureGame.Tests.Unit/Combat/DamageCalculatorTests.cs
 tests/AdventureGame.Tests.Unit/Characters/PlayerTests.cs
 tests/AdventureGame.Tests.Integration/Saving/SaveGameRepositoryTests.cs
@@ -1994,7 +1926,7 @@ tests/AdventureGame.Tests.Integration/Saving/SaveGameRepositoryTests.cs
 
 **Sin estándar**
 
-```text
+```csharp
 tests/Tests/DamageCalculatorTests.cs
 tests/Tests/PlayerTests.cs
 tests/Tests/SaveGameRepositoryTests.cs
@@ -2006,13 +1938,13 @@ Las clases que prueben lógica aislada, cálculos, validaciones, reglas de comba
 
 **Con estándar**
 
-```text
+```csharp
 tests/AdventureGame.Tests.Unit/Combat/DamageCalculatorTests.cs
 ```
 
 **Sin estándar**
 
-```text
+```csharp
 tests/AdventureGame.Tests.Integration/Combat/DamageCalculatorTests.cs
 ```
 
@@ -2022,13 +1954,13 @@ Las pruebas que utilicen archivos reales, bases de datos, servicios externos o v
 
 **Con estándar**
 
-```text
+```csharp
 tests/AdventureGame.Tests.Integration/Saving/FileSaveGameRepositoryTests.cs
 ```
 
 **Sin estándar**
 
-```text
+```csharp
 tests/AdventureGame.Tests.Unit/Saving/FileSaveGameRepositoryTests.cs
 ```
 
@@ -2094,7 +2026,7 @@ El nombre deberá contener:
 3. El flujo o escenario evaluado.
 4. El resultado esperado.
 
-Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado.
+Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado. El prefijo `Test` se conserva como convención propia del equipo (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2182,7 +2114,7 @@ public void Test_AddExperience_ExperienceReachesLimit_ValidResult()
 
 **Pruebas parametrizadas**
 
-Cuando el mismo comportamiento deba comprobarse con diferentes entradas, se utilizará `[TestCase]` en lugar de duplicar métodos. Cada ejecución parametrizada conservará un solo assert.
+Cuando el mismo comportamiento deba comprobarse con diferentes entradas, se utilizará `[TestCase]` en lugar de duplicar métodos. Cada ejecución parametrizada conservará un solo assert. El atributo `[TestCase]` identifica por sí mismo el método como una prueba parametrizada; no será necesario agregar `[Test]` al mismo método (NUnit Project, s. f.-d).
 
 **Con estándar**
 
@@ -2225,11 +2157,11 @@ public void Test_CalculateDamage_DifferentValues_ReturnsSomething()
 
 Cada prueba deberá seguir el patrón Arrange-Act-Assert:
 
-1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
-2. **Act:** ejecuta una sola operación sobre el objeto probado.
-3. **Assert:** comprueba un único resultado observable.
+1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
+2. **Act:** ejecuta una sola operación sobre el objeto probado.
+3. **Assert:** comprueba un único resultado observable.
 
-Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
+Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
 
 **Con estándar**
 
@@ -2310,7 +2242,7 @@ La etapa Act deberá contener una sola operación principal. Si una prueba neces
 
 ```csharp
 [Test]
-public void Test_ReceiveDamage_ValidDamage_ReducesHealth()
+public void Test_ReceiveDamage_DamageIsPositive_ReducesHealth()
 {
     Player player = new PlayerBuilder()
         .WithHealth(InitialHealth)
@@ -2374,9 +2306,11 @@ public void Test_GetAttackPower_PlayerHasWeapon_ReturnsTotalAttackPower()
 }
 ```
 
+Cuando se pruebe una excepción, la operación se representará mediante un delegado creado en la etapa Act. `Assert.Throws` ejecutará ese delegado durante la etapa Assert. Esta es una excepción intencional a la separación estricta entre Act y Assert, porque la comprobación requiere observar la excepción producida al ejecutar el delegado (NUnit Project, s. f.-a).
+
 ### 15.4 Un assert por test
 
-Cada prueba deberá contener un solo assert. Esta regla obliga a que cada método verifique un único comportamiento y permite identificar con precisión la causa de un fallo.
+Cada prueba deberá contener un solo assert. Esta es una política del equipo que busca que cada método verifique un único comportamiento y permita identificar con precisión la causa de un fallo. NUnit recomienda intentar mantener un assert por prueba, aunque el framework también admite la agrupación de varias comprobaciones (NUnit Project, s. f.-b).
 
 Una verificación de NSubstitute mediante `Received()` o de Moq mediante `Verify()` contará como el único assert de la prueba.
 
@@ -2388,7 +2322,7 @@ Cada método de prueba deberá contener una sola llamada a `Assert`.
 
 ```csharp
 [Test]
-public void Test_ReceiveDamage_ValidDamage_ReducesHealth()
+public void Test_ReceiveDamage_DamageIsPositive_ReducesHealth()
 {
     Player player = new PlayerBuilder()
         .WithHealth(InitialHealth)
@@ -2489,9 +2423,9 @@ public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
 }
 ```
 
-**Prohibición de `Assert.Multiple`**
+**Prohibición de `Assert.Multiple` y `Assert.EnterMultipleScope`**
 
-No se utilizará `Assert.Multiple`, ya que permite agrupar varios asserts dentro de una sola prueba y contradice la regla de verificar un comportamiento por método.
+No se utilizarán `Assert.Multiple` ni `Assert.EnterMultipleScope` en las pruebas unitarias del proyecto, ya que permiten agrupar varios asserts dentro de una sola prueba y contradicen la política del equipo de verificar un comportamiento por método. Esta prohibición es una decisión del equipo y no una limitación de NUnit.
 
 **Con estándar**
 
@@ -2539,7 +2473,7 @@ El código de producción deberá depender de interfaces recibidas mediante el c
 
 El equipo deberá seleccionar NSubstitute o Moq y utilizar una sola biblioteca en todo el proyecto. Los ejemplos siguientes muestran ambas alternativas, pero no deberán mezclarse dentro de la misma base de pruebas.
 
-NSubstitute está diseñado para seguir la estructura Arrange-Act-Assert mediante `Returns()` y `Received()`. Moq proporciona las operaciones equivalentes mediante `Setup()` y `Verify()`.
+NSubstitute permite configurar resultados mediante `Returns()` y verificar llamadas mediante `Received()`. Moq proporciona las operaciones equivalentes mediante `Setup()` y `Verify()` (Devlooped, 2024; NSubstitute, s. f.).
 
 **Dependencias mediante interfaces**
 
@@ -2645,7 +2579,7 @@ Cuando se compruebe una interacción, `Received()` será la única verificación
 
 ```csharp
 [Test]
-public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 {
     IInventory inventory = Substitute.For<IInventory>();
     Item reward = new ItemBuilder().Build();
@@ -2661,7 +2595,7 @@ public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
 
 ```csharp
 [Test]
-public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 {
     IInventory inventory = Substitute.For<IInventory>();
     Item reward = new ItemBuilder().Build();
@@ -2724,7 +2658,7 @@ Cuando se compruebe una interacción mediante Moq, `Verify()` será la única ve
 
 ```csharp
 [Test]
-public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 {
     Mock<IInventory> inventoryMock = new Mock<IInventory>();
     Item reward = new ItemBuilder().Build();
@@ -2743,7 +2677,7 @@ public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
 
 ```csharp
 [Test]
-public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 {
     Mock<IInventory> inventoryMock = new Mock<IInventory>();
     Item reward = new ItemBuilder().Build();
@@ -2943,6 +2877,7 @@ public void WithLevel(int level)
 {
     _level = level;
 }
+
 ```
 
 **Creación de una instancia nueva**
@@ -3057,11 +2992,49 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 ```
 
 ## 16. Dependencias externas
+
 ### 16.1 Librerías/paquetes utilizados
+
 ### 16.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
 
 ## 17. Referencias
 
-- Microsoft. (s. f.-a). *C# formatting options*. Microsoft Learn. Recuperado el 18 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options
-- Microsoft. (s. f.-b). *Compiler Error CS0163*. Microsoft Learn. Recuperado el 18 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0163
-- Unity Technologies. (s. f.). *Garbage collection best practices*. Unity Manual. Recuperado el 18 de agosto de 2026, de https://docs.unity3d.com/2022.2/Documentation/Manual/performance-garbage-collection-best-practices.html
+- Cwalina, K., Barton, J., & Abrams, B. (2020). *Framework design guidelines: Conventions, idioms, and patterns for reusable .NET libraries* (3.ª ed.). Addison-Wesley Professional. [https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372](https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372)
+
+- Devlooped. (2024, 4 de julio). *Quickstart*. GitHub. [https://github.com/devlooped/moq/wiki/Quickstart](https://github.com/devlooped/moq/wiki/Quickstart)
+
+- Microsoft. (2023, 3 de octubre). *Names of type members*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members)
+
+- Microsoft. (2024, 27 de septiembre). *C# compiler options for language feature rules*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language)
+
+- Microsoft. (2025a, 22 de octubre). *Best practices for exceptions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)
+
+- Microsoft. (2025b, 22 de marzo). *Best practices for writing unit tests*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices)
+
+- Microsoft. (2025c, 30 de enero). *C# formatting options*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options)
+
+- Microsoft. (2025d, 18 de enero). *Common C# code conventions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+
+- Microsoft. (2025e, 29 de mayo). *Names of classes, structs, and interfaces*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces)
+
+- Microsoft. (2026a, 2 de abril). *CA1031: Do not catch general exception types*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1031](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1031)
+
+- Microsoft. (2026b, 14 de julio). *C# identifier naming rules and conventions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
+
+- Microsoft. (2026c, 20 de enero). *Selection statements: `if`, `if-else`, and `switch`*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/selection-statements](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/selection-statements)
+
+- Microsoft. (2026d, 24 de marzo). *`switch` expression: Pattern matching expressions using the `switch` keyword*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression)
+
+- Microsoft. (2026e, 20 de enero). *XML API documentation comments*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
+
+- NSubstitute. (s. f.). *Getting started*. Recuperado el 22 de agosto de 2026, de [https://nsubstitute.github.io/help/getting-started/](https://nsubstitute.github.io/help/getting-started/)
+
+- NUnit Project. (s. f.-a). *Assert.Throws*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html](https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html)
+
+- NUnit Project. (s. f.-b). *Assertions*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html](https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html)
+
+- NUnit Project. (s. f.-c). *Test*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html](https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html)
+
+- NUnit Project. (s. f.-d). *TestCase*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html)
+
+- NUnit Project. (s. f.-e). *TestFixture*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html)
