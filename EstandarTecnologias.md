@@ -490,12 +490,9 @@ public sealed class DamageReceivedData : EventArgs
 
 ## 6 Estilo de código
 
-El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos C# del videojuego.
+El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos.
 
 Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las [convenciones de código oficiales de C#](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
-
-Las reglas relacionadas con números mágicos, complejidad ciclomática, cantidad de parámetros y operadores lógicos se establecerán en la sección 9 del estándar.
-
 ### 6.1 Formato general (indentación, límite de columnas)
 
 **Indentación de cuatro espacios**
@@ -524,23 +521,6 @@ if (player.IsAlive)
 
 La indentación deberá realizarse con espacios. No se utilizarán tabuladores, ya que su anchura puede cambiar entre editores.
 
-**Con estándar**
-
-```csharp
-while (enemy.IsAlive)
-{
-    enemy.UpdateBehavior();
-}
-```
-
-**Sin estándar**
-
-```csharp
-while (enemy.IsAlive)
-{
-	enemy.UpdateBehavior();
-}
-```
 
 **Colocación de llaves**
 
@@ -605,8 +585,6 @@ Ninguna línea deberá superar los 120 caracteres. Cuando una instrucción exced
 
 ```csharp
 BattleResult battleResult = battleService.ResolveBattle(
-    player,
-    enemy,
     selectedDifficulty,
     currentLevel,
     battleRules);
@@ -615,7 +593,7 @@ BattleResult battleResult = battleService.ResolveBattle(
 **Sin estándar**
 
 ```csharp
-BattleResult battleResult = battleService.ResolveBattle(player, enemy, selectedDifficulty, currentLevel, battleRules, availableRewards);
+BattleResult battleResult = battleService.ResolveBattle(selectedDifficulty, currentLevel, battleRules);
 ```
 
 **Indentación de líneas de continuación**
@@ -648,18 +626,15 @@ Cuando una llamada deba dividirse por superar el límite de columna, se colocar�
 Enemy enemy = enemyFactory.Create(
     enemyType,
     spawnPosition,
-    initialHealth,
-    attackPower);
+    initialHealth);
 ```
 
 **Sin estándar**
 
 ```csharp
 Enemy enemy = enemyFactory.Create(enemyType,
-    spawnPosition, initialHealth,
-        attackPower);
+    spawnPosition, initialHealth);
 ```
-
 ### 6.2 Espacios en blanco (vertical/horizontal)
 
 **Separación entre secciones del archivo**
@@ -926,7 +901,6 @@ string playerName = player.Name;
 int    currentHealth = player.Health;
 string playerName    = player.Name;
 ```
-
 ### 6.3 Organización del archivo (orden de `using`)
 
 **Ubicación de las directivas `using`**
@@ -1131,7 +1105,6 @@ public sealed class EnemyFactory
 {
 }
 ```
-
 ### 6.4 Orden de miembros de la clase
 
 Los miembros de una clase deberán conservar el siguiente orden general:
@@ -1834,6 +1807,34 @@ public void EquipWeapon(WeaponData weapon)
 
 Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente.
 ### 11.1 Comentarios de bloque
+
+Los comentarios de bloque (`/* ... */`) se utilizarán para justificar brevemente una decisión de diseño no evidente. Se colocarán antes de la línea de código a la que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación que el código.
+
+Los comentarios de bloque nunca deberán utilizarse para construir separadores decorativos mediante líneas de asteriscos.
+
+Microsoft indica en sus [convenciones de codificación de C#](https://learn.microsoft.com/es-es/dotnet/csharp/fundamentals/coding-style/coding-conventions) que, para explicaciones extensas, se deberá utilizar una secuencia de comentarios de una sola línea (`//`) en lugar de un comentario de bloque. Por lo tanto, los comentarios `/* ... */` se reservarán para justificaciones breves y autocontenidas (Microsoft, s. f.-a).
+
+La misma fuente establece que no deberán crearse bloques de asteriscos alrededor de los comentarios. Esta prohibición reemplaza, en la versión de C#, la regla equivalente de la versión de Java del estándar.
+
+**Con estándar**
+
+```csharp
+private const int MinimumHealth = 0;
+
+/* Clamped to prevent negative health when multiple damage sources land in the same frame. */
+_currentHealth = Math.Max(_currentHealth, MinimumHealth);
+```
+
+**Sin estándar**
+
+```csharp
+private const int MinimumHealth = 0;
+
+/****************************************
+ * HEALTH SECTION
+ ****************************************/
+_currentHealth = Math.Max(_currentHealth, MinimumHealth);
+```
 ### 11.2 Comentarios de línea
 
 Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código.
@@ -1915,8 +1916,6 @@ ActivateSpecialAbility();
 ### 12.4 Formato del mensaje
 ### 12.5 Logs en editor vs. build final
 
-> *Nota: aquí falta decidir qué tecnologías vamos a usar.*
-
 ## 13. Gestión de escenas y UI
 ### 13.1 Navegación entre escenas (SceneManager centralizado)
 ### 13.2 Mensajes/feedback al jugador (HUD, popups, pantallas de carga)
@@ -1928,12 +1927,1134 @@ ActivateSpecialAbility();
 ### 14.4 Persistencia de partidas (save/load) e integridad de datos
 
 ## 15. Pruebas unitarias
-### 15.1 Framework y ubicación (EditMode / PlayMode)
+
+Las pruebas unitarias deberán verificar comportamientos individuales del código de manera rápida, aislada, repetible y automática. No deberán depender de archivos reales, conexiones externas, servicios remotos, fechas del sistema ni otros recursos que puedan producir resultados variables.
+
+Las pruebas se escribirán utilizando NUnit como framework de referencia. Las dependencias podrán sustituirse mediante NSubstitute o Moq, pero el equipo deberá seleccionar una sola biblioteca de mocking y utilizarla consistentemente en todo el proyecto.
+
+Estas reglas se basan en las [prácticas recomendadas para pruebas unitarias de .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices) y en la [documentación oficial de NUnit](https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html).
+
+### 15.1 Framework y ubicación (Unit / Integration)
+
+**Framework de pruebas**
+
+Las pruebas se escribirán utilizando NUnit. Las clases de prueba deberán utilizar `[TestFixture]` y los métodos de prueba individuales deberán marcarse con `[Test]`.
+
+**Con estándar**
+
+```csharp
+using NUnit.Framework;
+
+[TestFixture]
+public sealed class DamageCalculatorTests
+{
+    [Test]
+    public void Test_CalculateDamage_ValidValues_ReturnsDamageAfterDefense()
+    {
+        const int AttackPower = 30;
+        const int Defense = 10;
+        const int ExpectedDamage = 20;
+        DamageCalculator damageCalculator = new DamageCalculator();
+
+        int actualDamage = damageCalculator.CalculateDamage(
+            AttackPower,
+            Defense);
+
+        Assert.That(actualDamage, Is.EqualTo(ExpectedDamage));
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class DamageCalculatorTests
+{
+    public bool CheckDamage()
+    {
+        DamageCalculator damageCalculator = new DamageCalculator();
+        return damageCalculator.CalculateDamage(30, 10) == 20;
+    }
+}
+```
+
+**Separación entre pruebas unitarias y de integración**
+
+Las pruebas unitarias y las pruebas de integración deberán almacenarse en proyectos o ensamblados separados.
+
+Las pruebas unitarias se colocarán en `tests/AdventureGame.Tests.Unit`. Las pruebas de integración se colocarán en `tests/AdventureGame.Tests.Integration`.
+
+**Con estándar**
+
+```text
+tests/AdventureGame.Tests.Unit/Combat/DamageCalculatorTests.cs
+tests/AdventureGame.Tests.Unit/Characters/PlayerTests.cs
+tests/AdventureGame.Tests.Integration/Saving/SaveGameRepositoryTests.cs
+```
+
+**Sin estándar**
+
+```text
+tests/Tests/DamageCalculatorTests.cs
+tests/Tests/PlayerTests.cs
+tests/Tests/SaveGameRepositoryTests.cs
+```
+
+**Ubicación de pruebas unitarias**
+
+Las clases que prueben lógica aislada, cálculos, validaciones, reglas de combate o transformaciones de datos deberán colocarse dentro del proyecto de pruebas unitarias.
+
+**Con estándar**
+
+```text
+tests/AdventureGame.Tests.Unit/Combat/DamageCalculatorTests.cs
+```
+
+**Sin estándar**
+
+```text
+tests/AdventureGame.Tests.Integration/Combat/DamageCalculatorTests.cs
+```
+
+**Ubicación de pruebas de integración**
+
+Las pruebas que utilicen archivos reales, bases de datos, servicios externos o varios componentes concretos deberán colocarse dentro del proyecto de pruebas de integración.
+
+**Con estándar**
+
+```text
+tests/AdventureGame.Tests.Integration/Saving/FileSaveGameRepositoryTests.cs
+```
+
+**Sin estándar**
+
+```text
+tests/AdventureGame.Tests.Unit/Saving/FileSaveGameRepositoryTests.cs
+```
+
+**Correspondencia entre archivos y clases de prueba**
+
+Cada archivo deberá contener una sola clase de prueba. El nombre del archivo deberá coincidir con el nombre de la clase.
+
+**Con estándar — archivo `PlayerTests.cs`**
+
+```csharp
+[TestFixture]
+public sealed class PlayerTests
+{
+}
+```
+
+**Sin estándar — archivo `Tests.cs`**
+
+```csharp
+[TestFixture]
+public sealed class PlayerTests
+{
+}
+
+[TestFixture]
+public sealed class EnemyTests
+{
+}
+```
+
 ### 15.2 Nomenclatura de métodos de prueba
+
+**Nomenclatura de las clases de prueba**
+
+El nombre de una clase de prueba deberá formarse con el nombre de la clase probada y el sufijo `Tests`.
+
+**Con estándar**
+
+```csharp
+public sealed class DamageCalculatorTests
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class DamageTests
+{
+}
+```
+
+**Estructura del nombre del método de prueba**
+
+Los métodos de prueba deberán seguir la estructura:
+
+`Test_NombreMetodo_Flujo_Resultado`
+
+El nombre deberá contener:
+
+1. El prefijo `Test`.
+2. El nombre del método probado.
+3. El flujo o escenario evaluado.
+4. El resultado esperado.
+
+Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_CalculateDamage_EnemyWithoutDefense_ReturnsAttackPower()
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void DamageTest()
+{
+}
+```
+
+**Idioma y capitalización**
+
+Los nombres de las pruebas deberán escribirse en inglés. Cada parte del nombre deberá utilizar `PascalCase` y separarse mediante un guion bajo.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_RestoreHealth_PlayerIsDamaged_RestoresMaximumHealth()
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void test_restaurarvida_jugadorDañado_funciona()
+{
+}
+```
+
+**Descripción del flujo**
+
+El flujo deberá describir la condición específica bajo la cual se ejecuta el método. No se utilizarán palabras genéricas como `Valid`, `Normal` o `Works` cuando exista una descripción más precisa.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_UseItem_InventoryIsEmpty_ReturnsFalse()
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_UseItem_Normal_Works()
+{
+}
+```
+
+**Descripción del resultado**
+
+La última parte del nombre deberá indicar el resultado observable esperado mediante expresiones como `Returns`, `Throws`, `Adds`, `Removes`, `Updates` o `DoesNotChange`.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_AddExperience_ExperienceReachesLimit_AddsLevel()
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_AddExperience_ExperienceReachesLimit_ValidResult()
+{
+}
+```
+
+**Pruebas parametrizadas**
+
+Cuando el mismo comportamiento deba comprobarse con diferentes entradas, se utilizará `[TestCase]` en lugar de duplicar métodos. Cada ejecución parametrizada conservará un solo assert.
+
+**Con estándar**
+
+```csharp
+[TestCase(30, 10, 20)]
+[TestCase(30, 20, 10)]
+[TestCase(30, 30, 0)]
+public void Test_CalculateDamage_DifferentDefense_ReturnsExpectedDamage(
+    int attackPower,
+    int defense,
+    int expectedDamage)
+{
+    DamageCalculator damageCalculator = new DamageCalculator();
+
+    int actualDamage = damageCalculator.CalculateDamage(
+        attackPower,
+        defense);
+
+    Assert.That(actualDamage, Is.EqualTo(expectedDamage));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_CalculateDamage_DifferentValues_ReturnsSomething()
+{
+    DamageCalculator damageCalculator = new DamageCalculator();
+
+    int firstDamage = damageCalculator.CalculateDamage(30, 10);
+    int secondDamage = damageCalculator.CalculateDamage(30, 20);
+
+    Assert.That(firstDamage, Is.EqualTo(20));
+    Assert.That(secondDamage, Is.EqualTo(10));
+}
+```
+
 ### 15.3 Estructura Arrange-Act-Assert
+
+Cada prueba deberá seguir el patrón Arrange-Act-Assert:
+
+1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
+2. **Act:** ejecuta una sola operación sobre el objeto probado.
+3. **Assert:** comprueba un único resultado observable.
+
+Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_CalculateDamage_EnemyHasDefense_ReturnsReducedDamage()
+{
+    const int AttackPower = 30;
+    const int Defense = 10;
+    const int ExpectedDamage = 20;
+    DamageCalculator damageCalculator = new DamageCalculator();
+
+    int actualDamage = damageCalculator.CalculateDamage(
+        AttackPower,
+        Defense);
+
+    Assert.That(actualDamage, Is.EqualTo(ExpectedDamage));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_CalculateDamage_EnemyHasDefense_ReturnsReducedDamage()
+{
+    Assert.That(
+        new DamageCalculator().CalculateDamage(30, 10),
+        Is.EqualTo(20));
+}
+```
+
+**Contenido de Arrange**
+
+La etapa Arrange deberá contener únicamente la creación y configuración necesarias para el comportamiento probado. No se configurarán propiedades o dependencias que no influyan en el resultado.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_IsAlive_HealthIsPositive_ReturnsTrue()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    bool isAlive = player.IsAlive;
+
+    Assert.That(isAlive, Is.True);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_IsAlive_HealthIsPositive_ReturnsTrue()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .WithName("Player")
+        .WithLevel(10)
+        .WithExperience(500)
+        .WithGold(1000)
+        .Build();
+
+    bool isAlive = player.IsAlive;
+
+    Assert.That(isAlive, Is.True);
+}
+```
+
+**Una operación en Act**
+
+La etapa Act deberá contener una sola operación principal. Si una prueba necesita ejecutar varias acciones independientes, deberá dividirse en pruebas separadas.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_ValidDamage_ReducesHealth()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(ReceivedDamage);
+
+    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_PlayerActions_ValidValues_UpdatePlayer()
+{
+    Player player = new PlayerBuilder().Build();
+
+    player.ReceiveDamage(ReceivedDamage);
+    player.RestoreHealth();
+    player.AddExperience(EarnedExperience);
+
+    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
+}
+```
+
+**Separación de Act y Assert**
+
+La operación probada no deberá ejecutarse directamente dentro del assert. Su resultado deberá almacenarse en una variable con un nombre descriptivo.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_GetAttackPower_PlayerHasWeapon_ReturnsTotalAttackPower()
+{
+    Player player = new PlayerBuilder()
+        .WithWeapon(defaultWeapon)
+        .Build();
+
+    int actualAttackPower = player.GetAttackPower();
+
+    Assert.That(actualAttackPower, Is.EqualTo(ExpectedAttackPower));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_GetAttackPower_PlayerHasWeapon_ReturnsTotalAttackPower()
+{
+    Player player = new PlayerBuilder()
+        .WithWeapon(defaultWeapon)
+        .Build();
+
+    Assert.That(
+        player.GetAttackPower(),
+        Is.EqualTo(ExpectedAttackPower));
+}
+```
+
 ### 15.4 Un assert por test
+
+Cada prueba deberá contener un solo assert. Esta regla obliga a que cada método verifique un único comportamiento y permite identificar con precisión la causa de un fallo.
+
+Una verificación de NSubstitute mediante `Received()` o de Moq mediante `Verify()` contará como el único assert de la prueba.
+
+**Un solo assert**
+
+Cada método de prueba deberá contener una sola llamada a `Assert`.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_ValidDamage_ReducesHealth()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(ReceivedDamage);
+
+    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_ValidDamage_UpdatesPlayer()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(ReceivedDamage);
+
+    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
+    Assert.That(player.IsAlive, Is.True);
+}
+```
+
+**Separación de comportamientos**
+
+Si una operación produce varios resultados que deben comprobarse por separado, se escribirá una prueba para cada comportamiento.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveFatalDamage_DamageExceedsHealth_SetsIsAliveToFalse()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(FatalDamage);
+
+    Assert.That(player.IsAlive, Is.False);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveFatalDamage_DamageExceedsHealth_UpdatesEverything()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(FatalDamage);
+
+    Assert.That(player.IsAlive, Is.False);
+    Assert.That(player.Health, Is.EqualTo(MinimumHealth));
+    Assert.That(player.CanAttack, Is.False);
+}
+```
+
+**Excepciones esperadas**
+
+Cuando se espere una excepción, `Assert.Throws<TException>()` será el único assert de la prueba.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_DamageIsNegative_ThrowsArgumentOutOfRangeException()
+{
+    Player player = new PlayerBuilder().Build();
+
+    TestDelegate receiveNegativeDamage = () =>
+        player.ReceiveDamage(NegativeDamage);
+
+    Assert.Throws<ArgumentOutOfRangeException>(
+        receiveNegativeDamage);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
+{
+    Player player = new PlayerBuilder().Build();
+
+    Assert.Throws<ArgumentOutOfRangeException>(
+        () => player.ReceiveDamage(NegativeDamage));
+    Assert.That(player.Health, Is.EqualTo(DefaultHealth));
+}
+```
+
+**Prohibición de `Assert.Multiple`**
+
+No se utilizará `Assert.Multiple`, ya que permite agrupar varios asserts dentro de una sola prueba y contradice la regla de verificar un comportamiento por método.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_LevelUp_ExperienceReachesLimit_IncreasesLevel()
+{
+    Player player = new PlayerBuilder()
+        .WithLevel(InitialLevel)
+        .WithExperience(ExperienceBeforeLevelUp)
+        .Build();
+
+    player.AddExperience(EarnedExperience);
+
+    Assert.That(player.Level, Is.EqualTo(ExpectedLevel));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_LevelUp_ExperienceReachesLimit_UpdatesPlayer()
+{
+    Player player = new PlayerBuilder()
+        .WithLevel(InitialLevel)
+        .WithExperience(ExperienceBeforeLevelUp)
+        .Build();
+
+    player.AddExperience(EarnedExperience);
+
+    Assert.Multiple(() =>
+    {
+        Assert.That(player.Level, Is.EqualTo(ExpectedLevel));
+        Assert.That(player.Experience, Is.EqualTo(ExpectedExperience));
+    });
+}
+```
+
 ### 15.5 Mocking de dependencias (interfaces + NSubstitute/Moq)
+
+Los mocks deberán utilizarse únicamente para reemplazar dependencias externas o colaboradores cuyo comportamiento necesite controlarse durante una prueba.
+
+El código de producción deberá depender de interfaces recibidas mediante el constructor. No deberá crear internamente implementaciones concretas de sus dependencias.
+
+El equipo deberá seleccionar NSubstitute o Moq y utilizar una sola biblioteca en todo el proyecto. Los ejemplos siguientes muestran ambas alternativas, pero no deberán mezclarse dentro de la misma base de pruebas.
+
+NSubstitute está diseñado para seguir la estructura Arrange-Act-Assert mediante `Returns()` y `Received()`. Moq proporciona las operaciones equivalentes mediante `Setup()` y `Verify()`.
+
+**Dependencias mediante interfaces**
+
+Las dependencias sustituibles deberán representarse mediante interfaces y recibirse mediante el constructor.
+
+**Con estándar**
+
+```csharp
+public sealed class RewardService
+{
+    private readonly IInventory _inventory;
+
+    public RewardService(IInventory inventory)
+    {
+        _inventory = inventory;
+    }
+
+    public void GrantReward(Item reward)
+    {
+        _inventory.Add(reward);
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class RewardService
+{
+    private readonly Inventory _inventory = new Inventory();
+
+    public void GrantReward(Item reward)
+    {
+        _inventory.Add(reward);
+    }
+}
+```
+
+**Selección de una biblioteca de mocking**
+
+El proyecto deberá utilizar NSubstitute o Moq. No deberán incluirse ambas bibliotecas dentro del mismo proyecto de pruebas.
+
+**Con estándar**
+
+```csharp
+using NSubstitute;
+using NUnit.Framework;
+```
+
+**Sin estándar**
+
+```csharp
+using Moq;
+using NSubstitute;
+using NUnit.Framework;
+```
+
+**Configuración mediante NSubstitute**
+
+Cuando el proyecto utilice NSubstitute, las dependencias deberán crearse mediante `Substitute.For<T>()` y configurarse mediante `Returns()`.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
+{
+    ISaveGameRepository saveGameRepository =
+        Substitute.For<ISaveGameRepository>();
+    Player expectedPlayer = new PlayerBuilder().Build();
+    saveGameRepository.Load(PlayerSlot).Returns(expectedPlayer);
+    LoadGameService loadGameService =
+        new LoadGameService(saveGameRepository);
+
+    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
+
+    Assert.That(actualPlayer, Is.SameAs(expectedPlayer));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
+{
+    FileSaveGameRepository saveGameRepository =
+        new FileSaveGameRepository();
+    LoadGameService loadGameService =
+        new LoadGameService(saveGameRepository);
+
+    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
+
+    Assert.That(actualPlayer, Is.Not.Null);
+}
+```
+
+**Verificación mediante NSubstitute**
+
+Cuando se compruebe una interacción, `Received()` será la única verificación de la prueba.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+{
+    IInventory inventory = Substitute.For<IInventory>();
+    Item reward = new ItemBuilder().Build();
+    RewardService rewardService = new RewardService(inventory);
+
+    rewardService.GrantReward(reward);
+
+    inventory.Received(1).Add(reward);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+{
+    IInventory inventory = Substitute.For<IInventory>();
+    Item reward = new ItemBuilder().Build();
+    RewardService rewardService = new RewardService(inventory);
+
+    rewardService.GrantReward(reward);
+
+    inventory.Received().Add(Arg.Any<Item>());
+    inventory.Received().Add(reward);
+}
+```
+
+**Configuración mediante Moq**
+
+Cuando el proyecto utilice Moq, las dependencias deberán crearse mediante `Mock<T>` y configurarse mediante `Setup()`.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
+{
+    Mock<ISaveGameRepository> saveGameRepositoryMock =
+        new Mock<ISaveGameRepository>();
+    Player expectedPlayer = new PlayerBuilder().Build();
+    saveGameRepositoryMock
+        .Setup(repository => repository.Load(PlayerSlot))
+        .Returns(expectedPlayer);
+    LoadGameService loadGameService =
+        new LoadGameService(saveGameRepositoryMock.Object);
+
+    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
+
+    Assert.That(actualPlayer, Is.SameAs(expectedPlayer));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
+{
+    Mock<FileSaveGameRepository> saveGameRepositoryMock =
+        new Mock<FileSaveGameRepository>();
+    LoadGameService loadGameService =
+        new LoadGameService(saveGameRepositoryMock.Object);
+
+    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
+
+    Assert.That(actualPlayer, Is.Not.Null);
+}
+```
+
+**Verificación mediante Moq**
+
+Cuando se compruebe una interacción mediante Moq, `Verify()` será la única verificación de la prueba.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+{
+    Mock<IInventory> inventoryMock = new Mock<IInventory>();
+    Item reward = new ItemBuilder().Build();
+    RewardService rewardService =
+        new RewardService(inventoryMock.Object);
+
+    rewardService.GrantReward(reward);
+
+    inventoryMock.Verify(
+        inventory => inventory.Add(reward),
+        Times.Once);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_GrantReward_RewardIsValid_AddsItemToInventory()
+{
+    Mock<IInventory> inventoryMock = new Mock<IInventory>();
+    Item reward = new ItemBuilder().Build();
+    RewardService rewardService =
+        new RewardService(inventoryMock.Object);
+
+    rewardService.GrantReward(reward);
+
+    inventoryMock.Verify(
+        inventory => inventory.Add(It.IsAny<Item>()));
+    inventoryMock.Verify(
+        inventory => inventory.Add(reward));
+}
+```
+
+**Objetos que no deben sustituirse**
+
+No se crearán mocks de entidades, objetos de valor ni de la clase que se está probando. Estos objetos deberán construirse directamente o mediante builders.
+
+**Con estándar**
+
+```csharp
+Player player = new PlayerBuilder()
+    .WithHealth(InitialHealth)
+    .Build();
+```
+
+**Sin estándar**
+
+```csharp
+Player player = Substitute.For<Player>();
+player.Health.Returns(InitialHealth);
+```
+
 ### 15.6 Métodos builder para objetos de prueba complejos
+
+Los builders de prueba se utilizarán para crear objetos complejos con valores válidos por defecto. Su propósito será reducir la repetición y permitir que cada prueba sobrescriba únicamente los valores relevantes para el escenario evaluado.
+
+Los builders se almacenarán dentro de `tests/AdventureGame.Tests.Unit/Builders`. Su nombre deberá terminar con el sufijo `Builder`.
+
+**Uso de builders para objetos complejos**
+
+Se utilizará un builder cuando la creación directa de un objeto necesite varios parámetros o configuraciones.
+
+**Con estándar**
+
+```csharp
+Player player = new PlayerBuilder()
+    .WithHealth(LowHealth)
+    .WithLevel(InitialLevel)
+    .Build();
+```
+
+**Sin estándar**
+
+```csharp
+Player player = new Player(
+    PlayerId,
+    "Player",
+    LowHealth,
+    MaximumHealth,
+    InitialLevel,
+    InitialExperience,
+    InitialGold,
+    new List<Item>(),
+    defaultWeapon,
+    defaultArmor);
+```
+
+**Nomenclatura de builders**
+
+La clase deberá utilizar el nombre del objeto construido y el sufijo `Builder`. Los métodos de configuración deberán utilizar el prefijo `With` y escribirse en `PascalCase`.
+
+**Con estándar**
+
+```csharp
+public sealed class PlayerBuilder
+{
+    public PlayerBuilder WithHealth(int health)
+    {
+        _health = health;
+        return this;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class PlayerMaker
+{
+    public PlayerMaker SetHp(int hp)
+    {
+        _health = hp;
+        return this;
+    }
+}
+```
+
+**Valores válidos por defecto**
+
+Un builder deberá producir un objeto válido aunque no se invoque ningún método `With`. Los valores predeterminados deberán representar el caso más común y neutral.
+
+**Con estándar**
+
+```csharp
+public sealed class PlayerBuilder
+{
+    private const int DefaultHealth = 100;
+    private const int DefaultLevel = 1;
+    private const string DefaultName = "Player";
+
+    private int _health = DefaultHealth;
+    private int _level = DefaultLevel;
+    private string _name = DefaultName;
+
+    public Player Build()
+    {
+        Player player = new Player(
+            _name,
+            _health,
+            _level);
+
+        return player;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class PlayerBuilder
+{
+    private int _health;
+    private int _level;
+    private string? _name;
+
+    public Player Build()
+    {
+        Player player = new Player(
+            _name,
+            _health,
+            _level);
+
+        return player;
+    }
+}
+```
+
+**Modificación de una propiedad por método**
+
+Cada método `With` deberá modificar una sola característica del objeto. No se utilizará un método para configurar varias propiedades sin relación directa.
+
+**Con estándar**
+
+```csharp
+public PlayerBuilder WithHealth(int health)
+{
+    _health = health;
+    return this;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public PlayerBuilder WithCombatValues(
+    int health,
+    int level,
+    int attackPower)
+{
+    _health = health;
+    _level = level;
+    _attackPower = attackPower;
+    return this;
+}
+```
+
+**Retorno del propio builder**
+
+Los métodos `With` deberán devolver la instancia actual mediante `return this;` para permitir el encadenamiento de llamadas.
+
+**Con estándar**
+
+```csharp
+public PlayerBuilder WithLevel(int level)
+{
+    _level = level;
+    return this;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void WithLevel(int level)
+{
+    _level = level;
+}
+```
+
+**Creación de una instancia nueva**
+
+El método `Build()` deberá devolver una nueva instancia en cada llamada. No deberá reutilizar un objeto mutable construido anteriormente.
+
+**Con estándar**
+
+```csharp
+public Player Build()
+{
+    List<Item> inventoryCopy = new List<Item>(_items);
+    Player player = new Player(
+        _name,
+        _health,
+        _level,
+        inventoryCopy);
+
+    return player;
+}
+```
+
+**Sin estándar**
+
+```csharp
+private readonly Player _player = new Player();
+
+public Player Build()
+{
+    _player.Name = _name;
+    _player.Health = _health;
+    _player.Level = _level;
+
+    return _player;
+}
+```
+
+**Ausencia de validaciones y asserts**
+
+Los builders no deberán contener asserts ni reglas de prueba. Su única responsabilidad será construir objetos.
+
+**Con estándar**
+
+```csharp
+public Player Build()
+{
+    Player player = new Player(
+        _name,
+        _health,
+        _level);
+
+    return player;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public Player Build()
+{
+    Assert.That(_health, Is.GreaterThan(MinimumHealth));
+
+    Player player = new Player(
+        _name,
+        _health,
+        _level);
+
+    return player;
+}
+```
+
+**Configuración mínima dentro de la prueba**
+
+Cada prueba deberá modificar únicamente las propiedades necesarias para representar su escenario.
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_IsAlive_HealthIsZero_ReturnsFalse()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(MinimumHealth)
+        .Build();
+
+    bool isAlive = player.IsAlive;
+
+    Assert.That(isAlive, Is.False);
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_IsAlive_HealthIsZero_ReturnsFalse()
+{
+    Player player = new PlayerBuilder()
+        .WithName("Player")
+        .WithHealth(MinimumHealth)
+        .WithLevel(InitialLevel)
+        .WithExperience(InitialExperience)
+        .WithGold(InitialGold)
+        .WithWeapon(defaultWeapon)
+        .WithArmor(defaultArmor)
+        .Build();
+
+    bool isAlive = player.IsAlive;
+
+    Assert.That(isAlive, Is.False);
+}
+```
 
 ## 16. Dependencias externas
 ### 16.1 Librerías/paquetes utilizados
