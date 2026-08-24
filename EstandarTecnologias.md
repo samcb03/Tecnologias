@@ -11,7 +11,6 @@
 
 **Fecha:** 23 de agosto de 2026
 
----
 <div style="page-break-after: always;"></div>
 ## Índice
 
@@ -31,8 +30,7 @@
 14. [Pruebas unitarias](#14-pruebas-unitarias)
 15. [Dependencias externas](#15-dependencias-externas)
 16. [Referencias](#16-referencias)
-
----
+<div style="page-break-after: always;"></div>
 
 ## 1. Introducción
 
@@ -3406,7 +3404,7 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 ### 15.1 Librerías/paquetes utilizados
 
 ### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
-
+<div style="page-break-after: always;"></div>
 ## 16. Referencias
 
 - Cwalina, K., Barton, J., & Abrams, B. (2020). *Framework design guidelines: Conventions, idioms, and patterns for reusable .NET libraries* (3.ª ed.). Addison-Wesley Professional. [https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372](https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372)
