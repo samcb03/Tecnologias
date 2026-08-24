@@ -1725,37 +1725,37 @@ public void EquipWeapon(WeaponData weapon)
 }
 ```
 
-## 9. Complejidad
+## 8. Complejidad
 
-### 9.1 Números mágicos
+### 8.1 Números mágicos
 
-### 9.2 Complejidad ciclomática máxima
+### 8.2 Complejidad ciclomática máxima
 
-### 9.3 Número máximo de parámetros por método
+### 8.3 Número máximo de parámetros por método
 
-### 9.4 Número máximo de operadores lógicos por expresión
+### 8.4 Número máximo de operadores lógicos por expresión
 
-## 10. Prácticas específicas de C#
+## 9. Prácticas específicas de C#
 
-### 10.1 Propiedades vs. campos públicos
+### 9.1 Propiedades vs. campos públicos
 
-### 10.2 Uso de LINQ (restricciones en rutas de ejecución frecuentes)
+### 9.2 Uso de LINQ (restricciones en rutas de ejecución frecuentes)
 
-### 10.3 Reutilización de referencias y Object Pooling
+### 9.3 Reutilización de referencias y Object Pooling
 
-### 10.4 Objetos para datos y configuración
+### 9.4 Objetos para datos y configuración
 
-### 10.5 Serialización (`[System.Serializable]` y serializador seleccionado)
+### 9.5 Serialización (`[System.Serializable]` y serializador seleccionado)
 
-### 10.6 Eventos (`event`, `EventHandler` y `Action`)
+### 9.6 Eventos (`event`, `EventHandler` y `Action`)
 
-### 10.7 Structs vs. classes vs. records (posiciones, stats, DTOs de guardado)
+### 9.7 Structs vs. classes vs. records (posiciones, stats, DTOs de guardado)
 
-## 11. Comentarios y documentación
+## 10. Comentarios y documentación
 
 Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente.
 
-### 11.1 Comentarios de bloque
+### 10.1 Comentarios de bloque
 
 Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 11.2.
 
@@ -1782,7 +1782,7 @@ _saveSerializer.Write(saveData);
 _saveSerializer.Write(saveData);
 ```
 
-### 11.2 Comentarios de línea
+### 10.2 Comentarios de línea
 
 Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código.
 
@@ -1811,7 +1811,7 @@ if (_currentHealth > MinimumHealth) // skip regeneration once the player has alr
 }
 ```
 
-### 11.3 Comentarios de documentación XML (///)
+### 10.3 Comentarios de documentación XML (///)
 
 Todo tipo o miembro que forme parte de la API pública del código de producción deberá documentarse con comentarios de documentación XML (`///`), como mínimo con la etiqueta `<summary>` y con una etiqueta `<param>` por cada parámetro. Estos comentarios se colocarán inmediatamente arriba del elemento que documentan, sin una línea en blanco entre ambos.
 
@@ -1846,7 +1846,7 @@ public void ApplyDamage(int amount)
 }
 ```
 
-### 11.4 Comentarios especiales (TODO, FIXME)
+### 10.4 Comentarios especiales (TODO, FIXME)
 
 `TODO` marca funcionalidad pendiente de implementar; `FIXME` marca un comportamiento incorrecto conocido que debe corregirse. Ambos se escriben en mayúsculas, se colocan inmediatamente antes de la sección de código correspondiente, y deben ir acompañados de una descripción clara del pendiente. Todo comentario `TODO` o `FIXME` debe resolverse antes de la entrega final.
 
@@ -1866,35 +1866,35 @@ ActivateSpecialAbility();
 ActivateSpecialAbility();
 ```
 
-## 12. Manejo de logs y categorización de errores
+## 11. Manejo de logs y categorización de errores
 
-### 12.1 Sistema/herramienta de logging
+### 11.1 Sistema/herramienta de logging
 
-### 12.2 Niveles de log: Trace, Debug, Info, Warning, Error
+### 11.2 Niveles de log: Trace, Debug, Info, Warning, Error
 
-### 12.3 Criterio de aplicación por nivel (contexto de juego)
+### 11.3 Criterio de aplicación por nivel (contexto de juego)
 
-### 12.4 Formato del mensaje
+### 11.4 Formato del mensaje
 
-### 12.5 Logs en entornos de desarrollo y versiones finales
+### 11.5 Logs en entornos de desarrollo y versiones finales
 
-## 13. Gestión de estados, pantallas y UI
+## 12. Gestión de estados, pantallas y UI
 
-### 13.1 Navegación centralizada entre estados o pantallas
+### 12.1 Navegación centralizada entre estados o pantallas
 
-### 13.2 Mensajes/feedback al jugador (HUD, popups, pantallas de carga)
+### 12.2 Mensajes/feedback al jugador (HUD, popups, pantallas de carga)
 
-## 14. Validación de entradas y seguridad
+## 13. Validación de entradas y seguridad
 
-### 14.1 Validación de inputs del jugador
+### 13.1 Validación de inputs del jugador
 
-### 14.2 Autoridad del servidor (si el proyecto es multijugador)
+### 13.2 Autoridad del servidor (si el proyecto es multijugador)
 
-### 14.3 Manejo de datos sensibles
+### 13.3 Manejo de datos sensibles
 
-### 14.4 Persistencia de partidas (save/load) e integridad de datos
+### 13.4 Persistencia de partidas (save/load) e integridad de datos
 
-## 15. Pruebas unitarias
+## 14. Pruebas unitarias
 
 Las pruebas unitarias deberán verificar comportamientos individuales del código de manera rápida, aislada, repetible y automática. No deberán depender de archivos reales, conexiones externas, servicios remotos, fechas del sistema ni otros recursos que puedan producir resultados variables.
 
@@ -1902,7 +1902,7 @@ Las pruebas se escribirán utilizando NUnit como framework de referencia. Las de
 
 Estas reglas se basan en las prácticas recomendadas para pruebas unitarias de .NET y en la documentación oficial de NUnit (Microsoft, 2025b; NUnit Project, s. f.-c).
 
-### 15.1 Framework y ubicación (Unit / Integration)
+### 14.1 Framework y ubicación (Unit / Integration)
 
 **Framework de pruebas**
 
@@ -2027,7 +2027,7 @@ public sealed class EnemyTests
 }
 ```
 
-### 15.2 Nomenclatura de métodos de prueba
+### 14.2 Nomenclatura de métodos de prueba
 
 **Nomenclatura de las clases de prueba**
 
@@ -2189,7 +2189,7 @@ public void Test_CalculateDamage_DifferentValues_ReturnsSomething()
 }
 ```
 
-### 15.3 Estructura Arrange-Act-Assert
+### 14.3 Estructura Arrange-Act-Assert
 
 Cada prueba deberá seguir el patrón Arrange-Act-Assert:
 
@@ -2344,7 +2344,7 @@ public void Test_GetAttackPower_PlayerHasWeapon_ReturnsTotalAttackPower()
 
 Cuando se pruebe una excepción, la operación se representará mediante un delegado creado en la etapa Act. `Assert.Throws` ejecutará ese delegado durante la etapa Assert. Esta es una excepción intencional a la separación estricta entre Act y Assert, porque la comprobación requiere observar la excepción producida al ejecutar el delegado (NUnit Project, s. f.-a).
 
-### 15.4 Un assert por test
+### 14.4 Un assert por test
 
 Cada prueba deberá contener un solo assert. Esta es una política del equipo que busca que cada método verifique un único comportamiento y permita identificar con precisión la causa de un fallo. NUnit recomienda intentar mantener un assert por prueba, aunque el framework también admite la agrupación de varias comprobaciones (NUnit Project, s. f.-b).
 
@@ -2501,7 +2501,7 @@ public void Test_LevelUp_ExperienceReachesLimit_UpdatesPlayer()
 }
 ```
 
-### 15.5 Mocking de dependencias (interfaces + NSubstitute/Moq)
+### 14.5 Mocking de dependencias (interfaces + NSubstitute/Moq)
 
 Los mocks deberán utilizarse únicamente para reemplazar dependencias externas o colaboradores cuyo comportamiento necesite controlarse durante una prueba.
 
@@ -2748,7 +2748,7 @@ Player player = Substitute.For<Player>();
 player.Health.Returns(InitialHealth);
 ```
 
-### 15.6 Métodos builder para objetos de prueba complejos
+### 14.6 Métodos builder para objetos de prueba complejos
 
 Los builders de prueba se utilizarán para crear objetos complejos con valores válidos por defecto. Su propósito será reducir la repetición y permitir que cada prueba sobrescriba únicamente los valores relevantes para el escenario evaluado.
 
@@ -3027,13 +3027,13 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 }
 ```
 
-## 16. Dependencias externas
+## 15. Dependencias externas
 
-### 16.1 Librerías/paquetes utilizados
+### 15.1 Librerías/paquetes utilizados
 
-### 16.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
+### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
 
-## 17. Referencias
+## 16. Referencias
 
 - Cwalina, K., Barton, J., & Abrams, B. (2020). *Framework design guidelines: Conventions, idioms, and patterns for reusable .NET libraries* (3.ª ed.). Addison-Wesley Professional. [https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372](https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372)
 
