@@ -3406,3 +3406,13 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 - NUnit Project. (s. f.-d). *TestCase*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html)
 
 - NUnit Project. (s. f.-e). *TestFixture*. Recuperado el 22 de agosto de 2026, de [https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html](https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html)
+
+- Fowler, M. (2018). Refactoring: Improving the design of existing code (2nd ed.). Addison-Wesley.
+  
+- Martin, R. C. (2008). Clean code: A handbook of agile software craftsmanship. Prentice Hall.
+
+- McCabe, T. J. (1976). A complexity measure. IEEE Transactions on Software Engineering, SE-2(4), 308–320. https://doi.org/10.1109/TSE.1976.233837
+
+- McConnell, S. (2004). Code complete (2nd ed.). Microsoft Press.
+
+- Chuvakin, A., Schmidt, K., & Phillips, C. (2013). Logging and log management: The authoritative guide to understanding the concepts surrounding logging and log management. Syngress.
