@@ -60,15 +60,7 @@ public void PerderVida()
 
 ### 3.2 .gitignore y Git LFS (assets binarios)
 
-### 4. Formato general de cada regla (aplica a las secciones 5–15)
-
-Regla
-Justificación breve
-Ejemplo correcto (contexto de videojuego)
-Ejemplo incorrecto (contexto de videojuego)
-Dominio sugerido para todos los ejemplos: combate/vida del jugador, inventario, spawn de enemigos, guardado de partida
-
-## 5 Reglas de nombrado
+## 4 Reglas de nombrado
 
 Los identificadores deberán escribirse en inglés y describir claramente su propósito. Se priorizará la claridad sobre la brevedad y se evitarán abreviaturas, palabras reservadas y nombres de un solo carácter. Se permitirán identificadores de una letra únicamente en contadores de ciclos, excepciones capturadas y parámetros de eventos cuando su alcance sea menor o igual a tres líneas. También se permitirá el parámetro `e` cuando forme parte de la firma convencional de un manejador de eventos.
 
@@ -83,7 +75,7 @@ C# utiliza principalmente:
 
 Estas reglas corresponden a las convenciones oficiales para identificadores de C# (Microsoft, 2026b).
 
-### 5.1 Variables y parámetros
+### 4.1 Variables y parámetros
 
 Las variables locales y los parámetros deberán escribirse utilizando `camelCase`. Sus nombres deberán ser sustantivos o frases nominales que permitan comprender qué información almacenan.
 
@@ -119,7 +111,7 @@ public void AddExperience(int exp)
 }
 ```
 
-### 5.2 Colecciones
+### 4.2 Colecciones
 
 Las variables y propiedades que representen colecciones deberán utilizar nombres en plural para indicar que contienen varios elementos.
 
@@ -137,7 +129,7 @@ List<Enemy> activeEnemy = new();
 
 El nombre no deberá incluir palabras como `List` o `Collection` cuando el plural ya permita identificar claramente su contenido.
 
-### 5.3 Booleanos
+### 4.3 Booleanos
 
 Los identificadores booleanos deberán expresar una condición afirmativa. Cuando ayude a comprender su significado, se utilizarán prefijos como `Is`, `Has` o `Can`, respetando el tipo de capitalización correspondiente.
 
@@ -157,7 +149,7 @@ bool ability = true;
 bool cannotAttack = false;
 ```
 
-### 5.4 Declaración y sombreado de variables
+### 4.4 Declaración y sombreado de variables
 
 Se deberá declarar una sola variable por línea para mejorar la claridad del código.
 
@@ -199,7 +191,7 @@ public void AddScore(int earnedPoints)
 }
 ```
 
-### 5.5 Campos privados e internos
+### 4.5 Campos privados e internos
 
 Los campos de instancia privados o internos deberán escribirse utilizando `_camelCase`.
 
@@ -231,7 +223,7 @@ private static int s_activeEnemyCount;
 private static int activeEnemyCount;
 ```
 
-### 5.6 Propiedades
+### 4.6 Propiedades
 
 Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado.
 
@@ -253,7 +245,7 @@ public bool InvulnerabilityFlag { get; private set; }
 
 Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023).
 
-### 5.7 Constantes
+### 4.7 Constantes
 
 Las constantes de C# deberán escribirse en `PascalCase`. Esta regla se aplicará tanto a constantes públicas como privadas y locales.
 
@@ -271,7 +263,7 @@ private const int MAXIMUM_LIVES = 3;
 
 Las constantes deberán representar valores que no cambien durante la ejecución.
 
-### 5.8 Métodos
+### 4.8 Métodos
 
 Los métodos y las funciones locales deberán escribirse utilizando `PascalCase`. Sus nombres deberán ser verbos o frases verbales que indiquen claramente la acción que realizan.
 
@@ -311,7 +303,7 @@ public int calculateDamage(int baseDamage, int defensePoints)
 }
 ```
 
-### 5.9 Eventos
+### 4.9 Eventos
 
 Los eventos deberán escribirse utilizando `PascalCase` y nombrarse con verbos o frases verbales. Se utilizará el presente para eventos que ocurren antes de una acción y el pasado para los que ocurren después.
 
@@ -344,7 +336,7 @@ protected virtual void RaiseDeath(PlayerDiedEventArgs data)
 
 Los métodos protegidos que disparen un evento deberán comenzar con `On`, seguido del nombre del evento. Los parámetros de un manejador de eventos deberán llamarse `sender` y `e`, de acuerdo con las convenciones oficiales para miembros de tipos de .NET (Microsoft, 2023).
 
-### 5.10 Métodos de prueba unitaria
+### 4.10 Métodos de prueba unitaria
 
 Los métodos de prueba deberán utilizar el siguiente formato:
 
@@ -379,7 +371,7 @@ public void testDamage1()
 
 Las partes `NombreMetodo`, `Flujo` y `Resultado` coinciden con las prácticas recomendadas por Microsoft para nombrar pruebas unitarias. El prefijo `Test` es una convención propia del equipo (Microsoft, 2025b).
 
-### 5.11 Clases, estructuras y registros
+### 4.11 Clases, estructuras y registros
 
 Los nombres de clases, estructuras y registros deberán escribirse utilizando `PascalCase`. Deberán ser sustantivos o frases nominales que describan la entidad o concepto que representan.
 
@@ -407,7 +399,7 @@ public struct damage_result
 }
 ```
 
-### 5.12 Interfaces
+### 4.12 Interfaces
 
 Las interfaces deberán escribirse utilizando `PascalCase` y comenzar con la letra mayúscula `I`.
 
@@ -455,7 +447,7 @@ public class DefaultEnemyGenerator : SpawnerInterface
 
 Las reglas para clases e interfaces están recogidas en las guías oficiales de diseño de .NET (Microsoft, 2025e).
 
-### 5.13 Parámetros de tipo genérico
+### 4.13 Parámetros de tipo genérico
 
 Los parámetros genéricos deberán comenzar con la letra mayúscula `T`. Se podrá utilizar únicamente `T` cuando el significado sea evidente o un nombre descriptivo como `TEntity` cuando proporcione mayor claridad.
 
@@ -475,7 +467,7 @@ public class ObjectPool<EntityType>
 }
 ```
 
-### 5.14 Enumeraciones
+### 4.14 Enumeraciones
 
 Los nombres de las enumeraciones y sus valores deberán escribirse utilizando `PascalCase`.
 
@@ -503,7 +495,7 @@ public enum EnemyStateEnum
 }
 ```
 
-### 5.15 Espacios de nombres
+### 4.15 Espacios de nombres
 
 Los espacios de nombres deberán utilizar `PascalCase`. Sus componentes se separarán mediante puntos y deberán representar de forma clara el proyecto y la funcionalidad agrupada.
 
@@ -519,7 +511,7 @@ namespace CompanyName.GameName.Combat;
 namespace company_name.game_name.combat;
 ```
 
-### 5.16 Sufijos oficiales por responsabilidad
+### 4.16 Sufijos oficiales por responsabilidad
 
 Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la responsabilidad correspondiente:
 
@@ -555,13 +547,13 @@ public sealed class DamageReceivedData : EventArgs
 }
 ```
 
-## 6 Estilo de código
+## 5 Estilo de código
 
 El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos.
 
 Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las convenciones de código oficiales de C# (Microsoft, 2025d).
 
-### 6.1 Formato general (indentación, límite de columnas)
+### 5.1 Formato general (indentación, límite de columnas)
 
 **Indentación de cuatro espacios**
 
@@ -703,7 +695,7 @@ Enemy enemy = enemyFactory.Create(enemyType,
     spawnPosition, initialHealth);
 ```
 
-### 6.2 Espacios en blanco (vertical/horizontal)
+### 5.2 Espacios en blanco (vertical/horizontal)
 
 **Separación entre secciones del archivo**
 
@@ -970,7 +962,7 @@ int    currentHealth = player.Health;
 string playerName    = player.Name;
 ```
 
-### 6.3 Organización del archivo (orden de `using`)
+### 5.3 Organización del archivo (orden de `using`)
 
 **Ubicación de las directivas `using`**
 
@@ -1175,7 +1167,7 @@ public sealed class EnemyFactory
 }
 ```
 
-### 6.4 Orden de miembros de la clase
+### 5.4 Orden de miembros de la clase
 
 Los miembros de una clase deberán conservar el siguiente orden general:
 
@@ -1408,9 +1400,9 @@ private void ChangeState(EnemyState state)
 }
 ```
 
-## 7. Estructuras de control
+## 6. Estructuras de control
 
-### 7.1 Llaves
+### 6.1 Llaves
 
 El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción. Siguiendo el estilo de indentación definido, la llave de apertura deberá posicionarse en una línea independiente, alineada con el inicio de la instrucción precedente; de igual manera, la llave de cierre ocupará su propia línea en el mismo nivel jerárquico.
 
@@ -1434,7 +1426,7 @@ if (amount > 0)
     _currentHealth -= amount;
 ```
 
-### 7.2 Condicionales
+### 6.2 Condicionales
 
 La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior. La configuración oficial de formato de C# define como valor predeterminado que `else`, `catch` y `finally` inicien en una línea nueva (Microsoft, 2025c). Mantener esta regla alineada con el estilo Allman adoptado en 7.1 evita mezclar convenciones de llaves distintas dentro del mismo archivo.
 
@@ -1465,7 +1457,7 @@ if (_currentHealth <= 0)
 }
 ```
 
-### 7.3 Bucles
+### 6.3 Bucles
 
 La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas, colecciones o consultas LINQ nuevas en cada iteración cuando esas asignaciones puedan reutilizarse.
 
@@ -1489,7 +1481,7 @@ for (int enemyIndex = 0, tickCount = 0, totalDamage = 0, poisonStacks = 0; enemy
 }
 ```
 
-### 7.4 Sentencia `switch` y expresión `switch`
+### 6.4 Sentencia `switch` y expresión `switch`
 
 **Sentencia `switch`**
 
@@ -1561,7 +1553,7 @@ private string GetGameStateLabel(GameState gameState)
 }
 ```
 
-### 7.5 Operador ternario
+### 6.5 Operador ternario
 
 El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá utilizarse cuando la condición sea una única expresión booleana simple, sin más de un operador lógico. Ambas ramas deben ser expresiones del mismo tipo que retornen un valor; no se permite invocar métodos void en ninguna rama. Se prohíbe anidar operadores ternarios.
 
@@ -1579,9 +1571,9 @@ string statusLabel = _isGameOver ? "Game Over" : "Playing";
 string statusLabel = (_isGameOver && _livesRemaining <= 0 && !_isRespawning) ? "Game Over" : "Playing";
 ```
 
-## 8. Manejo de errores y excepciones
+## 7. Manejo de errores y excepciones
 
-### 8.1 Jerarquía de excepciones propias del dominio del juego
+### 7.1 Jerarquía de excepciones propias del dominio del juego
 
 Las excepciones personalizadas deben derivar directamente de Exception (nunca de ApplicationException), terminar su nombre con el sufijo Exception, evitar jerarquías profundas, y proveer como mínimo los tres constructores estándar: sin parámetros, con mensaje, y con mensaje más excepción interna. Solo se crea un tipo de excepción nuevo cuando el código que captura necesita manejarla de forma distinta a las excepciones ya existentes.
 
@@ -1625,7 +1617,7 @@ public class SaveLoadException : ApplicationException
 }
 ```
 
-### 8.2 Try-catch y prohibición de catch vacíos
+### 7.2 Try-catch y prohibición de catch vacíos
 
 Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo de excepción más específico posible. La excepción capturada deberá manejarse, registrarse, volver a lanzarse mediante `throw;` o envolverse en una excepción de dominio que conserve la excepción original como excepción interna.
 
@@ -1662,7 +1654,7 @@ private void LoadCheckpoint(string checkpointPath)
 }
 ```
 
-### 8.3 Null-checking (?., ??, tipos de referencia anulables)
+### 7.3 Null-checking (?., ??, tipos de referencia anulables)
 
 El proyecto habilita los tipos de referencia anulables (\<Nullable>enable\</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible.
 
@@ -1705,7 +1697,7 @@ private int GetEquippedAmmo()
 }
 ```
 
-### 8.4 Guard clauses / validación temprana de parámetros
+### 7.4 Guard clauses / validación temprana de parámetros
 
 Todo método público valida sus parámetros de tipo referencia como primera instrucción del cuerpo del método, antes de usarlos para cualquier otro propósito, lanzando inmediatamente mediante ArgumentNullException.ThrowIfNull (u otro método Throw… equivalente).
 
