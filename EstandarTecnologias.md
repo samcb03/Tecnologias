@@ -1438,9 +1438,7 @@ private void ChangeState(EnemyState state)
 
 ### 6.1 Llaves
 
-El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción. Siguiendo el estilo de indentación definido, la llave de apertura deberá posicionarse en una línea independiente, alineada con el inicio de la instrucción precedente; de igual manera, la llave de cierre ocupará su propia línea en el mismo nivel jerárquico.
-
-Bajo las directrices oficiales de desarrollo para C#, se adopta el estilo Allman, el cual ubica la llave de apertura en una nueva línea para bloques lógicos, métodos y definiciones de tipos (Microsoft, 2025d). Se mantiene la restricción de omitir llaves en cuerpos simples como una medida preventiva de seguridad técnica; esta práctica mitiga el riesgo de introducir errores lógicos al añadir instrucciones adicionales de manera accidental, garantizando que la estructura sintáctica sea explícita y no dependa únicamente de la indentación visual del código.
+El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción.
 
 **Con estándar**
 
@@ -1462,7 +1460,7 @@ if (amount > 0)
 
 ### 6.2 Condicionales
 
-La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior. La configuración oficial de formato de C# define como valor predeterminado que `else`, `catch` y `finally` inicien en una línea nueva (Microsoft, 2025c). Mantener esta regla alineada con el estilo Allman adoptado en 7.1 evita mezclar convenciones de llaves distintas dentro del mismo archivo.
+La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior.
 
 **Con estándar**
 
@@ -1493,9 +1491,7 @@ if (_currentHealth <= 0)
 
 ### 6.3 Bucles
 
-La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas, colecciones o consultas LINQ nuevas en cada iteración cuando esas asignaciones puedan reutilizarse.
-
-El límite de variables y la restricción de asignaciones evitables son políticas del equipo orientadas a conservar la legibilidad y reducir trabajo innecesario en rutas de ejecución frecuentes. Las estrategias concretas de reutilización de objetos se documentan en la sección 10.3.
+La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas o colecciones nuevas en cada iteración cuando esas asignaciones puedan reutilizarse.
 
 **Con estándar**
 
@@ -1519,7 +1515,7 @@ for (int enemyIndex = 0, tickCount = 0, totalDamage = 0, poisonStacks = 0; enemy
 
 **Sentencia `switch`**
 
-Toda sentencia `switch` deberá incluir una etiqueta `default`. Cada sección con instrucciones deberá terminar explícitamente con `break`, `return`, `throw` o `goto case`. La etiqueta `default` obligatoria es una política de legibilidad del equipo; la terminación explícita de cada sección con instrucciones es un requisito del lenguaje C# (Microsoft, 2026c).
+Toda sentencia `switch` deberá incluir una etiqueta `default`. Cada sección con instrucciones deberá terminar explícitamente con `break`, `return`, `throw`. La etiqueta `default` obligatoria es una política de legibilidad del equipo.
 
 **Con estándar**
 
@@ -1545,53 +1541,15 @@ switch (currentGameState)
 {
     case GameState.Menu:
         ShowMainMenu();
-        break;
     case GameState.Playing:
         ResumeGameplay();
         break;
 }
 ```
 
-**Expresión `switch`**
-
-Una expresión `switch` deberá contener únicamente brazos formados por un patrón, el operador `=>` y una expresión de resultado. Cuando los casos anteriores no cubran todos los valores posibles, se agregará un brazo final con el patrón de descarte `_`. Los brazos se separarán mediante comas y no utilizarán `case`, `default` ni `break` (Microsoft, 2026d).
-
-**Con estándar**
-
-```csharp
-private string GetGameStateLabel(GameState gameState)
-{
-    string stateLabel = gameState switch
-    {
-        GameState.Menu => "Menu",
-        GameState.Playing => "Playing",
-        _ => "Unknown"
-    };
-
-    return stateLabel;
-}
-```
-
-**Sin estándar**
-
-```csharp
-private string GetGameStateLabel(GameState gameState)
-{
-    string stateLabel = gameState switch
-    {
-        GameState.Menu => "Menu",
-        GameState.Playing => "Playing"
-    };
-
-    return stateLabel;
-}
-```
-
 ### 6.5 Operador ternario
 
 El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá utilizarse cuando la condición sea una única expresión booleana simple, sin más de un operador lógico. Ambas ramas deben ser expresiones del mismo tipo que retornen un valor; no se permite invocar métodos void en ninguna rama. Se prohíbe anidar operadores ternarios.
-
-Esta regla es una política de legibilidad propia del equipo, trasladada sin cambios de espíritu desde la versión Java del estándar. A nivel de lenguaje, C# impone además una restricción que refuerza esta regla de forma estructural: ambas ramas del operador condicional deben poder convertirse a un tipo común, o el compilador rechaza la expresión, lo que en la práctica ya impide mezclar una rama que retorna un valor con otra que invoque un método void.
 
 **Con estándar**
 
@@ -1609,9 +1567,7 @@ string statusLabel = (_isGameOver && _livesRemaining <= 0 && !_isRespawning) ? "
 
 ### 7.1 Jerarquía de excepciones propias del dominio del juego
 
-Las excepciones personalizadas deben derivar directamente de Exception (nunca de ApplicationException), terminar su nombre con el sufijo Exception, evitar jerarquías profundas, y proveer como mínimo los tres constructores estándar: sin parámetros, con mensaje, y con mensaje más excepción interna. Solo se crea un tipo de excepción nuevo cuando el código que captura necesita manejarla de forma distinta a las excepciones ya existentes.
-
-La prohibición de heredar de `ApplicationException`, la recomendación de derivar de `Exception`, el uso del sufijo `Exception` y los tres constructores comunes están documentados en las guías de diseño y buenas prácticas de .NET (Cwalina et al., 2020; Microsoft, 2025a). Esta regla se relaciona con los sufijos definidos en la sección 5.16.
+Las excepciones personalizadas deben derivar directamente de Exception, terminar su nombre con el sufijo Exception, evitar jerarquías profundas, y proveer como mínimo los tres constructores estándar: sin parámetros, con mensaje, y con mensaje más excepción interna. Solo se crea un tipo de excepción nuevo cuando el código que captura necesita manejarla de forma distinta a las excepciones ya existentes.
 
 **Con estándar**
 
@@ -1641,10 +1597,6 @@ public class SaveLoadException : ApplicationException
     {
     }
 
-    public SaveLoadException(string message) : base(message)
-    {
-    }
-
     public SaveLoadException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -1655,7 +1607,7 @@ public class SaveLoadException : ApplicationException
 
 Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo de excepción más específico posible. La excepción capturada deberá manejarse, registrarse, volver a lanzarse mediante `throw;` o envolverse en una excepción de dominio que conserve la excepción original como excepción interna.
 
-Solo se permitirá capturar `Exception` o `SystemException` en un límite claramente definido de la aplicación y cuando el bloque termine volviendo a lanzar la excepción mediante `throw;`. CA1031 recomienda capturar una excepción más específica o volver a lanzar la excepción general como última instrucción del bloque `catch` (Microsoft, 2026a).
+Solo se permitirá capturar `Exception` o `SystemException` en un límite claramente definido de la aplicación y cuando el bloque termine volviendo a lanzar la excepción mediante `throw;`.
 
 **Con estándar**
 
@@ -1731,41 +1683,13 @@ private int GetEquippedAmmo()
 }
 ```
 
-### 7.4 Guard clauses / validación temprana de parámetros
-
-Todo método público valida sus parámetros de tipo referencia como primera instrucción del cuerpo del método, antes de usarlos para cualquier otro propósito, lanzando inmediatamente mediante ArgumentNullException.ThrowIfNull (u otro método Throw… equivalente).
-
-`ArgumentNullException.ThrowIfNull`, disponible desde .NET 6, valida un argumento y lanza `ArgumentNullException` si es `null`, infiriendo automáticamente el nombre del parámetro sin necesidad de pasarlo de forma explícita. Microsoft incluye este método entre los métodos auxiliares recomendados para lanzar excepciones de validación (Microsoft, 2025a).
-
-**Con estándar**
-
-```csharp
-public void EquipWeapon(WeaponData weapon)
-{
-    ArgumentNullException.ThrowIfNull(weapon);
-
-    _equippedWeapon = weapon;
-}
-```
-
-**Sin estándar**
-
-```csharp
-public void EquipWeapon(WeaponData weapon)
-{
-    _equippedWeapon = weapon;
-
-    ArgumentNullException.ThrowIfNull(weapon);
-}
-```
-
 ## 8. Complejidad
 
 La gestión de la complejidad en el código fuente es un pilar fundamental para asegurar la mantenibilidad, escalabilidad y la detección temprana de defectos en el desarrollo de software (Martin, 2008). En el contexto del desarrollo de videojuegos, donde los bucles lógicos se ejecutan decenas de veces por segundo, mantener una baja complejidad reduce drásticamente los cuellos de botella en el procesamiento y facilita la creación de pruebas unitarias efectivas.
 
 ### 8.1 Números mágicos
 
-Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 quando se usan como valores triviales de inicialización, incremento o comparación de signo) directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio (umbrales de vida, cantidades de inventario, tiempos de spawn, identificadores de slot) debe declararse como una constante (const) o un campo de solo lectura (static readonly o [SerializeField] private readonly) con un nombre descriptivo que exprese su propósito.
+Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 cuando se usan como valores triviales de inicialización, incremento o comparación de signo) directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio (umbrales de vida, cantidades de inventario, tiempos de spawn, identificadores de slot) debe declararse como una constante (const) o un campo de solo lectura (static readonly con un nombre descriptivo que exprese su propósito.
 
 
 **Con estándar**
@@ -1773,11 +1697,11 @@ Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 quando se usa
 ```csharp
 public class HealthSystem
 {
-    private const int MAX_HEALTH = 100;
-    private const int LOW_HEALTH_THRESHOLD = 20;
+    private const int MaxHealth = 100;
+    private const int LowHealthThreshold = 20;
 
 public bool IsLowHealth(int currentHealth) {
-        return currentHealth <= LOW_HEALTH_THRESHOLD;
+        return currentHealth <= LowHealthThreshold;
     }
 }
 ```
@@ -1914,48 +1838,28 @@ Todo método podrá recibir como máximo tres parámetros. Cuando la operación 
 **Con estándar**
 
 ```csharp
-public class EnemySpawner : MonoBehaviour
+public Enemy Spawn(EnemySpawnRequest request)
 {
-    public GameObject Spawn(EnemySpawnRequest request)
-    {
-        var instance = Instantiate(GetPrefab(request.Type), request.Position, Quaternion.identity);
-        instance.GetComponent<EnemyStats>().Configure(request.Level, request.Faction);
-        return instance;
-    }
-
-    private GameObject GetPrefab(EnemyType type)
-    {
-        return enemyPrefabsByType[type];
-    }
-
-    [SerializeField] private System.Collections.Generic.Dictionary<EnemyType, GameObject> enemyPrefabsByType;
+    var enemy = enemyFactory.Create(request.Type, request.Position);
+    enemy.Configure(request.Level, request.Faction);
+    return enemy;
 }
 ```
 
 **Sin estándar**
 
 ```csharp
-public class EnemySpawner : MonoBehaviour
+public Enemy Spawn(EnemyType type, float positionX, float positionY, float positionZ, int level, Faction faction)
 {
-    public GameObject Spawn(EnemyType type, float positionX, float positionY, float positionZ, int level, Faction faction)
-    {
-        var instance = Instantiate(GetPrefab(type), new Vector3(positionX, positionY, positionZ), Quaternion.identity);
-        instance.GetComponent<EnemyStats>().Configure(level, faction);
-        return instance;
-    }
-
-    private GameObject GetPrefab(EnemyType type)
-    {
-        return enemyPrefabsByType[type];
-    }
-
-    [SerializeField] private System.Collections.Generic.Dictionary<EnemyType, GameObject> enemyPrefabsByType;
+    var enemy = enemyFactory.Create(type, positionX, positionY, positionZ);
+    enemy.Configure(level, faction);
+    return enemy;
 }
 ```
 
 ### 8.4 Número máximo de operadores lógicos por expresión
 
-Ninguna expresión condicional podrá contener más de tres operadores lógicos o de comparación (&&, ||, ==, !=, <, >, <=, >=) combinados en una misma línea. Cuando una condición requiera evaluar más criterios, estos deberán descomponerse en variables booleanas intermedias con nombre descriptivo, siguiendo el mismo criterio ya aplicado en la sección 9.1 para literales numéricos.
+Ninguna expresión condicional podrá contener más de tres operadores lógicos o de comparación (&&, ||, ==, !=, <, >, <=, >=) combinados en una misma línea. Cuando una condición requiera evaluar más criterios, estos deberán descomponerse en variables booleanas intermedias con nombre descriptivo.
 
 **Con estándar**
 
@@ -2010,7 +1914,7 @@ Todo fragmento de código que se desvíe de una norma del estándar, que impleme
 
 ### 10.1 Comentarios de bloque
 
-Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 11.2.
+Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 10.2.
 
 Los comentarios de bloque nunca deberán utilizarse para construir separadores decorativos mediante líneas de asteriscos.
 
@@ -2724,10 +2628,6 @@ Cada prueba deberá contener un solo assert. Esta es una política del equipo qu
 
 Una verificación de NSubstitute mediante `Received()` o de Moq mediante `Verify()` contará como el único assert de la prueba.
 
-**Un solo assert**
-
-Cada método de prueba deberá contener una sola llamada a `Assert`.
-
 **Con estándar**
 
 ```csharp
@@ -2833,6 +2733,7 @@ public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
 }
 ```
 
+_verificar esto_
 **Prohibición de `Assert.Multiple` y `Assert.EnterMultipleScope`**
 
 No se utilizarán `Assert.Multiple` ni `Assert.EnterMultipleScope` en las pruebas unitarias del proyecto, ya que permiten agrupar varios asserts dentro de una sola prueba y contradicen la política del equipo de verificar un comportamiento por método. Esta prohibición es una decisión del equipo y no una limitación de NUnit.
