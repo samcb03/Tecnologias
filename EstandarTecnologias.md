@@ -1,5 +1,39 @@
 # Estándar de codificación
 
+## Desarrollo de videojuegos en C#
+
+
+**Institución:** Universidad Veracruzana
+**Asignatura:** Tecnologías para la Construcción de Software  
+**Integrantes:**  
+- Carreto Barrientos Samuel
+- Juarez Reyes Denisse Yamileth
+
+**Fecha:** 23 de agosto de 2026
+
+---
+<div style="page-break-after: always;"></div>
+## Índice
+
+1. [Introducción](#1-introducción)
+2. [Organización del proyecto](#2-organización-del-proyecto)
+3. [Control de versiones](#3-control-de-versiones)
+4. [Reglas de nombrado](#4-reglas-de-nombrado)
+5. [Estilo de código](#5-estilo-de-código)
+6. [Estructuras de control](#6-estructuras-de-control)
+7. [Manejo de errores y excepciones](#7-manejo-de-errores-y-excepciones)
+8. [Complejidad](#8-complejidad)
+9. [Prácticas específicas de C#](#9-prácticas-específicas-de-c)
+10. [Comentarios y documentación](#10-comentarios-y-documentación)
+11. [Manejo de logs y categorización de errores](#11-manejo-de-logs-y-categorización-de-errores)
+12. [Gestión de estados, pantallas y UI](#12-gestión-de-estados-pantallas-y-ui)
+13. [Validación de entradas y seguridad](#13-validación-de-entradas-y-seguridad)
+14. [Pruebas unitarias](#14-pruebas-unitarias)
+15. [Dependencias externas](#15-dependencias-externas)
+16. [Referencias](#16-referencias)
+
+---
+
 ## 1. Introducción
 
 En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado.
