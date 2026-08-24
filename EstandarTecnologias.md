@@ -2,11 +2,20 @@
 
 ## 1. Introducción
 
+En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado.
+
 ### 1.1 Problemática
+
+El desarrollo de un videojuego en un entorno escolar empleando buenas prácticas, así como también se busca que sea multijugador, empleando conocimientos de cursos anteriores, siendo conocimiento acumulativo.
 
 ### 1.2 Propósito
 
-En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado.
+Se busca garantizar que el desarrollo del videojuego cumpla con los pilares de calidad necesarios para un producto final estable:
+- `Mantenibilidad`: asegurar que la arquitectura sea legible, escalable y comprensible para cualquier desarrollador del equipo, preservando su integridad técnica a largo plazo.
+- `Detección temprana de errores`: facilitar la identificación de inconsistencias o desviaciones del estándar durante las revisiones de código, mitigando riesgos antes de las fases de entrega.
+- `Productividad`: optimizar el flujo de trabajo al unificar criterios de formato, permitiendo que el equipo priorice la resolución de mecánicas y lógica de diseño sobre debates estéticos.
+- `Rendimiento consistente`: garantizar que las convenciones de estilo no comprometan la eficiencia del ciclo de ejecución, especialmente en procesos críticos que impactan los cuadros por segundo.
+
 
 ### 1.3 Idioma del código
 
@@ -50,6 +59,14 @@ public void PerderVida()
 ### 3.1 Commits
 
 ### 3.2 .gitignore y Git LFS (assets binarios)
+
+### 4. Formato general de cada regla (aplica a las secciones 5–15)
+
+Regla
+Justificación breve
+Ejemplo correcto (contexto de videojuego)
+Ejemplo incorrecto (contexto de videojuego)
+Dominio sugerido para todos los ejemplos: combate/vida del jugador, inventario, spawn de enemigos, guardado de partida
 
 ## 5 Reglas de nombrado
 
