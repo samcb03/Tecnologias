@@ -1727,13 +1727,218 @@ public void EquipWeapon(WeaponData weapon)
 
 ## 8. Complejidad
 
+La gestión de la complejidad en el código fuente es un pilar fundamental para asegurar la mantenibilidad, escalabilidad y la detección temprana de defectos en el desarrollo de software (Martin, 2008). En el contexto del desarrollo de videojuegos, donde los bucles lógicos se ejecutan decenas de veces por segundo, mantener una baja complejidad reduce drásticamente los cuellos de botella en el procesamiento y facilita la creación de pruebas unitarias efectivas. Un código con alta complejidad cognitiva aumenta la probabilidad de inyectar errores durante las fases de refactorización (Fowler, 2018
+
 ### 8.1 Números mágicos
+
+Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 quando se usan como valores triviales de inicialización, incremento o comparación de signo) directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio (umbrales de vida, cantidades de inventario, tiempos de spawn, identificadores de slot) debe declararse como una constante (const) o un campo de solo lectura (static readonly o [SerializeField] private readonly) con un nombre descriptivo que exprese su propósito.
+
+Un literal numérico aislado obliga a quien lee el código a inferir su significado por el contexto, lo que incrementa el tiempo de comprensión y el riesgo de introducir un valor inconsistente al modificarlo en un solo lugar y olvidar los demás. McCabe (1976) ya advertía que la complejidad de un programa no depende únicamente de su tamaño físico sino de la claridad de su estructura de decisión, y sustituir literales por nombres significativos reduce la carga cognitiva necesaria para verificar esa estructura. Martin (2008) sostiene que los nombres con significado son la forma más directa de comunicar intención sin necesidad de comentarios adicionales, principio que en este estándar se combina con la prohibición general de comentarios explicativos dentro del código de producción. McConnell (2004) recomienda explícitamente declarar constantes con nombre para cualquier valor que pueda cambiar o que no sea evidente por sí mismo, señalando que esta práctica facilita el ajuste de balance de un sistema (por ejemplo, el daño de un arma o la vida máxima de un enemigo) sin tener que rastrear cada aparición del valor en el código.
+
+**Con estándar**
+
+```csharp
+public class HealthSystem
+{
+    private const int MAX_HEALTH = 100;
+    private const int LOW_HEALTH_THRESHOLD = 20;
+
+public bool IsLowHealth(int currentHealth) {
+        return currentHealth <= LOW_HEALTH_THRESHOLD;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public class HealthSystem
+{
+
+public bool IsLowHealth(int currentHealth) {
+        return currentHealth <= 20;
+    }
+}
+```
 
 ### 8.2 Complejidad ciclomática máxima
 
+Ningún método podrá superar una complejidad ciclomática de 10, medida como el número de caminos linealmente independientes en su grafo de flujo de control. Se adopta un umbral más estricto que el de 12 usado en otros módulos del proyecto, dado que la lógica de videojuego (spawn de enemigos, resolución de combate por frame) suele ejecutarse en rutas críticas de rendimiento donde la simplicidad reduce tanto el riesgo de errores como el costo de mantenimiento durante la depuración en tiempo real.
+
+McCabe (1976) definió la complejidad ciclomática como el número de caminos independientes de un grafo de control y demostró que esta medida es independiente del tamaño físico del programa, dependiendo únicamente de su estructura de decisión; su propuesta original recomienda mantener los módulos por debajo de un umbral manejable para facilitar la prueba exhaustiva de caminos. Fowler (2018) describe la extracción de método como la técnica principal para reducir esta complejidad cuando un bloque de lógica condicional crece más allá de lo legible, recomendación que en este estándar se traduce en la obligación de refactorizar cualquier método que exceda el límite fijado.
+
+**Con estándar**
+
+```csharp
+public class CombatResolver
+{
+    private const int CriticalHitThreshold = 3;
+
+    public int ResolveAttack(Attacker attacker, Defender defender, WeaponData weapon)
+    {
+        if (!CanAttack(attacker, defender))
+        {
+            return 0;
+        }
+
+        var baseDamage = CalculateBaseDamage(attacker, weapon);
+        var finalDamage = ApplyDefense(baseDamage, defender);
+        return ApplyCriticalModifier(finalDamage, attacker.CriticalRolls);
+    }
+
+    private bool CanAttack(Attacker attacker, Defender defender)
+    {
+        return attacker.IsAlive && defender.IsAlive && attacker.HasStamina;
+    }
+
+    private int CalculateBaseDamage(Attacker attacker, WeaponData weapon)
+    {
+        return attacker.Strength * weapon.DamageMultiplier;
+    }
+
+    private int ApplyDefense(int rawDamage, Defender defender)
+    {
+        return Mathf.Max(rawDamage - defender.Armor, 0);
+    }
+
+    private int ApplyCriticalModifier(int damage, int criticalRolls)
+    {
+        return criticalRolls >= CriticalHitThreshold ? damage * 2 : damage;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public class CombatResolver
+{
+    public int ResolveAttack(Attacker attacker, Defender defender, WeaponData weapon)
+    {
+        int finalDamage = 0;
+        if (attacker.IsAlive)
+        {
+            if (defender.IsAlive)
+            {
+                if (attacker.HasStamina)
+                {
+                    int rawDamage = attacker.Strength * weapon.DamageMultiplier;
+                    if (rawDamage > 0)
+                    {
+                        int afterArmor = rawDamage - defender.Armor;
+                        if (afterArmor < 0)
+                        {
+                            afterArmor = 0;
+                        }
+                        if (attacker.CriticalRolls >= 3)
+                        {
+                            if (defender.IsStunned)
+                            {
+                                finalDamage = afterArmor * 3;
+                            }
+                            else
+                            {
+                                finalDamage = afterArmor * 2;
+                            }
+                        }
+                        else
+                        {
+                            finalDamage = afterArmor;
+                        }
+                    }
+                }
+            }
+        }
+        return finalDamage;
+    }
+}
+```
+
 ### 8.3 Número máximo de parámetros por método
 
+Todo método podrá recibir como máximo tres parámetros. Cuando la operación requiera más datos de entrada, estos deberán agruparse en un tipo dedicado (struct o class según corresponda por la sección 10.7 de este estándar), en lugar de ampliar la firma del método.
+
+Justificación. McConnell (2004) reporta que las firmas de método extensas dificultan tanto la lectura en el punto de llamada como la comprobación del orden correcto de los argumentos, y recomienda agrupar parámetros relacionados en un objeto propio cuando su número crece. Martin (2008) coincide en que la cantidad ideal de argumentos de un método es la mínima posible, señalando que cada parámetro adicional incrementa el esfuerzo de comprensión de forma no lineal, especialmente cuando varios de ellos comparten el mismo tipo primitivo (por ejemplo, varios int seguidos), lo que facilita errores de intercambio de argumentos.
+
+**Con estándar**
+
+```csharp
+
+public class EnemySpawner : MonoBehaviour
+{
+    public GameObject Spawn(EnemySpawnRequest request)
+    {
+        var instance = Instantiate(GetPrefab(request.Type), request.Position, Quaternion.identity);
+        instance.GetComponent<EnemyStats>().Configure(request.Level, request.Faction);
+        return instance;
+    }
+
+    private GameObject GetPrefab(EnemyType type)
+    {
+        return enemyPrefabsByType[type];
+    }
+
+    [SerializeField] private System.Collections.Generic.Dictionary<EnemyType, GameObject> enemyPrefabsByType;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public class EnemySpawner : MonoBehaviour
+{
+    public GameObject Spawn(EnemyType type, float positionX, float positionY, float positionZ, int level, Faction faction)
+    {
+        var instance = Instantiate(GetPrefab(type), new Vector3(positionX, positionY, positionZ), Quaternion.identity);
+        instance.GetComponent<EnemyStats>().Configure(level, faction);
+        return instance;
+    }
+
+    private GameObject GetPrefab(EnemyType type)
+    {
+        return enemyPrefabsByType[type];
+    }
+
+    [SerializeField] private System.Collections.Generic.Dictionary<EnemyType, GameObject> enemyPrefabsByType;
+}
+```
+
 ### 8.4 Número máximo de operadores lógicos por expresión
+
+Ninguna expresión condicional podrá contener más de tres operadores lógicos o de comparación (&&, ||, ==, !=, <, >, <=, >=) combinados en una misma línea. Cuando una condición requiera evaluar más criterios, estos deberán descomponerse en variables booleanas intermedias con nombre descriptivo, siguiendo el mismo criterio ya aplicado en la sección 9.1 para literales numéricos.
+
+McCabe (1976) muestra que cada operador de decisión —incluidos los operadores lógicos dentro de una misma condición— añade un camino independiente al grafo de control del método, por lo que una expresión con múltiples operadores lógicos incrementa la complejidad ciclomática real del bloque aunque se escriba en una sola línea. Fowler (2018) recomienda la técnica de "introducir variable explicativa" precisamente para este caso, sustituyendo fragmentos de una expresión booleana compleja por variables con nombre que documenten la intención de cada subcondición sin necesidad de comentarios.
+
+**Con estándar**
+
+```csharp
+public class SaveSystem
+{
+    private const int MinimumProgressPercent = 5;
+
+    public bool CanSaveGame(PlayerState state, LevelState level)
+    {
+        var hasMinimumProgress = level.ProgressPercent >= MinimumProgressPercent;
+        var isInSafeZone = level.CurrentZone.IsSafe;
+        var isPlayerAlive = state.IsAlive;
+        var isNotInCutscene = !level.IsPlayingCutscene;
+
+        return hasMinimumProgress && isInSafeZone && isPlayerAlive && isNotInCutscene;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public class SaveSystem
+{
+    public bool CanSaveGame(PlayerState state, LevelState level)
+    {
+        return level.ProgressPercent >= 5 && level.CurrentZone.IsSafe && state.IsAlive && !level.IsPlayingCutscene && state.Stamina > 0;
+    }
+}
+```
 
 ## 9. Prácticas específicas de C#
 
@@ -1868,15 +2073,142 @@ ActivateSpecialAbility();
 
 ## 11. Manejo de logs y categorización de errores
 
+El registro de eventos (logging) es el mecanismo principal para diagnosticar el comportamiento de un videojuego una vez que ya no se está depurando paso a paso dentro del editor, especialmente en sistemas que se ejecutan por frame (spawn de enemigos, resolución de combate) o que involucran persistencia (guardado de partida). Esta sección regula la herramienta de logging a utilizar, los niveles disponibles, el criterio para elegir cada nivel, el formato del mensaje y la diferencia de comportamiento entre el editor y el build final.
+
 ### 11.1 Sistema/herramienta de logging
+
+Queda prohibido escribir a la salida estándar o a cualquier destino de registro directamente desde la lógica de gameplay. Todo registro debe pasar por una clase centralizada GameLogger, que expone un método por nivel y delega la escritura real a una implementación de ILogSink inyectada (consola, archivo u otro destino, según el entorno de ejecución). Ningún componente fuera de GameLogger puede escribir un log directamente.
+
+McConnell (2004) recomienda tratar la instrumentación de diagnóstico como una capa transversal separada de la lógica de negocio, de modo que pueda activarse, desactivarse o redirigirse sin modificar el código que genera el evento; envolver el destino real de escritura detrás de una interfaz propia es la forma estándar de lograr ese desacoplamiento. Chuvakin et al. (2013) señalan que centralizar la emisión de logs en un único punto de entrada es una condición necesaria para poder aplicar de manera consistente el formato, el nivel y el filtrado de mensajes en todo el sistema, evitando que cada desarrollador decida de forma distinta cómo y cuándo registrar un evento.
+
+**Con estándar**
+
+```csharp
+public void SaveGame(PlayerState state)
+{
+    GameLogger.Info(nameof(SaveSystem), "Guardado de partida iniciado");
+    PersistToDisk(state);
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void SaveGame(PlayerState state)
+{
+    Console.WriteLine("Guardado de partida iniciado");
+    PersistToDisk(state);
+}
+```
 
 ### 11.2 Niveles de log: Trace, Debug, Info, Warning, Error
 
+GameLogger deberá exponer exactamente cinco niveles, ordenados de menor a mayor severidad: Trace, Debug, Info, Warning y Error. No se permite introducir niveles adicionales ni usar un nivel para un propósito distinto al definido en 12.3.
+
+Justificación. Chuvakin et al. (2013) describen la jerarquía de niveles de severidad como el mecanismo estándar de la industria para permitir que un mismo sistema de logging sirva tanto para depuración detallada en desarrollo como para monitoreo de incidentes en producción, filtrando por nivel según el contexto de ejecución sin cambiar el código fuente. Martin (2008) plantea que el manejo de errores debe diseñarse como una preocupación propia, separada de la lógica de negocio; asignar un nivel de severidad explícito a cada evento registrado es la forma en que este estándar traslada ese principio al sistema de logging.
+
+**Con estándar**
+
+```csharp
+public enum LogLevel
+{
+    Trace,
+    Debug,
+    Info,
+    Warning,
+    Error
+}
+```
+
+**Sin estándar**
+
+```csharp
+public enum LogLevel
+{
+    Verbose,
+    Info,
+    Oops,
+    Critical
+}
+```
+
 ### 11.3 Criterio de aplicación por nivel (contexto de juego)
+
+Cada nivel deberá reservarse para el siguiente tipo de evento:
+
+- `Trace`: eventos de muy alta frecuencia usados solo para depuración fina (posición del jugador en cada ciclo de actualización, cada iteración de un bucle de física).
+- `Debug`: información de desarrollo no crítica (valores intermedios de una fórmula de daño, estado de una máquina de estados de un enemigo).
+- `Info`: hitos normales del flujo del juego (partida guardada correctamente, jugador entra a un nuevo nivel, enemigo generado por el EnemySpawner).
+- `Warning`: situaciones anómalas pero recuperables (intento de recoger un objeto con el inventario lleno, archivo de guardado con una versión antigua pero migrable).
+- `Error`: fallos que impiden completar una operación crítica (fallo de escritura del archivo de guardado, referencia nula a los datos requeridos para el spawn).
+
+Chuvakin et al. (2013) argumentan que un criterio de aplicación mal definido —donde eventos de igual severidad real se registran en niveles distintos según el criterio de cada desarrollador— es la causa más común de que los equipos terminen ignorando los logs de advertencia y error por el ruido generado por eventos triviales; fijar explícitamente qué tipo de evento corresponde a cada nivel, en el vocabulario del propio dominio del juego, reduce ese riesgo. McConnell (2004) recomienda que las advertencias registradas durante la ejecución permitan distinguir con claridad entre una condición que el sistema puede resolver por sí mismo y una que requiere intervención, distinción que aquí separa Warning de Error.
+
+**Con estándar**
+
+```csharp
+if (items.Count >= MaxSlots)
+{
+    GameLogger.Warning(nameof(InventorySystem), "Inventario lleno, no se pudo agregar el objeto");
+    return false;
+}
+```
+
+**Sin estándar**
+
+```csharp
+if (items.Count >= MaxSlots)
+{
+    GameLogger.Error(nameof(InventorySystem), "no se pudo agregar el objeto");
+    return false;
+}
+```
 
 ### 11.4 Formato del mensaje
 
+Todo mensaje de log deberá construirse con la firma GameLogger.<Nivel>(categoria, mensaje), donde categoria es el nombre de la clase de origen (obtenido con nameof) y mensaje describe el evento en español, sin concatenar valores dinámicos mediante el operador +. Cuando el mensaje deba incluir un valor variable, este se pasará como argumento adicional a un método sobrecargado que use string.Format internamente, nunca interpolación ni concatenación directa en el punto de la llamada.
+
+Chuvakin et al. (2013) recomiendan un formato de mensaje consistente y con estructura fija (nivel, origen, contenido) para que los logs puedan procesarse de forma automática por herramientas externas, en lugar de depender de texto libre. McConnell (2004) advierte que construir cadenas mediante concatenación en cada llamada de diagnóstico añade trabajo de asignación de memoria incluso cuando el nivel de log correspondiente está deshabilitado, recomendación especialmente relevante en un sistema que se ejecuta en cada ciclo de actualización de un videojuego, donde ese costo se repite constantemente.
+
+**Con estándar**
+
+```csharp
+GameLogger.Info(nameof(EnemySpawner), "Enemigo generado: {0}", request.Type);
+```
+
+**Sin estándar**
+
+```csharp
+Console.WriteLine("Enemigo generado: " + request.Type.ToString());
+```
+
 ### 11.5 Logs en entornos de desarrollo y versiones finales
+
+Los niveles Trace y Debug deberán compilarse únicamente en builds de desarrollo, usando el atributo [System.Diagnostics.Conditional("DEBUG")] sobre los métodos correspondientes de GameLogger, de forma que las llamadas se eliminen por completo del build final en lugar de evaluarse y descartarse en tiempo de ejecución. Los niveles Info, Warning y Error sí deberán persistir en el build final.
+
+McConnell (2004) distingue entre código de instrumentación destinado exclusivamente al desarrollo y código de diagnóstico que debe sobrevivir en producción, y recomienda que el primero se elimine del binario final en lugar de simplemente desactivarse, para no pagar ningún costo de rendimiento en el producto entregado. Este criterio es particularmente relevante en un videojuego, donde los niveles Trace y Debug suelen invocarse dentro de bucles que se ejecutan en cada ciclo de actualización, y el atributo Conditional de C# permite que el compilador elimine por completo la llamada cuando el símbolo de compilación DEBUG no está definido, sin necesidad de envolver cada invocación en una comprobación manual en tiempo de ejecución.
+
+**Con estándar**
+
+```csharp
+[System.Diagnostics.Conditional("DEBUG")]
+public static void Trace(string category, string message)
+{
+    sink.Write(LogFormatter.Format(LogLevel.Trace, category, message));
+}
+```
+
+**Sin estándar**
+
+```csharp
+public static void Trace(string category, string message)
+{
+    if (BuildConfiguration.IsDebug)
+    {
+        sink.Write(LogFormatter.Format(LogLevel.Trace, category, message));
+    }
+}
+```
 
 ## 12. Gestión de estados, pantallas y UI
 
