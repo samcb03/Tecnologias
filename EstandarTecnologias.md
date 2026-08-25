@@ -105,7 +105,6 @@ C# utiliza principalmente:
 - `PascalCase` para clases, estructuras, interfaces, métodos, propiedades, eventos, constantes y espacios de nombres.
 - `camelCase` para variables locales y parámetros.
 - `_camelCase` para campos de instancia privados o internos.
-- `s_camelCase` para campos estáticos privados o internos.
 
 Estas reglas corresponden a las convenciones oficiales para identificadores de C# (Microsoft, 2026b).
 
@@ -243,20 +242,6 @@ private int currentHealth;
 private string PlayerName;
 ```
 
-Los campos estáticos privados o internos deberán escribirse utilizando el prefijo `s_` seguido de `camelCase`.
-
-**Con estándar**
-
-```csharp
-private static int s_activeEnemyCount;
-```
-
-**Sin estándar**
-
-```csharp
-private static int activeEnemyCount;
-```
-
 ### 4.6 Propiedades
 
 Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado.
@@ -278,6 +263,41 @@ public bool InvulnerabilityFlag { get; private set; }
 ```
 
 Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023).
+
+### 4.6.1 Propiedades con campo de respaldo
+
+Propiedades con campo de respaldo. Cuando asignar un valor requiera validación, transformación o un efecto colateral controlado, la propiedad debe declararse con un campo de respaldo (backing field) explícito y lógica propia en el get/set, en lugar de una propiedad automática. El campo de respaldo debe ser private y nunca exponerse directamente.
+
+Martin (2008) señala que proteger los invariantes de un objeto —por ejemplo, que la vida de un personaje nunca sea negativa ni exceda su máximo— es responsabilidad del propio objeto, y una propiedad automática no puede hacer cumplir esa regla porque cualquier código externo puede asignarle un valor inválido. McConnell (2004) recomienda tratar cada punto de entrada de datos, incluido un setter, como una frontera que debe validar sus parámetros de forma defensiva, en lugar de confiar en que quien llama siempre enviará un valor correcto.
+
+**Con estándar**
+
+```csharp
+private const int MaxHealth = 100;
+private int currentHealth;
+
+public int CurrentHealth
+{
+    get => currentHealth;
+    set
+    {
+        var clamped = Math.Clamp(value, 0, MaxHealth);
+        if (clamped != currentHealth)
+        {
+            currentHealth = clamped;
+            OnHealthChanged?.Invoke(currentHealth);
+        }
+    }
+}
+
+public event Action<int> OnHealthChanged;
+```
+
+**Sin estándar**
+
+```csharp
+public int CurrentHealth { get; set; }
+```
 
 ### 4.7 Constantes
 
@@ -580,6 +600,40 @@ public sealed class DamageReceivedData : EventArgs
 { 
 }
 ```
+
+### 4.17 Estructura del nombre del método de prueba**
+
+Los métodos de prueba deberán seguir la estructura:
+
+``Test_MethodName_Flow_Result``
+
+El nombre deberá contener:
+
+1. El prefijo `Test`.
+2. El nombre del método probado.
+3. El flujo o escenario evaluado.
+4. El resultado esperado.
+
+Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado. El prefijo `Test` se conserva como convención propia del equipo (Microsoft, 2025b).
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_CalculateDamage_EnemyWithoutDefense_ReturnsAttackPower()
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void DamageTest()
+{
+}
+```
+
 
 ## 5 Estilo de código
 
@@ -2323,39 +2377,6 @@ public sealed class DamageCalculatorTests
 
 ```csharp
 public sealed class DamageTests
-{
-}
-```
-
-**Estructura del nombre del método de prueba**
-
-Los métodos de prueba deberán seguir la estructura:
-
-`Test_NombreMetodo_Flujo_Resultado`
-
-El nombre deberá contener:
-
-1. El prefijo `Test`.
-2. El nombre del método probado.
-3. El flujo o escenario evaluado.
-4. El resultado esperado.
-
-Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado. El prefijo `Test` se conserva como convención propia del equipo (Microsoft, 2025b).
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_CalculateDamage_EnemyWithoutDefense_ReturnsAttackPower()
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void DamageTest()
 {
 }
 ```
