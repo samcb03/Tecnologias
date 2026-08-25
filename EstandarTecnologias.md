@@ -78,6 +78,34 @@ public void PerderVida()
 }
 ```
 
+### 1.3 Idioma de la base de datos
+
+El esquema de la base de datos (nombres de tablas, columnas, claves foráneas, índices y procedimientos almacenados) se escribe en inglés, siguiendo el mismo idioma que el código fuente definido en 1.3. Los nombres de tabla se escriben en PascalCase y en plural (Players, EnemySpawns, InventoryItems); los nombres de columna se escriben en PascalCase y en singular, coincidiendo con el nombre de la propiedad C# que representan (CurrentHealth, CreatedAt). Las claves foráneas siguen el patrón {TablaReferenciada}Id (PlayerId, EnemyTypeId). Se evita el uso de palabras reservadas del motor de base de datos como nombre de tabla o columna.
+
+Karwin (2010) documenta la inconsistencia de nombrado entre tablas y columnas como una de las antipatrones más comunes de diseño de bases de datos, señalando que mezclar convenciones o idiomas dentro del mismo esquema obliga a quien escribe una consulta a recordar excepciones caso por caso en lugar de aplicar una regla única. Mantener el mismo idioma que el código fuente responde al mismo criterio de consistencia que sustenta la regla 1.3: un desarrollador que revisa tanto la clase Player como la tabla que la persiste no debería tener que traducir mentalmente entre CurrentHealth en C# y vidaActual en SQL para saber que representan el mismo dato. Martin (2008) plantea que los nombres relacionados deben usar un vocabulario consistente en todo el sistema precisamente para que esa correspondencia sea inmediata.
+
+**Con estándar**
+
+```csharp
+CREATE TABLE Players (
+    PlayerId INT PRIMARY KEY IDENTITY,
+    CharacterName NVARCHAR(50) NOT NULL,
+    CurrentHealth INT NOT NULL,
+    CreatedAt DATETIME NOT NULL
+);
+```
+
+**Sin estándar**
+
+```csharp
+CREATE TABLE jugadores (
+    id_jugador INT PRIMARY KEY IDENTITY,
+    nombre_personaje NVARCHAR(50) NOT NULL,
+    vida_actual INT NOT NULL,
+    fecha_creacion DATETIME NOT NULL
+);
+```
+
 ## 2. Organización del proyecto
 
 ### 2.1 Stack tecnológico y entorno de desarrollo
@@ -573,8 +601,6 @@ Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la res
 - `EventArgs`: clases que contienen información de un evento.
 - `EventHandler`: delegados personalizados utilizados para eventos.
 - `Attribute`: atributos personalizados.
-- `Collection`: tipos especializados de colección.
-- `Dictionary`: tipos especializados de diccionario.
 - `Stream`: tipos especializados de flujo de datos.
 
 **Con estándar**
@@ -1278,14 +1304,14 @@ Las constantes deberán colocarse antes de los campos estáticos y de instancia.
 
 ```csharp
 private const int DefaultHealth = 100;
-private static int s_activePlayers;
+private static int activePlayers;
 private int _currentHealth;
 ```
 
 **Sin estándar**
 
 ```csharp
-private static int s_activePlayers;
+private static int activePlayers;
 private int _currentHealth;
 private const int DefaultHealth = 100;
 ```
@@ -3382,3 +3408,5 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 - McConnell, S. (2004). Code complete (2nd ed.). Microsoft Press.
 
 - Chuvakin, A., Schmidt, K., & Phillips, C. (2013). Logging and log management: The authoritative guide to understanding the concepts surrounding logging and log management. Syngress.
+
+- Karwin, B. (2010). SQL antipatterns: Avoiding the pitfalls of database programming. Pragmatic Bookshelf.
