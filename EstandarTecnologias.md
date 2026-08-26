@@ -2,7 +2,6 @@
 
 ## Desarrollo de videojuegos en C#
 
-
 **Institución:** Universidad Veracruzana
 **Asignatura:** Tecnologías para la Construcción de Software  
 **Integrantes:**  
@@ -30,7 +29,8 @@
 13. [Validación de entradas y seguridad](#13-validación-de-entradas-y-seguridad)
 14. [Pruebas unitarias](#14-pruebas-unitarias)
 15. [Dependencias externas](#15-dependencias-externas)
-16. [Referencias](#16-referencias)
+16. [Declaración de uso de inteligencia artificial](#16-declaración-de-uso-de-inteligencia-artificial)
+17. [Referencias](#17-referencias)
 
 <div style="page-break-after: always;"></div>
 
@@ -53,8 +53,9 @@ Se busca garantizar que el desarrollo del videojuego cumpla con los pilares de c
 
 ### 1.3 Idioma del código
 
-El código fuente (nombres de clases, métodos, variables, constantes y comentarios) se escribe en inglés. Esta regla aplica específicamente al código fuente; las convenciones para otros elementos del proyecto (textos de interfaz, base de datos, mensajes de commit) se abordan en sus secciones correspondientes.
-Las guías de nombrado de Microsoft para C# incluyen, dentro de sus convenciones generales, una recomendación específica sobre evitar nombres de identificadores ligados a un idioma en particular (Microsoft, s. f.). Escribir el código en inglés, en lugar de español, hace que sea comprensible para cualquier desarrollador que lo revise en el futuro, independientemente de su idioma nativo, y mantiene el código consistente con el idioma en el que están documentadas tanto la API de C# como la de Unity que el equipo consulta constantemente.
+El código fuente se escribirá en inglés. Esta regla incluye los nombres de clases, métodos, variables, parámetros, constantes, comentarios y pruebas. También se escribirán en inglés los identificadores de la base de datos, incluidos los nombres de tablas, columnas, vistas, índices, restricciones y procedimientos almacenados. Los textos visibles para el usuario podrán escribirse en español según los requisitos del producto.
+
+Los identificadores deberán ser comprensibles y consistentes en todo el sistema. El uso del inglés es una decisión del equipo que evita mezclar idiomas entre el código, las pruebas y el esquema de datos; las convenciones oficiales de C# también recomiendan nombres claros y legibles para los identificadores (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -76,34 +77,6 @@ public void PerderVida()
 {
     _vidasRestantes--;
 }
-```
-
-### 1.3 Idioma de la base de datos
-
-El esquema de la base de datos (nombres de tablas, columnas, claves foráneas, índices y procedimientos almacenados) se escribe en inglés, siguiendo el mismo idioma que el código fuente definido en 1.3. Los nombres de tabla se escriben en PascalCase y en plural (Players, EnemySpawns, InventoryItems); los nombres de columna se escriben en PascalCase y en singular, coincidiendo con el nombre de la propiedad C# que representan (CurrentHealth, CreatedAt). Las claves foráneas siguen el patrón {TablaReferenciada}Id (PlayerId, EnemyTypeId). Se evita el uso de palabras reservadas del motor de base de datos como nombre de tabla o columna.
-
-Karwin (2010) documenta la inconsistencia de nombrado entre tablas y columnas como una de las antipatrones más comunes de diseño de bases de datos, señalando que mezclar convenciones o idiomas dentro del mismo esquema obliga a quien escribe una consulta a recordar excepciones caso por caso en lugar de aplicar una regla única. Mantener el mismo idioma que el código fuente responde al mismo criterio de consistencia que sustenta la regla 1.3: un desarrollador que revisa tanto la clase Player como la tabla que la persiste no debería tener que traducir mentalmente entre CurrentHealth en C# y vidaActual en SQL para saber que representan el mismo dato. Martin (2008) plantea que los nombres relacionados deben usar un vocabulario consistente en todo el sistema precisamente para que esa correspondencia sea inmediata.
-
-**Con estándar**
-
-```csharp
-CREATE TABLE Players (
-    PlayerId INT PRIMARY KEY IDENTITY,
-    CharacterName NVARCHAR(50) NOT NULL,
-    CurrentHealth INT NOT NULL,
-    CreatedAt DATETIME NOT NULL
-);
-```
-
-**Sin estándar**
-
-```csharp
-CREATE TABLE jugadores (
-    id_jugador INT PRIMARY KEY IDENTITY,
-    nombre_personaje NVARCHAR(50) NOT NULL,
-    vida_actual INT NOT NULL,
-    fecha_creacion DATETIME NOT NULL
-);
 ```
 
 ## 2. Organización del proyecto
@@ -132,7 +105,7 @@ C# utiliza principalmente:
 
 - `PascalCase` para clases, estructuras, interfaces, métodos, propiedades, eventos, constantes y espacios de nombres.
 - `camelCase` para variables locales y parámetros.
-- `_camelCase` para campos de instancia privados o internos.
+- `_camelCase` para todos los campos privados o internos, incluidos los campos estáticos.
 
 Estas reglas corresponden a las convenciones oficiales para identificadores de C# (Microsoft, 2026b).
 
@@ -188,7 +161,7 @@ List<Enemy> activeEnemies = new();
 List<Enemy> activeEnemy = new();
 ```
 
-El nombre no deberá incluir palabras como `List` o `Collection` cuando el plural ya permita identificar claramente su contenido.
+El nombre no deberá incluir palabras como `List`, `Collection` o `Dictionary` cuando el plural o el concepto de dominio ya permitan identificar claramente su contenido. El nombre deberá describir qué elementos contiene o qué relación representa, no la estructura concreta utilizada para almacenarlos.
 
 ### 4.3 Booleanos
 
@@ -252,15 +225,34 @@ public void AddScore(int earnedPoints)
 }
 ```
 
+#### 4.4.1 Uso de `var`
+// TODO entender esto
+Las variables locales deberán declarar su tipo de forma explícita. `var` solo podrá utilizarse cuando el lenguaje lo requiera, por ejemplo, para almacenar un tipo anónimo producido por una consulta LINQ. No se utilizará `var` con el resultado de un método, porque el tipo no puede determinarse únicamente al leer la asignación.
+
+Microsoft permite `var` cuando el tipo es evidente en el lado derecho de la asignación y desaconseja usarlo cuando el lector tendría que inferirlo a partir del nombre de un método. (Microsoft, 2025d).
+
+**Con estándar**
+
+```csharp
+DamageResult damageResult = damageCalculator.Calculate(attack);
+```
+
+**Sin estándar**
+
+```csharp
+var damageResult = damageCalculator.Calculate(attack);
+```
+
 ### 4.5 Campos privados e internos
 
-Los campos de instancia privados o internos deberán escribirse utilizando `_camelCase`.
+Todos los campos privados o internos deberán escribirse utilizando `_camelCase`, sin cambiar el prefijo por tratarse de un campo estático. Por lo tanto, no se utilizará la convención `s_camelCase`.
 
 **Con estándar**
 
 ```csharp
 private int _currentHealth;
 private string _playerName;
+private static int _activePlayers;
 ```
 
 **Sin estándar**
@@ -268,11 +260,22 @@ private string _playerName;
 ```csharp
 private int currentHealth;
 private string PlayerName;
+private static int s_activePlayers;
 ```
 
 ### 4.6 Propiedades
 
-Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado.
+Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado. No se agregarán los prefijos `Get` o `Set`, porque la lectura y la escritura ya se expresan mediante los accesores de la propiedad.
+
+Se utilizará la forma de acceso que corresponda al ciclo de vida del valor:
+
+- `{ get; set; }`: únicamente cuando cualquier consumidor autorizado pueda leer y modificar el valor, como en un DTO.
+- `{ get; private set; }`: cuando el valor pueda consultarse públicamente, pero solo la propia clase deba modificarlo.
+- `{ get; protected set; }`: cuando la clase y sus tipos derivados puedan modificarlo.
+- `{ get; init; }`: cuando el valor solo deba asignarse durante la construcción o inicialización del objeto.
+- `{ get; }`: cuando el valor solo pueda asignarse desde un constructor.
+
+Un modificador aplicado a un accesor deberá ser más restrictivo que el modificador de la propiedad. Microsoft documenta que `get` y `set` son accesores y que es habitual restringir `set` para conservar una lectura pública sin permitir modificaciones externas (Microsoft, 2024b; Microsoft, 2025f).
 
 **Con estándar**
 
@@ -280,6 +283,7 @@ Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar su
 public int CurrentHealth { get; private set; }
 public string CharacterName { get; private set; }
 public bool IsInvulnerable { get; private set; }
+public Guid PlayerId { get; init; }
 ```
 
 **Sin estándar**
@@ -288,43 +292,54 @@ public bool IsInvulnerable { get; private set; }
 public int currentHealth { get; private set; }
 public string character_name { get; private set; }
 public bool InvulnerabilityFlag { get; private set; }
+public Guid GetPlayerId { get; set; }
 ```
 
-Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023).
+Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023a).
 
 ### 4.6.1 Propiedades con campo de respaldo
 
-Propiedades con campo de respaldo. Cuando asignar un valor requiera validación, transformación o un efecto colateral controlado, la propiedad debe declararse con un campo de respaldo (backing field) explícito y lógica propia en el get/set, en lugar de una propiedad automática. El campo de respaldo debe ser private y nunca exponerse directamente.
+Cuando asignar un valor requiera una validación o transformación breve, la propiedad deberá utilizar un campo de respaldo explícito y accesores `get` y `set`. Los accesores no deberán ejecutar operaciones de dominio, emitir eventos, escribir logs ni realizar entrada o salida. Los cambios que representen acciones del juego deberán exponerse mediante métodos, como `ReceiveDamage` o `RestoreHealth`.
 
-Martin (2008) señala que proteger los invariantes de un objeto —por ejemplo, que la vida de un personaje nunca sea negativa ni exceda su máximo— es responsabilidad del propio objeto, y una propiedad automática no puede hacer cumplir esa regla porque cualquier código externo puede asignarle un valor inválido. McConnell (2004) recomienda tratar cada punto de entrada de datos, incluido un setter, como una frontera que debe validar sus parámetros de forma defensiva, en lugar de confiar en que quien llama siempre enviará un valor correcto.
+El campo de respaldo deberá ser privado, utilizar `_camelCase` y no exponerse directamente. Las propiedades permiten ocultar la verificación del valor y restringir la accesibilidad de la escritura sin cambiar la forma en que el consumidor consulta el dato (Microsoft, 2025f).
 
 **Con estándar**
 
 ```csharp
+private const int MinimumHealth = 0;
 private const int MaxHealth = 100;
-private int currentHealth;
+private int _currentHealth;
 
 public int CurrentHealth
 {
-    get => currentHealth;
+    get
+    {
+        return _currentHealth;
+    }
     set
     {
-        var clamped = Math.Clamp(value, 0, MaxHealth);
-        if (clamped != currentHealth)
-        {
-            currentHealth = clamped;
-            OnHealthChanged?.Invoke(currentHealth);
-        }
+        _currentHealth = Math.Clamp(value, MinimumHealth, MaxHealth);
     }
 }
-
-public event Action<int> OnHealthChanged;
 ```
 
 **Sin estándar**
 
 ```csharp
-public int CurrentHealth { get; set; }
+private int currentHealth;
+
+public int CurrentHealth
+{
+    get
+    {
+        return currentHealth;
+    }
+    set
+    {
+        currentHealth = value;
+        OnHealthChanged?.Invoke(currentHealth);
+    }
+}
 ```
 
 ### 4.7 Constantes
@@ -416,24 +431,24 @@ protected virtual void RaiseDeath(PlayerDiedEventArgs data)
 }
 ```
 
-Los métodos protegidos que disparen un evento deberán comenzar con `On`, seguido del nombre del evento. Los parámetros de un manejador de eventos deberán llamarse `sender` y `e`, de acuerdo con las convenciones oficiales para miembros de tipos de .NET (Microsoft, 2023).
+Los métodos protegidos que disparen un evento deberán comenzar con `On`, seguido del nombre del evento. Los parámetros de un manejador de eventos deberán llamarse `sender` y `e`, de acuerdo con las convenciones oficiales para miembros de tipos de .NET (Microsoft, 2023a).
 
 ### 4.10 Métodos de prueba unitaria
 
 Los métodos de prueba deberán utilizar el siguiente formato:
 
 ```csharp
-Test_NombreMetodo_Flujo_Resultado
+Test_MethodName_Scenario_ExpectedResult
 ```
 
 Cada parte tendrá la siguiente función:
 
-- Test: prefijo obligatorio que identifica el método como una prueba.
-- NombreMetodo: nombre exacto del método que se está probando.
-- Flujo: condición o flujo de ejecución evaluado.
-- Resultado: comportamiento esperado.
+- `Test`: prefijo obligatorio que identifica el método como una prueba.
+- `MethodName`: nombre exacto del método que se está probando.
+- `Scenario`: condición o escenario evaluado.
+- `ExpectedResult`: comportamiento observable esperado.
 
-Las partes deberán escribirse en PascalCase y separarse mediante guiones bajos.
+Todas las partes del nombre deberán escribirse en inglés, utilizar `PascalCase` y separarse mediante guiones bajos.
 
 **Con estándar**
 
@@ -451,7 +466,7 @@ public void testDamage1()
 }
 ```
 
-Las partes `NombreMetodo`, `Flujo` y `Resultado` coinciden con las prácticas recomendadas por Microsoft para nombrar pruebas unitarias. El prefijo `Test` es una convención propia del equipo (Microsoft, 2025b).
+Las partes `MethodName`, `Scenario` y `ExpectedResult` coinciden con la recomendación de que el nombre de una prueba describa el método probado, el escenario y el comportamiento esperado. El prefijo `Test` es una convención propia del equipo (Microsoft, 2025b).
 
 ### 4.11 Clases, estructuras y registros
 
@@ -489,7 +504,8 @@ Las interfaces deberán escribirse utilizando `PascalCase` y comenzar con la let
 
 ```csharp
 public interface IEnemySpawner 
-{ 
+{
+    Enemy Spawn(EnemySpawnRequest request);
 }
 ```
 
@@ -497,7 +513,8 @@ public interface IEnemySpawner
 
 ```csharp
 public interface EnemySpawnerInterface 
-{ 
+{
+    Enemy Generate(EnemySpawnRequest request);
 }
 ```
 
@@ -507,11 +524,18 @@ Cuando una clase sea la implementación principal de una interfaz, sus nombres d
 
 ```csharp
 public interface IEnemySpawner 
-{ 
+{
+    Enemy Spawn(EnemySpawnRequest request);
 }
 
 public class EnemySpawner : IEnemySpawner 
-{ 
+{
+    public Enemy Spawn(EnemySpawnRequest request)
+    {
+        Enemy enemy = new Enemy(request.Type);
+
+        return enemy;
+    }
 }
 ```
 
@@ -519,11 +543,18 @@ public class EnemySpawner : IEnemySpawner
 
 ```csharp
 public interface SpawnerInterface 
-{ 
+{
+    Enemy Generate(EnemySpawnRequest request);
 }
 
 public class DefaultEnemyGenerator : SpawnerInterface 
-{ 
+{
+    public Enemy Generate(EnemySpawnRequest request)
+    {
+        Enemy enemy = new Enemy(request.Type);
+
+        return enemy;
+    }
 }
 ```
 
@@ -603,6 +634,8 @@ Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la res
 - `Attribute`: atributos personalizados.
 - `Stream`: tipos especializados de flujo de datos.
 
+No se agregarán los sufijos `Collection` o `Dictionary` únicamente para indicar la estructura de almacenamiento. Si se crea un tipo especializado, su nombre deberá expresar la responsabilidad de dominio, por ejemplo, `Inventory` o `EnemyRegistry`.
+
 **Con estándar**
 
 ```csharp
@@ -627,40 +660,6 @@ public sealed class DamageReceivedData : EventArgs
 }
 ```
 
-### 4.17 Estructura del nombre del método de prueba**
-
-Los métodos de prueba deberán seguir la estructura:
-
-``Test_MethodName_Flow_Result``
-
-El nombre deberá contener:
-
-1. El prefijo `Test`.
-2. El nombre del método probado.
-3. El flujo o escenario evaluado.
-4. El resultado esperado.
-
-Microsoft recomienda que los nombres de las pruebas indiquen el método probado, el escenario y el comportamiento esperado. El prefijo `Test` se conserva como convención propia del equipo (Microsoft, 2025b).
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_CalculateDamage_EnemyWithoutDefense_ReturnsAttackPower()
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void DamageTest()
-{
-}
-```
-
-
 ## 5 Estilo de código
 
 El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos.
@@ -676,18 +675,30 @@ Por cada nivel de indentación se utilizarán cuatro espacios.
 **Con estándar**
 
 ```csharp
-if (player.IsAlive)
+public sealed class EnemyController
 {
-    player.Attack();
+    public void UpdateEnemy(Enemy enemy)
+    {
+        if (enemy.IsAlive)
+        {
+            enemy.Move();
+        }
+    }
 }
 ```
 
 **Sin estándar**
 
 ```csharp
-if (player.IsAlive)
+public sealed class EnemyController
 {
-  player.Attack();
+  public void UpdateEnemy(Enemy enemy)
+  {
+    if (enemy.IsAlive)
+    {
+      enemy.Move();
+    }
+  }
 }
 ```
 
@@ -1107,17 +1118,15 @@ namespace AdventureGame.Inventory
 }
 ```
 
-**Orden de los grupos de directivas `using`**
+**Orden de las directivas `using`**
 
-Primero se colocarán los espacios de nombres del sistema, después los de bibliotecas externas y finalmente los pertenecientes al proyecto.
+Las directivas formarán un único bloque continuo, sin líneas en blanco entre ellas. Primero se colocarán los espacios de nombres del sistema, después los de bibliotecas externas y finalmente los pertenecientes al proyecto.
 
 **Con estándar**
 
 ```csharp
 using System.Collections.Generic;
-
 using PathfindingLibrary;
-
 using AdventureGame.Characters;
 ```
 
@@ -1125,9 +1134,7 @@ using AdventureGame.Characters;
 
 ```csharp
 using AdventureGame.Characters;
-
 using System.Collections.Generic;
-
 using PathfindingLibrary;
 ```
 
@@ -1151,17 +1158,15 @@ using System;
 using System.Collections.Generic;
 ```
 
-**Separación entre grupos de directivas `using`**
+**Bloque continuo de directivas `using`**
 
-Los grupos de directivas `using` deberán separarse mediante una línea en blanco.
+No se insertarán líneas en blanco dentro del bloque de directivas `using`.
 
 **Con estándar**
 
 ```csharp
 using System.Collections.Generic;
-
 using PathfindingLibrary;
-
 using AdventureGame.Characters;
 ```
 
@@ -1169,7 +1174,9 @@ using AdventureGame.Characters;
 
 ```csharp
 using System.Collections.Generic;
+
 using PathfindingLibrary;
+
 using AdventureGame.Characters;
 ```
 
@@ -1213,7 +1220,6 @@ Los alias y las directivas `using static` se colocarán después de las directiv
 
 ```csharp
 using System;
-
 using AdventureGame.Characters;
 using DamageCalculator = AdventureGame.Combat.DamageCalculator;
 using static AdventureGame.Combat.DamageConstants;
@@ -1296,221 +1302,88 @@ Los miembros de una clase deberán conservar el siguiente orden general:
 9. Métodos privados.
 10. Tipos anidados.
 
-**Posición de las constantes**
-
-Las constantes deberán colocarse antes de los campos estáticos y de instancia.
+Los ejemplos de esta regla deberán mostrar la clase completa para que el orden de todos los grupos pueda evaluarse en conjunto.
 
 **Con estándar**
 
 ```csharp
-private const int DefaultHealth = 100;
-private static int activePlayers;
-private int _currentHealth;
-```
-
-**Sin estándar**
-
-```csharp
-private static int activePlayers;
-private int _currentHealth;
-private const int DefaultHealth = 100;
-```
-
-**Posición de los campos estáticos**
-
-Los campos estáticos deberán colocarse después de las constantes y antes de los campos de instancia.
-
-**Con estándar**
-
-```csharp
-private static int s_activeEnemies;
-private readonly EnemyFactory _enemyFactory;
-```
-
-**Sin estándar**
-
-```csharp
-private readonly EnemyFactory _enemyFactory;
-private static int s_activeEnemies;
-```
-
-**Posición de los campos de instancia**
-
-Los campos de instancia deberán colocarse antes de los constructores.
-
-**Con estándar**
-
-```csharp
-private readonly Player _player;
-
-public PlayerController(Player player)
+public sealed class PlayerController
 {
-    _player = player;
+    private const int DefaultHealth = 100;
+
+    private static int _activePlayers;
+
+    private readonly Weapon _weapon;
+
+    public PlayerController(Weapon weapon)
+    {
+        _weapon = weapon;
+        CurrentHealth = DefaultHealth;
+        _activePlayers++;
+    }
+
+    public event Action? PlayerDefeated;
+
+    public int CurrentHealth { get; private set; }
+
+    public void Attack()
+    {
+        PrepareAttack();
+        ExecuteAttack();
+    }
+
+    protected void PrepareAttack()
+    {
+        _weapon.Prepare();
+    }
+
+    private void ExecuteAttack()
+    {
+        _weapon.Use();
+    }
+
+    private enum PlayerState
+    {
+        Idle,
+        Attacking,
+        Defeated
+    }
 }
 ```
 
 **Sin estándar**
 
 ```csharp
-public PlayerController(Player player)
+public sealed class PlayerController
 {
-    _player = player;
-}
+    private enum PlayerState
+    {
+        Idle,
+        Attacking,
+        Defeated
+    }
 
-private readonly Player _player;
-```
+    private void ExecuteAttack()
+    {
+        _weapon.Use();
+    }
 
-**Posición de los constructores**
+    public int CurrentHealth { get; private set; }
 
-Los constructores deberán colocarse después de los campos y antes de los eventos y propiedades.
+    public event Action? PlayerDefeated;
 
-**Con estándar**
+    public PlayerController(Weapon weapon)
+    {
+        _weapon = weapon;
+        CurrentHealth = DefaultHealth;
+        _activePlayers++;
+    }
 
-```csharp
-private readonly Player _player;
+    private readonly Weapon _weapon;
 
-public PlayerController(Player player)
-{
-    _player = player;
-}
+    private static int _activePlayers;
 
-public event Action? PlayerDefeated;
-```
-
-**Sin estándar**
-
-```csharp
-public event Action? PlayerDefeated;
-
-public PlayerController(Player player)
-{
-    _player = player;
-}
-
-private readonly Player _player;
-```
-
-**Posición de los eventos**
-
-Los eventos deberán colocarse después de los constructores y antes de las propiedades.
-
-**Con estándar**
-
-```csharp
-public event Action? PlayerDefeated;
-
-public int CurrentHealth { get; private set; }
-```
-
-**Sin estándar**
-
-```csharp
-public int CurrentHealth { get; private set; }
-
-public event Action? PlayerDefeated;
-```
-
-**Posición de las propiedades**
-
-Las propiedades deberán colocarse después de los eventos y antes de los métodos.
-
-**Con estándar**
-
-```csharp
-public int CurrentHealth { get; private set; }
-
-public void ReceiveDamage(int damage)
-{
-    CurrentHealth -= damage;
-}
-```
-
-**Sin estándar**
-
-```csharp
-public void ReceiveDamage(int damage)
-{
-    CurrentHealth -= damage;
-}
-
-public int CurrentHealth { get; private set; }
-```
-
-**Orden de métodos según su visibilidad**
-
-Después de las propiedades se colocarán primero los métodos públicos, después los protegidos y finalmente los privados.
-
-**Con estándar**
-
-```csharp
-public void Attack()
-{
-    ExecuteAttack();
-}
-
-protected void PrepareAttack()
-{
-    weapon.Prepare();
-}
-
-private void ExecuteAttack()
-{
-    weapon.Use();
-}
-```
-
-**Sin estándar**
-
-```csharp
-private void ExecuteAttack()
-{
-    weapon.Use();
-}
-
-public void Attack()
-{
-    ExecuteAttack();
-}
-
-protected void PrepareAttack()
-{
-    weapon.Prepare();
-}
-```
-
-**Posición de los tipos anidados**
-
-Las clases, estructuras, enumeraciones o interfaces anidadas deberán colocarse después de todos los demás miembros de la clase.
-
-**Con estándar**
-
-```csharp
-private void ChangeState(EnemyState state)
-{
-    _currentState = state;
-}
-
-private enum EnemyState
-{
-    Idle,
-    Chasing,
-    Attacking
-}
-```
-
-**Sin estándar**
-
-```csharp
-private enum EnemyState
-{
-    Idle,
-    Chasing,
-    Attacking
-}
-
-private void ChangeState(EnemyState state)
-{
-    _currentState = state;
+    private const int DefaultHealth = 100;
 }
 ```
 
@@ -1645,24 +1518,90 @@ string statusLabel = (_isGameOver && _livesRemaining <= 0 && !_isRespawning) ? "
 
 ## 7. Manejo de errores y excepciones
 
-### 7.1 Jerarquía de excepciones propias del dominio del juego
+### 7.1 Uso y selección de excepciones
 
-Las excepciones personalizadas deben derivar directamente de Exception, terminar su nombre con el sufijo Exception, evitar jerarquías profundas, y proveer como mínimo los tres constructores estándar: sin parámetros, con mensaje, y con mensaje más excepción interna. Solo se crea un tipo de excepción nuevo cuando el código que captura necesita manejarla de forma distinta a las excepciones ya existentes.
+Las excepciones se utilizarán únicamente en servicios y componentes de infraestructura, donde una operación pueda fallar por una condición verdaderamente excepcional. Las entidades, objetos de valor y componentes de presentación no utilizarán excepciones para representar resultados esperados del juego, como un inventario lleno, una habilidad en enfriamiento o una acción no disponible; esos casos se comunicarán mediante valores de retorno o tipos de resultado.
+
+Antes de crear una excepción personalizada, se utilizará el tipo estándar que describa con mayor precisión el error. No se lanzarán excepciones para controlar el flujo normal. Microsoft recomienda evitar excepciones para condiciones frecuentes, seleccionar tipos predefinidos y reservar `try`/`catch` para errores de los que el código pueda recuperarse (Microsoft, 2025a; Microsoft, 2023b).
+
+| Excepción | Cuándo se utilizará en un servicio |
+| --- | --- |
+| `ArgumentNullException` | Un parámetro obligatorio recibido por el servicio es `null`. |
+| `ArgumentException` | Un argumento tiene un valor o formato inválido que no corresponde a un rango numérico. |
+| `ArgumentOutOfRangeException` | Un argumento se encuentra fuera del intervalo permitido. |
+| `InvalidOperationException` | El estado actual del objeto no permite ejecutar la operación solicitada. |
+| `NotSupportedException` | La operación forma parte del contrato, pero la implementación no la admite. |
+| `ObjectDisposedException` | Se intenta utilizar un recurso que el servicio ya liberó. |
+| `IOException` | Falla una operación de lectura, escritura o acceso a archivos. |
+| `UnauthorizedAccessException` | El proceso no tiene permisos para acceder al recurso solicitado. |
+| `TimeoutException` | Una operación externa no termina dentro del tiempo permitido. |
+| `OperationCanceledException` | La operación se cancela mediante el mecanismo de cancelación previsto. |
+
+No se lanzarán directamente `Exception`, `SystemException`, `NullReferenceException`, `IndexOutOfRangeException`, `StackOverflowException`, `AccessViolationException` ni `OutOfMemoryException`. `NotImplementedException` solo podrá utilizarse temporalmente durante el desarrollo y deberá eliminarse antes de integrar el código a la rama principal (Microsoft, 2023b; Microsoft, 2025a).
 
 **Con estándar**
 
 ```csharp
-public class SaveLoadException : Exception
+public sealed class SaveGameService
 {
-    public SaveLoadException()
+    private readonly ISaveGameRepository _saveGameRepository;
+
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        ArgumentNullException.ThrowIfNull(saveGameRepository);
+        _saveGameRepository = saveGameRepository;
+    }
+
+    public void Save(PlayerState playerState)
+    {
+        ArgumentNullException.ThrowIfNull(playerState);
+
+        if (!playerState.CanBeSaved)
+        {
+            throw new InvalidOperationException(
+                "The player state cannot be saved in its current state.");
+        }
+
+        _saveGameRepository.Save(playerState);
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class Player
+{
+    public void UseItem(Item? item)
+    {
+        if (item is null)
+        {
+            throw new Exception("Invalid item.");
+        }
+    }
+}
+```
+
+#### 7.1.1 Excepciones personalizadas
+
+Solo se creará una excepción personalizada cuando un consumidor necesite distinguir ese fallo de las excepciones estándar para manejarlo de manera diferente. La clase deberá derivar de `Exception`, terminar con el sufijo `Exception` e incluir los constructores sin parámetros, con mensaje y con mensaje más excepción interna. No se agregará el constructor de serialización heredado de `Exception`, porque las API de serialización de excepciones están obsoletas en .NET moderno (Microsoft, 2025a; Microsoft, 2023c).
+
+**Con estándar**
+
+```csharp
+public sealed class SaveGameException : Exception
+{
+    public SaveGameException()
     {
     }
 
-    public SaveLoadException(string message) : base(message)
+    public SaveGameException(string message) : base(message)
     {
     }
 
-    public SaveLoadException(string message, Exception innerException) : base(message, innerException)
+    public SaveGameException(
+        string message,
+        Exception innerException) : base(message, innerException)
     {
     }
 }
@@ -1671,36 +1610,54 @@ public class SaveLoadException : Exception
 **Sin estándar**
 
 ```csharp
-public class SaveLoadException : ApplicationException
+public class SaveError : ApplicationException
 {
-    public SaveLoadException()
-    {
-    }
-
-    public SaveLoadException(string message, Exception innerException) : base(message, innerException)
+    public SaveError(string message) : base(message)
     {
     }
 }
 ```
 
-### 7.2 Try-catch y prohibición de catch vacíos
+### 7.2 `try`, `catch`, `finally` y relanzamiento
 
-Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo de excepción más específico posible. La excepción capturada deberá manejarse, registrarse, volver a lanzarse mediante `throw;` o envolverse en una excepción de dominio que conserve la excepción original como excepción interna.
+Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo más específico posible y las cláusulas se ordenarán desde la excepción más derivada hasta la menos derivada. Si el servicio no puede recuperarse, no deberá capturar la excepción. Una excepción capturada deberá manejarse, registrarse, relanzarse mediante `throw;` o envolverse conservando la excepción original en `InnerException`.
 
-Solo se permitirá capturar `Exception` o `SystemException` en un límite claramente definido de la aplicación y cuando el bloque termine volviendo a lanzar la excepción mediante `throw;`.
+No se capturarán `Exception` ni `SystemException` en servicios ordinarios. `Exception` solo podrá capturarse en el límite superior de la aplicación para registrar un fallo no controlado y terminar o propagar la operación de forma segura. `SystemException` no deberá capturarse de forma explícita. Para preservar la traza original se utilizará `throw;`, nunca `throw exception;` (Microsoft, 2025a; Microsoft, 2026a).
+
+Los recursos que implementen `IDisposable` se liberarán preferentemente mediante una declaración `using`. `finally` se reservará para limpieza imprescindible que no pueda expresarse mediante `using`.
 
 **Con estándar**
 
 ```csharp
-private void LoadCheckpoint(string checkpointPath)
+public sealed class LoadGameService
 {
-    try
+    private readonly ISaveSerializer _saveSerializer;
+
+    public LoadGameService(ISaveSerializer saveSerializer)
     {
-        _saveData = SaveSerializer.Read(checkpointPath);
+        _saveSerializer = saveSerializer;
     }
-    catch (IOException exception)
+
+    public SaveData LoadCheckpoint(string checkpointPath)
     {
-        throw new SaveLoadException("Unable to load checkpoint file.", exception);
+        try
+        {
+            SaveData saveData = _saveSerializer.Read(checkpointPath);
+
+            return saveData;
+        }
+        catch (FileNotFoundException exception)
+        {
+            throw new SaveGameException(
+                "The checkpoint file was not found.",
+                exception);
+        }
+        catch (IOException exception)
+        {
+            throw new SaveGameException(
+                "The checkpoint file could not be read.",
+                exception);
+        }
     }
 }
 ```
@@ -1708,14 +1665,20 @@ private void LoadCheckpoint(string checkpointPath)
 **Sin estándar**
 
 ```csharp
-private void LoadCheckpoint(string checkpointPath)
+public sealed class LoadGameService
 {
-    try
+    public SaveData? LoadCheckpoint(string checkpointPath)
     {
-        _saveData = SaveSerializer.Read(checkpointPath);
-    }
-    catch (IOException exception)
-    {
+        try
+        {
+            SaveData saveData = SaveSerializer.Read(checkpointPath);
+
+            return saveData;
+        }
+        catch (Exception exception)
+        {
+            return null;
+        }
     }
 }
 ```
@@ -1724,7 +1687,7 @@ private void LoadCheckpoint(string checkpointPath)
 
 El proyecto habilita los tipos de referencia anulables (\<Nullable>enable\</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible.
 
-Los tipos de referencia anulables permiten declarar qué variables pueden contener `null` y hacen que el compilador advierta cuando el uso del código no coincide con esa declaración, sin alterar el comportamiento en tiempo de ejecución. El contexto anulable se habilita mediante la opción `<Nullable>enable</Nullable>` del proyecto (Microsoft, 2024).
+Los tipos de referencia anulables permiten declarar qué variables pueden contener `null` y hacen que el compilador advierta cuando el uso del código no coincide con esa declaración, sin alterar el comportamiento en tiempo de ejecución. El contexto anulable se habilita mediante la opción `<Nullable>enable</Nullable>` del proyecto (Microsoft, 2024a).
 
 **Con estándar**
 
@@ -1769,7 +1732,7 @@ La gestión de la complejidad en el código fuente es un pilar fundamental para 
 
 ### 8.1 Números mágicos
 
-Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 cuando se usan como valores triviales de inicialización, incremento o comparación de signo) directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio (umbrales de vida, cantidades de inventario, tiempos de spawn, identificadores de slot) debe declararse como una constante (const) o un campo de solo lectura (static readonly con un nombre descriptivo que exprese su propósito.
+Se prohíbe el uso de literales numéricos distintos de `0`, `1` y `-1` cuando se usen como valores triviales de inicialización, incremento o comparación de signo directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio, como umbrales de vida, cantidades de inventario, tiempos de aparición o identificadores de ranura, deberá declararse como una constante (`const`) o como un campo de solo lectura (`static readonly`) con un nombre descriptivo.
 
 
 **Con estándar**
@@ -1777,10 +1740,10 @@ Se prohíbe el uso de literales numéricos (distintos de 0, 1 y -1 cuando se usa
 ```csharp
 public class HealthSystem
 {
-    private const int MaxHealth = 100;
     private const int LowHealthThreshold = 20;
 
-public bool IsLowHealth(int currentHealth) {
+    public bool IsLowHealth(int currentHealth)
+    {
         return currentHealth <= LowHealthThreshold;
     }
 }
@@ -1791,8 +1754,8 @@ public bool IsLowHealth(int currentHealth) {
 ```csharp
 public class HealthSystem
 {
-
-public bool IsLowHealth(int currentHealth) {
+    public bool IsLowHealth(int currentHealth)
+    {
         return currentHealth <= 20;
     }
 }
@@ -1813,12 +1776,12 @@ public class CombatResolver
 
     public int ResolveAttack(Attacker attacker, Defender defender, WeaponData weapon)
     {
-        var finalDamage = NoDamage;
+        int finalDamage = NoDamage;
 
         if (CanAttack(attacker, defender))
         {
-            var baseDamage = CalculateBaseDamage(attacker, weapon);
-            var reducedDamage = ApplyDefense(baseDamage, defender);
+            int baseDamage = CalculateBaseDamage(attacker, weapon);
+            int reducedDamage = ApplyDefense(baseDamage, defender);
             finalDamage = ApplyCriticalModifier(reducedDamage, attacker.CriticalRolls);
         }
 
@@ -1827,7 +1790,7 @@ public class CombatResolver
 
     private bool CanAttack(Attacker attacker, Defender defender)
     {
-        var canAttack = attacker.IsAlive
+        bool canAttack = attacker.IsAlive
             && defender.IsAlive
             && attacker.HasStamina;
 
@@ -1836,22 +1799,22 @@ public class CombatResolver
 
     private int CalculateBaseDamage(Attacker attacker, WeaponData weapon)
     {
-        var baseDamage = attacker.Strength * weapon.DamageMultiplier;
+        int baseDamage = attacker.Strength * weapon.DamageMultiplier;
 
         return baseDamage;
     }
 
     private int ApplyDefense(int rawDamage, Defender defender)
     {
-        var reducedDamage = rawDamage - defender.Armor;
-        var finalDamage = Mathf.Max(reducedDamage, NoDamage);
+        int reducedDamage = rawDamage - defender.Armor;
+        int finalDamage = Math.Max(reducedDamage, NoDamage);
 
         return finalDamage;
     }
 
     private int ApplyCriticalModifier(int damage, int criticalRolls)
     {
-        var finalDamage = damage;
+        int finalDamage = damage;
 
         if (criticalRolls >= CriticalHitThreshold)
         {
@@ -1920,7 +1883,7 @@ Todo método podrá recibir como máximo tres parámetros. Cuando la operación 
 ```csharp
 public Enemy Spawn(EnemySpawnRequest request)
 {
-    var enemy = enemyFactory.Create(request.Type, request.Position);
+    Enemy enemy = enemyFactory.Create(request.Type, request.Position);
     enemy.Configure(request.Level, request.Faction);
     return enemy;
 }
@@ -1931,7 +1894,7 @@ public Enemy Spawn(EnemySpawnRequest request)
 ```csharp
 public Enemy Spawn(EnemyType type, float positionX, float positionY, float positionZ, int level, Faction faction)
 {
-    var enemy = enemyFactory.Create(type, positionX, positionY, positionZ);
+    Enemy enemy = enemyFactory.Create(type, positionX, positionY, positionZ);
     enemy.Configure(level, faction);
     return enemy;
 }
@@ -1950,10 +1913,10 @@ public class SaveSystem
 
     public bool CanSaveGame(PlayerState state, LevelState level)
     {
-        var hasMinimumProgress = level.ProgressPercent >= MinimumProgressPercent;
-        var isInSafeZone = level.CurrentZone.IsSafe;
-        var isPlayerAlive = state.IsAlive;
-        var isNotInCutscene = !level.IsPlayingCutscene;
+        bool hasMinimumProgress = level.ProgressPercent >= MinimumProgressPercent;
+        bool isInSafeZone = level.CurrentZone.IsSafe;
+        bool isPlayerAlive = state.IsAlive;
+        bool isNotInCutscene = !level.IsPlayingCutscene;
 
         return hasMinimumProgress && isInSafeZone && isPlayerAlive && isNotInCutscene;
     }
@@ -2050,22 +2013,92 @@ if (_currentHealth > MinimumHealth) // skip regeneration once the player has alr
 
 ### 10.3 Comentarios de documentación XML (///)
 
-Todo tipo o miembro que forme parte de la API pública del código de producción deberá documentarse con comentarios de documentación XML (`///`), como mínimo con la etiqueta `<summary>` y con una etiqueta `<param>` por cada parámetro. Estos comentarios se colocarán inmediatamente arriba del elemento que documentan, sin una línea en blanco entre ambos.
+La documentación XML (`///`) se utilizará únicamente en las clases de servicio, las interfaces públicas de servicio y sus miembros públicos. Las entidades, objetos de valor, componentes internos y clases de prueba no deberán documentarse con XML salvo que formen parte de un contrato público. Esta delimitación es una decisión del equipo para evitar documentación repetitiva en miembros cuyo propósito ya es evidente.
 
-Las clases y los métodos de los proyectos de prueba estarán exentos, salvo que el equipo decida documentarlos. Los fragmentos del presente estándar también podrán omitir la documentación XML cuando la regla ilustrada no sea la documentación. Esta excepción evita que los ejemplos marcados como “Con estándar” contradigan esta sección.
+Todo servicio público deberá incluir como mínimo `<summary>`. Cada miembro documentado agregará las etiquetas que correspondan a su firma y comportamiento. El texto deberá escribirse en inglés, con oraciones completas, y colocarse inmediatamente antes del elemento, sin una línea en blanco. La documentación deberá ser XML bien formado (Microsoft, 2026e).
 
-Los comentarios `///` son el mecanismo oficial de C# para documentar una API. Cuando se habilita `GenerateDocumentationFile`, el compilador genera la advertencia CS1591 para los miembros públicamente visibles que no tengan documentación XML (Microsoft, 2026e).
+Los ejemplos de este estándar podrán omitir la documentación XML cuando estén demostrando una regla diferente. Esta excepción editorial evita llenar los ejemplos con información ajena al punto evaluado; no se aplicará al código de producción.
+
+Las etiquetas oficiales se utilizarán de la siguiente manera:
+
+| Etiqueta o atributo | Uso |
+| --- | --- |
+| `<summary>` | Resume la responsabilidad del tipo o miembro. Es obligatorio en los servicios documentados. |
+| `<remarks>` | Agrega condiciones de uso o detalles que no pertenecen al resumen. |
+| `<param>` | Describe cada parámetro de un método o constructor. |
+| `<paramref>` | Hace referencia a un parámetro dentro de otra etiqueta. |
+| `<returns>` | Describe el valor devuelto por un método no `void`. |
+| `<value>` | Describe el valor que representa una propiedad. |
+| `<exception>` | Indica cada excepción que el miembro puede lanzar directamente y la condición que la provoca. |
+| `<typeparam>` | Describe cada parámetro de tipo genérico. |
+| `<typeparamref>` | Hace referencia a un parámetro de tipo dentro del texto. |
+| `<see>` | Crea una referencia en línea a otro miembro, tipo, palabra clave o vínculo. |
+| `<seealso>` | Agrega una referencia relacionada al final de la documentación. |
+| `cref` | Identifica un tipo o miembro de código y permite que el compilador valide la referencia. |
+| `href` | Identifica un vínculo externo cuando la referencia no es un elemento de código. |
+| `<example>` | Presenta un ejemplo de uso cuando el contrato no resulte evidente. |
+| `<c>` | Marca como código un fragmento corto dentro de una oración. |
+| `<code>` | Contiene un ejemplo de código de varias líneas. |
+| `<para>` | Divide una explicación extensa en párrafos. |
+| `<list>` | Presenta una lista o tabla dentro de la documentación generada. |
+| `<inheritdoc>` | Hereda documentación de una interfaz, clase base o miembro equivalente. |
+| `<include>` | Reutiliza documentación almacenada en un archivo XML externo. |
+| `<b>`, `<i>`, `<u>`, `<br/>` y `<a>` | Aplican formato básico; se utilizarán solo cuando mejoren la comprensión. |
+| `<safety>` | Documenta obligaciones de código `unsafe`; no se utilizará mientras el proyecto prohíba código `unsafe`. |
+
+No se utilizará `<tt>` porque es una etiqueta obsoleta; para código en línea se utilizará `<c>`. Microsoft reconoce las etiquetas anteriores para los escenarios habituales de documentación y valida de forma especial elementos como `<param>`, `<exception>`, `<see>`, `<seealso>`, `<typeparam>` e `<include>` (Microsoft, 2026e).
 
 **Con estándar**
 
 ```csharp
 /// <summary>
-/// Applies damage to the player and triggers defeat once health reaches the minimum threshold.
+/// Provides operations for storing the current game state.
 /// </summary>
-/// <param name="amount">The amount of damage to apply.</param>
-public void ApplyDamage(int amount)
+public sealed class SaveGameService
 {
-    _currentHealth -= amount;
+    private const int MinimumSlot = 1;
+    private const int MaximumSlot = 3;
+
+    private readonly ISaveGameRepository _saveGameRepository;
+
+    /// <summary>
+    /// Initializes a service with the repository used to store game states.
+    /// </summary>
+    /// <param name="saveGameRepository">The repository used for persistence.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="saveGameRepository"/> is null.
+    /// </exception>
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        ArgumentNullException.ThrowIfNull(saveGameRepository);
+        _saveGameRepository = saveGameRepository;
+    }
+
+    /// <summary>
+    /// Stores the supplied player state in the selected slot.
+    /// </summary>
+    /// <param name="playerState">The player state to store.</param>
+    /// <param name="slot">The destination save slot.</param>
+    /// <returns>The result reported by the save repository.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="playerState"/> is null.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="slot"/> is outside the supported range.
+    /// </exception>
+    public SaveResult Save(PlayerState playerState, int slot)
+    {
+        ArgumentNullException.ThrowIfNull(playerState);
+
+        if (slot < MinimumSlot || slot > MaximumSlot)
+        {
+            throw new ArgumentOutOfRangeException(nameof(slot));
+        }
+
+        SaveResult saveResult = _saveGameRepository.Save(playerState, slot);
+
+        return saveResult;
+    }
 }
 ```
 
@@ -2073,13 +2106,16 @@ public void ApplyDamage(int amount)
 
 ```csharp
 /// <summary>
-/// Applies damage to the player and triggers defeat once health reaches the minimum threshold.
+/// Saves data.
 /// </summary>
-/// <param name="amount">The amount of damage to apply.</param>
-
-public void ApplyDamage(int amount)
+public sealed class SaveGameService
 {
-    _currentHealth -= amount;
+    public SaveResult Save(PlayerState playerState, int slot)
+    {
+        SaveResult saveResult = SaveRepository.Save(playerState, slot);
+
+        return saveResult;
+    }
 }
 ```
 
@@ -2109,57 +2145,76 @@ El registro de eventos (logging) es el mecanismo principal para diagnosticar el 
 
 ### 11.1 Sistema/herramienta de logging
 
-Queda prohibido escribir a la salida estándar o a cualquier destino de registro directamente desde la lógica de gameplay. Todo registro debe pasar por una clase centralizada GameLogger, que expone un método por nivel y delega la escritura real a una implementación de ILogSink inyectada (consola, archivo u otro destino, según el entorno de ejecución). Ningún componente fuera de GameLogger puede escribir un log directamente.
+El proyecto utilizará `log4net` como biblioteca de logging. Debido a que el estándar también exige el nivel `Trace`, se utilizará la extensión oficial `log4net.Ext.Trace`, la cual agrega `ITraceLog` y `TraceLogManager` sobre los niveles principales de `log4net`.
+
+Cada clase que necesite registrar eventos declarará un único logger privado, estático y de solo lectura. El campo se llamará `_logger`, de acuerdo con la regla 4.5, sin utilizar el prefijo `s_`. Queda prohibido utilizar `Console.WriteLine`, `Debug.WriteLine` o crear un sistema de niveles paralelo a `log4net`. Apache documenta `log4net.Ext.Trace` como la extensión que añade el nivel `Trace` y define `Debug`, `Info`, `Warn`, `Error` y `Fatal` como los niveles principales de `ILog` (Apache Logging Services, s. f.-a, s. f.-b).
 
 **Con estándar**
 
 ```csharp
-public void SaveGame(PlayerState state)
+using log4net.Ext.Trace;
+
+public sealed class SaveGameService
 {
-    GameLogger.Info(nameof(SaveSystem), "Guardado de partida iniciado");
-    PersistToDisk(state);
+    private static readonly ITraceLog _logger =
+        TraceLogManager.GetLogger(typeof(SaveGameService));
+
+    private readonly ISaveGameRepository _saveGameRepository;
+
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        _saveGameRepository = saveGameRepository;
+    }
+
+    public void SaveGame(PlayerState playerState)
+    {
+        _logger.Info("Game save started.");
+        _saveGameRepository.Save(playerState);
+    }
 }
 ```
 
 **Sin estándar**
 
 ```csharp
-public void SaveGame(PlayerState state)
+public sealed class SaveGameService
 {
-    Console.WriteLine("Guardado de partida iniciado");
-    PersistToDisk(state);
+    private readonly ISaveGameRepository _saveGameRepository;
+
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        _saveGameRepository = saveGameRepository;
+    }
+
+    public void SaveGame(PlayerState playerState)
+    {
+        Console.WriteLine("Game save started.");
+        _saveGameRepository.Save(playerState);
+    }
 }
 ```
 
-### 11.2 Niveles de log: Trace, Debug, Info, Warning, Error
+### 11.2 Niveles de log: Trace, Debug, Info, Warn, Error y Fatal
 
-GameLogger deberá exponer exactamente cinco niveles, ordenados de menor a mayor severidad: Trace, Debug, Info, Warning y Error. No se permite introducir niveles adicionales ni usar un nivel para un propósito distinto al definido en 12.3.
+Se utilizarán seis niveles, ordenados de menor a mayor severidad: `Trace`, `Debug`, `Info`, `Warn`, `Error` y `Fatal`. En el código se escribirá `Warn`, no `Warning`, porque ese es el nombre del método expuesto por `log4net`. Los niveles `All` y `Off` se reservarán para configuración y filtrado; no se utilizarán para registrar eventos.
 
-Chuvakin et al. (2013) describen la jerarquía de niveles de severidad como el mecanismo estándar de la industria para permitir que un mismo sistema de logging sirva tanto para depuración detallada en desarrollo como para monitoreo de incidentes en producción, filtrando por nivel según el contexto de ejecución sin cambiar el código fuente.g.
+La documentación de Apache establece el orden `Debug < Info < Warn < Error < Fatal`; `Trace` se incorpora por debajo de `Debug` mediante la extensión oficial (Apache Logging Services, s. f.-a, s. f.-b).
 
 **Con estándar**
 
 ```csharp
-public enum LogLevel
-{
-    Trace,
-    Debug,
-    Info,
-    Warning,
-    Error
-}
+_logger.Trace("Enemy position updated.");
+_logger.Debug("Damage modifiers calculated.");
+_logger.Info("Game saved successfully.");
+_logger.Warn("Save file version is outdated.");
+_logger.Error("The save operation failed.");
+_logger.Fatal("The game state cannot be initialized.");
 ```
 
 **Sin estándar**
 
 ```csharp
-public enum LogLevel
-{
-    Verbose,
-    Info,
-    Oops,
-    Critical
-}
+Console.WriteLine("Something happened.");
 ```
 
 ### 11.3 Criterio de aplicación por nivel (contexto de juego)
@@ -2168,72 +2223,96 @@ Cada nivel deberá reservarse para el siguiente tipo de evento:
 
 - `Trace`: eventos de muy alta frecuencia usados solo para depuración fina (posición del jugador en cada ciclo de actualización, cada iteración de un bucle de física).
 - `Debug`: información de desarrollo no crítica (valores intermedios de una fórmula de daño, estado de una máquina de estados de un enemigo).
-- `Info`: hitos normales del flujo del juego (partida guardada correctamente, jugador entra a un nuevo nivel, enemigo generado por el EnemySpawner).
-- `Warning`: situaciones anómalas pero recuperables (intento de recoger un objeto con el inventario lleno, archivo de guardado con una versión antigua pero migrable).
-- `Error`: fallos que impiden completar una operación crítica (fallo de escritura del archivo de guardado, referencia nula a los datos requeridos para el spawn).
+- `Info`: hitos normales del flujo del juego (partida guardada correctamente, jugador entra a un nuevo nivel, enemigo generado por `EnemySpawner`).
+- `Warn`: situaciones anómalas pero recuperables (intento de recoger un objeto con el inventario lleno, archivo de guardado con una versión antigua pero migrable).
+- `Error`: fallos que impiden completar una operación, pero permiten que la aplicación o el subsistema continúen (fallo de escritura de una partida o pérdida temporal de conexión).
+- `Fatal`: fallos irrecuperables que impiden que la aplicación o un subsistema esencial continúen de forma segura (configuración principal inválida, corrupción del estado inicial o imposibilidad de iniciar los servicios esenciales).
 
 **Con estándar**
 
 ```csharp
-if (items.Count >= MaxSlots)
+public sealed class InventoryService
 {
-    GameLogger.Warning(nameof(InventorySystem), "Inventario lleno, no se pudo agregar el objeto");
-    return false;
+    private const int MaximumSlots = 20;
+
+    private static readonly ITraceLog _logger =
+        TraceLogManager.GetLogger(typeof(InventoryService));
+
+    public bool AddItem(ICollection<Item> items, Item item)
+    {
+        bool wasAdded = false;
+
+        if (items.Count >= MaximumSlots)
+        {
+            _logger.Warn("The inventory is full; the item was not added.");
+        }
+        else
+        {
+            items.Add(item);
+            wasAdded = true;
+        }
+
+        return wasAdded;
+    }
 }
 ```
 
 **Sin estándar**
 
 ```csharp
-if (items.Count >= MaxSlots)
+if (items.Count >= MaximumSlots)
 {
-    GameLogger.Error(nameof(InventorySystem), "no se pudo agregar el objeto");
+    _logger.Error("The inventory is full.");
     return false;
 }
 ```
 
 ### 11.4 Formato del mensaje
 
-Todo mensaje de log deberá construirse con la firma GameLogger.<Nivel>(categoria, mensaje), donde categoria es el nombre de la clase de origen (obtenido con nameof) y mensaje describe el evento en español, sin concatenar valores dinámicos mediante el operador +. Cuando el mensaje deba incluir un valor variable, este se pasará como argumento adicional a un método sobrecargado que use string.Format internamente, nunca interpolación ni concatenación directa en el punto de la llamada.
+Los mensajes se escribirán en inglés, iniciarán con mayúscula y terminarán con punto. Deberán describir un evento específico e incluir el contexto mínimo necesario para diagnosticarlo. El nombre del logger identificará la clase de origen, por lo que no se repetirá manualmente como categoría dentro del mensaje.
 
-Chuvakin et al. (2013) recomiendan un formato de mensaje consistente y con estructura fija (nivel, origen, contenido) para que los logs puedan procesarse de forma automática por herramientas externas, en lugar de depender de texto libre. McConnell (2004) advierte que construir cadenas mediante concatenación en cada llamada de diagnóstico añade trabajo de asignación de memoria incluso cuando el nivel de log correspondiente está deshabilitado.
+Los valores dinámicos se enviarán mediante los métodos terminados en `Format`, como `InfoFormat`, en vez de concatenar cadenas. Cuando se registre una excepción se utilizará la sobrecarga que recibe el mensaje y el objeto `Exception`, para conservar la traza. No se registrarán contraseñas, tokens, datos personales ni contenido completo de archivos de guardado.
 
 **Con estándar**
 
 ```csharp
-GameLogger.Info(nameof(EnemySpawner), "Enemigo generado: {0}", request.Type);
+_logger.InfoFormat(
+    "Enemy spawned. Type: {0}.",
+    request.Type);
+
+_logger.Error(
+    "The checkpoint file could not be written.",
+    exception);
 ```
 
 **Sin estándar**
 
 ```csharp
-Console.WriteLine("Enemigo generado: " + request.Type.ToString());
+_logger.Info("Enemy spawned: " + request.Type.ToString());
 ```
 
 ### 11.5 Logs en entornos de desarrollo y versiones finales
 
-Los niveles Trace y Debug deberán compilarse únicamente en builds de desarrollo, usando el atributo [System.Diagnostics.Conditional("DEBUG")] sobre los métodos correspondientes de GameLogger, de forma que las llamadas se eliminen por completo del build final en lugar de evaluarse y descartarse en tiempo de ejecución. Los niveles Info, Warning y Error sí deberán persistir en el build final.
+Los niveles `Trace` y `Debug` se habilitarán únicamente en configuraciones de desarrollo. En las versiones finales, el umbral se configurará como mínimo en `Info`. Los niveles `Info`, `Warn`, `Error` y `Fatal` permanecerán disponibles en la versión final, y cada appender podrá aplicar un umbral más alto según su destino.
+
+El filtrado se realizará en la configuración de `log4net`; no se agregarán condicionales de compilación o comprobaciones manuales alrededor de cada llamada. `log4net` habilita una solicitud cuando su nivel es igual o superior al umbral efectivo del logger (Apache Logging Services, s. f.-b).
 
 **Con estándar**
 
-```csharp
-[System.Diagnostics.Conditional("DEBUG")]
-public static void Trace(string category, string message)
-{
-    sink.Write(LogFormatter.Format(LogLevel.Trace, category, message));
-}
+```xml
+<root>
+  <level value="INFO" />
+  <appender-ref ref="RollingFileAppender" />
+</root>
 ```
 
 **Sin estándar**
 
-```csharp
-public static void Trace(string category, string message)
-{
-    if (BuildConfiguration.IsDebug)
-    {
-        sink.Write(LogFormatter.Format(LogLevel.Trace, category, message));
-    }
-}
+```xml
+<root>
+  <level value="DEBUG" />
+  <appender-ref ref="RollingFileAppender" />
+</root>
 ```
 
 ## 12. Gestión de estados, pantallas y UI
@@ -2385,94 +2464,6 @@ public sealed class EnemyTests
 }
 ```
 
-### 14.2 Nomenclatura de métodos de prueba
-
-**Nomenclatura de las clases de prueba**
-
-El nombre de una clase de prueba deberá formarse con el nombre de la clase probada y el sufijo `Tests`.
-
-**Con estándar**
-
-```csharp
-public sealed class DamageCalculatorTests
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-public sealed class DamageTests
-{
-}
-```
-
-**Idioma y capitalización**
-
-Los nombres de las pruebas deberán escribirse en inglés. Cada parte del nombre deberá utilizar `PascalCase` y separarse mediante un guion bajo.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_RestoreHealth_PlayerIsDamaged_RestoresMaximumHealth()
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void test_restaurarvida_jugadorDañado_funciona()
-{
-}
-```
-
-**Descripción del flujo**
-
-El flujo deberá describir la condición específica bajo la cual se ejecuta el método. No se utilizarán palabras genéricas como `Valid`, `Normal` o `Works` cuando exista una descripción más precisa.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_UseItem_InventoryIsEmpty_ReturnsFalse()
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_UseItem_Normal_Works()
-{
-}
-```
-
-**Descripción del resultado**
-
-La última parte del nombre deberá indicar el resultado observable esperado mediante expresiones como `Returns`, `Throws`, `Adds`, `Removes`, `Updates` o `DoesNotChange`.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_AddExperience_ExperienceReachesLimit_AddsLevel()
-{
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_AddExperience_ExperienceReachesLimit_ValidResult()
-{
-}
-```
-
 **Pruebas parametrizadas**
 
 Cuando el mismo comportamiento deba comprobarse con diferentes entradas, se utilizará `[TestCase]` en lugar de duplicar métodos. Cada ejecución parametrizada conservará un solo assert. El atributo `[TestCase]` identifica por sí mismo el método como una prueba parametrizada; no será necesario agregar `[Test]` al mismo método (NUnit Project, s. f.-d).
@@ -2514,15 +2505,15 @@ public void Test_CalculateDamage_DifferentValues_ReturnsSomething()
 }
 ```
 
-### 14.3 Estructura Arrange-Act-Assert
+### 14.2 Estructura Arrange-Act-Assert
 
 Cada prueba deberá seguir el patrón Arrange-Act-Assert:
 
-1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
-2. **Act:** ejecuta una sola operación sobre el objeto probado.
-3. **Assert:** comprueba un único resultado observable.
+1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
+2. **Act:** ejecuta una sola operación sobre el objeto probado.
+3. **Assert:** comprueba un único resultado observable.
 
-Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
+Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
 
 **Con estándar**
 
@@ -2669,7 +2660,7 @@ public void Test_GetAttackPower_PlayerHasWeapon_ReturnsTotalAttackPower()
 
 Cuando se pruebe una excepción, la operación se representará mediante un delegado creado en la etapa Act. `Assert.Throws` ejecutará ese delegado durante la etapa Assert. Esta es una excepción intencional a la separación estricta entre Act y Assert, porque la comprobación requiere observar la excepción producida al ejecutar el delegado (NUnit Project, s. f.-a).
 
-### 14.4 Un assert por test
+### 14.3 Un assert por test
 
 Cada prueba deberá contener un solo assert. Esta es una política del equipo que busca que cada método verifique un único comportamiento y permita identificar con precisión la causa de un fallo. NUnit recomienda intentar mantener un assert por prueba, aunque el framework también admite la agrupación de varias comprobaciones (NUnit Project, s. f.-b).
 
@@ -2780,58 +2771,13 @@ public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
 }
 ```
 
-_verificar esto_
-**Prohibición de `Assert.Multiple` y `Assert.EnterMultipleScope`**
-
-No se utilizarán `Assert.Multiple` ni `Assert.EnterMultipleScope` en las pruebas unitarias del proyecto, ya que permiten agrupar varios asserts dentro de una sola prueba y contradicen la política del equipo de verificar un comportamiento por método. Esta prohibición es una decisión del equipo y no una limitación de NUnit.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_LevelUp_ExperienceReachesLimit_IncreasesLevel()
-{
-    Player player = new PlayerBuilder()
-        .WithLevel(InitialLevel)
-        .WithExperience(ExperienceBeforeLevelUp)
-        .Build();
-
-    player.AddExperience(EarnedExperience);
-
-    Assert.That(player.Level, Is.EqualTo(ExpectedLevel));
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_LevelUp_ExperienceReachesLimit_UpdatesPlayer()
-{
-    Player player = new PlayerBuilder()
-        .WithLevel(InitialLevel)
-        .WithExperience(ExperienceBeforeLevelUp)
-        .Build();
-
-    player.AddExperience(EarnedExperience);
-
-    Assert.Multiple(() =>
-    {
-        Assert.That(player.Level, Is.EqualTo(ExpectedLevel));
-        Assert.That(player.Experience, Is.EqualTo(ExpectedExperience));
-    });
-}
-```
-
-### 14.5 Mocking de dependencias (interfaces + NSubstitute/Moq)
+### 14.4 Mocking de dependencias
 
 Los mocks deberán utilizarse únicamente para reemplazar dependencias externas o colaboradores cuyo comportamiento necesite controlarse durante una prueba.
 
 El código de producción deberá depender de interfaces recibidas mediante el constructor. No deberá crear internamente implementaciones concretas de sus dependencias.
 
-El equipo deberá seleccionar NSubstitute o Moq y utilizar una sola biblioteca en todo el proyecto. Los ejemplos siguientes muestran ambas alternativas, pero no deberán mezclarse dentro de la misma base de pruebas.
-
-NSubstitute permite configurar resultados mediante `Returns()` y verificar llamadas mediante `Received()`. Moq proporciona las operaciones equivalentes mediante `Setup()` y `Verify()` (Devlooped, 2024; NSubstitute, s. f.).
+El proyecto utilizará exclusivamente NSubstitute como biblioteca de mocking. Las dependencias se configurarán mediante `Returns()` y las interacciones se verificarán mediante `Received()` (NSubstitute, s. f.).
 
 **Dependencias mediante interfaces**
 
@@ -2840,6 +2786,11 @@ Las dependencias sustituibles deberán representarse mediante interfaces y recib
 **Con estándar**
 
 ```csharp
+public interface IInventory
+{
+    void Add(Item item);
+}
+
 public sealed class RewardService
 {
     private readonly IInventory _inventory;
@@ -2870,9 +2821,9 @@ public sealed class RewardService
 }
 ```
 
-**Selección de una biblioteca de mocking**
+**Biblioteca de mocking**
 
-El proyecto deberá utilizar NSubstitute o Moq. No deberán incluirse ambas bibliotecas dentro del mismo proyecto de pruebas.
+Todos los proyectos de pruebas deberán importar NSubstitute junto con NUnit. No se incluirán otras bibliotecas de mocking.
 
 **Con estándar**
 
@@ -2884,14 +2835,14 @@ using NUnit.Framework;
 **Sin estándar**
 
 ```csharp
-using Moq;
 using NSubstitute;
 using NUnit.Framework;
+using OtherMockingLibrary;
 ```
 
 **Configuración mediante NSubstitute**
 
-Cuando el proyecto utilice NSubstitute, las dependencias deberán crearse mediante `Substitute.For<T>()` y configurarse mediante `Returns()`.
+Las dependencias deberán crearse mediante `Substitute.For<T>()`. Cuando sea necesario controlar el valor devuelto por un miembro, este se configurará mediante `Returns()`.
 
 **Con estándar**
 
@@ -2931,7 +2882,7 @@ public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
 
 **Verificación mediante NSubstitute**
 
-Cuando se compruebe una interacción, `Received()` será la única verificación de la prueba.
+Cuando se compruebe una interacción, `Received()` será la única verificación de la prueba. Se deberán especificar tanto la cantidad esperada de llamadas como los argumentos exactos.
 
 **Con estándar**
 
@@ -2966,91 +2917,6 @@ public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 }
 ```
 
-**Configuración mediante Moq**
-
-Cuando el proyecto utilice Moq, las dependencias deberán crearse mediante `Mock<T>` y configurarse mediante `Setup()`.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
-{
-    Mock<ISaveGameRepository> saveGameRepositoryMock =
-        new Mock<ISaveGameRepository>();
-    Player expectedPlayer = new PlayerBuilder().Build();
-    saveGameRepositoryMock
-        .Setup(repository => repository.Load(PlayerSlot))
-        .Returns(expectedPlayer);
-    LoadGameService loadGameService =
-        new LoadGameService(saveGameRepositoryMock.Object);
-
-    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
-
-    Assert.That(actualPlayer, Is.SameAs(expectedPlayer));
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
-{
-    Mock<FileSaveGameRepository> saveGameRepositoryMock =
-        new Mock<FileSaveGameRepository>();
-    LoadGameService loadGameService =
-        new LoadGameService(saveGameRepositoryMock.Object);
-
-    Player actualPlayer = loadGameService.LoadPlayer(PlayerSlot);
-
-    Assert.That(actualPlayer, Is.Not.Null);
-}
-```
-
-**Verificación mediante Moq**
-
-Cuando se compruebe una interacción mediante Moq, `Verify()` será la única verificación de la prueba.
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
-{
-    Mock<IInventory> inventoryMock = new Mock<IInventory>();
-    Item reward = new ItemBuilder().Build();
-    RewardService rewardService =
-        new RewardService(inventoryMock.Object);
-
-    rewardService.GrantReward(reward);
-
-    inventoryMock.Verify(
-        inventory => inventory.Add(reward),
-        Times.Once);
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
-{
-    Mock<IInventory> inventoryMock = new Mock<IInventory>();
-    Item reward = new ItemBuilder().Build();
-    RewardService rewardService =
-        new RewardService(inventoryMock.Object);
-
-    rewardService.GrantReward(reward);
-
-    inventoryMock.Verify(
-        inventory => inventory.Add(It.IsAny<Item>()));
-    inventoryMock.Verify(
-        inventory => inventory.Add(reward));
-}
-```
-
 **Objetos que no deben sustituirse**
 
 No se crearán mocks de entidades, objetos de valor ni de la clase que se está probando. Estos objetos deberán construirse directamente o mediante builders.
@@ -3070,7 +2936,7 @@ Player player = Substitute.For<Player>();
 player.Health.Returns(InitialHealth);
 ```
 
-### 14.6 Métodos builder para objetos de prueba complejos
+### 14.5 Métodos builder para objetos de prueba complejos
 
 Los builders de prueba se utilizarán para crear objetos complejos con valores válidos por defecto. Su propósito será reducir la repetición y permitir que cada prueba sobrescriba únicamente los valores relevantes para el escenario evaluado.
 
@@ -3353,19 +3219,36 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 
 ### 15.1 Librerías/paquetes utilizados
 
+| Paquete | Uso en el proyecto |
+| --- | --- |
+| `log4net` | Registro de eventos mediante los niveles `Debug`, `Info`, `Warn`, `Error` y `Fatal`. |
+| `log4net.Ext.Trace` | Incorporación del nivel `Trace` requerido por este estándar. |
+| `NUnit` | Escritura y ejecución de pruebas unitarias y de integración. |
+| `NSubstitute` | Sustitución de dependencias en pruebas. |
+
 ### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
+
+## 16. Declaración de uso de inteligencia artificial
 
 <div style="page-break-after: always;"></div>
 
-## 16. Referencias
+## 17. Referencias
+
+- Apache Logging Services. (s. f.-a). *Apache log4net release notes*. Recuperado el 25 de agosto de 2026, de [https://logging.apache.org/log4net/log4net-3.0.0/release/release-notes.html](https://logging.apache.org/log4net/log4net-3.0.0/release/release-notes.html)
+
+- Apache Logging Services. (s. f.-b). *Introduction*. Recuperado el 25 de agosto de 2026, de [https://logging.apache.org/log4net/manual/introduction.html](https://logging.apache.org/log4net/manual/introduction.html)
 
 - Cwalina, K., Barton, J., & Abrams, B. (2020). *Framework design guidelines: Conventions, idioms, and patterns for reusable .NET libraries* (3.ª ed.). Addison-Wesley Professional. [https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372](https://www.informit.com/store/framework-design-guidelines-conventions-idioms-and-9780135896372)
 
-- Devlooped. (2024, 4 de julio). *Quickstart*. GitHub. [https://github.com/devlooped/moq/wiki/Quickstart](https://github.com/devlooped/moq/wiki/Quickstart)
+- Microsoft. (2023a, 3 de octubre). *Names of type members*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members)
 
-- Microsoft. (2023, 3 de octubre). *Names of type members*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members)
+- Microsoft. (2023b, 3 de noviembre). *Creating and throwing exceptions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions)
 
-- Microsoft. (2024, 27 de septiembre). *C# compiler options for language feature rules*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language)
+- Microsoft. (2023c, 17 de mayo). *SYSLIB0051: Legacy serialization support APIs are obsolete*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/fundamentals/syslib-diagnostics/syslib0051](https://learn.microsoft.com/en-us/dotnet/fundamentals/syslib-diagnostics/syslib0051)
+
+- Microsoft. (2024a, 27 de septiembre). *C# compiler options for language feature rules*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language)
+
+- Microsoft. (2024b, 30 de octubre). *Restricting accessor accessibility*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/restricting-accessor-accessibility](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/restricting-accessor-accessibility)
 
 - Microsoft. (2025a, 22 de octubre). *Best practices for exceptions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)
 
@@ -3377,6 +3260,8 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 
 - Microsoft. (2025e, 29 de mayo). *Names of classes, structs, and interfaces*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces)
 
+- Microsoft. (2025f, 19 de noviembre). *Properties*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties)
+
 - Microsoft. (2026a, 2 de abril). *CA1031: Do not catch general exception types*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1031](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1031)
 
 - Microsoft. (2026b, 14 de julio). *C# identifier naming rules and conventions*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
@@ -3385,7 +3270,7 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 
 - Microsoft. (2026d, 24 de marzo). *`switch` expression: Pattern matching expressions using the `switch` keyword*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression)
 
-- Microsoft. (2026e, 20 de enero). *XML API documentation comments*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
+- Microsoft. (2026e, 14 de agosto). *Recommended XML documentation tags*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags)
 
 - NSubstitute. (s. f.). *Getting started*. Recuperado el 22 de agosto de 2026, de [https://nsubstitute.github.io/help/getting-started/](https://nsubstitute.github.io/help/getting-started/)
 
@@ -3408,5 +3293,3 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 - McConnell, S. (2004). Code complete (2nd ed.). Microsoft Press.
 
 - Chuvakin, A., Schmidt, K., & Phillips, C. (2013). Logging and log management: The authoritative guide to understanding the concepts surrounding logging and log management. Syngress.
-
-- Karwin, B. (2010). SQL antipatterns: Avoiding the pitfalls of database programming. Pragmatic Bookshelf.
