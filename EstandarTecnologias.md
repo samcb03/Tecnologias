@@ -36,7 +36,7 @@
 
 ## 1. Introducción
 
-En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado.
+En este documento se definen las reglas a seguir para el desarrollo de nuestro proyecto de videojuego, tomando como base las convenciones oficiales “Microsoft C# Coding Conventions” que aseguran consistencia en el código, con el fin de que sea fácil de leer, entender y de mantener para cualquier miembro del equipo, además de unificar el formato para evitar problemas. Este estándar además de cubrir que el código se vea estético, sino también reglas de estructuras  que nos permitirán integrar las mecánicas en un producto final estable y unificado (Microsoft, 2025d; Martin, 2008).
 
 ### 1.1 Problemática
 
@@ -44,7 +44,7 @@ El desarrollo de un videojuego en un entorno escolar empleando buenas prácticas
 
 ### 1.2 Propósito
 
-Se busca garantizar que el desarrollo del videojuego cumpla con los pilares de calidad necesarios para un producto final estable:
+Se busca garantizar que el desarrollo del videojuego cumpla con los pilares de calidad necesarios para un producto final estable (Martin, 2008; McConnell, 2004):
 - `Mantenibilidad`: asegurar que la arquitectura sea legible, escalable y comprensible para cualquier desarrollador del equipo, preservando su integridad técnica a largo plazo.
 - `Detección temprana de errores`: facilitar la identificación de inconsistencias o desviaciones del estándar durante las revisiones de código, mitigando riesgos antes de las fases de entrega.
 - `Productividad`: optimizar el flujo de trabajo al unificar criterios de formato, permitiendo que el equipo priorice la resolución de mecánicas y lógica de diseño sobre debates estéticos.
@@ -53,7 +53,7 @@ Se busca garantizar que el desarrollo del videojuego cumpla con los pilares de c
 
 ### 1.3 Idioma del código
 
-El código fuente se escribirá en inglés. Esta regla incluye los nombres de clases, métodos, variables, parámetros, constantes, comentarios y pruebas. También se escribirán en inglés los identificadores de la base de datos, incluidos los nombres de tablas, columnas, vistas, índices, restricciones y procedimientos almacenados. Los textos visibles para el usuario podrán escribirse en español según los requisitos del producto.
+El código fuente se escribirá en inglés. Esta regla incluye los nombres de clases, métodos, variables, parámetros, constantes, comentarios y pruebas. También se escribirán en inglés los identificadores de la base de datos, incluidos los nombres de tablas, columnas, vistas, índices, restricciones y procedimientos almacenados. Los textos visibles para el usuario podrán escribirse en español según los requisitos del producto (Microsoft, 2026b).
 
 Los identificadores deberán ser comprensibles y consistentes en todo el sistema. El uso del inglés es una decisión del equipo que evita mezclar idiomas entre el código, las pruebas y el esquema de datos; las convenciones oficiales de C# también recomiendan nombres claros y legibles para los identificadores (Microsoft, 2026b).
 
@@ -97,9 +97,9 @@ public void PerderVida()
 
 ## 4 Reglas de nombrado
 
-Los identificadores deberán escribirse en inglés y describir claramente su propósito. Se priorizará la claridad sobre la brevedad y se evitarán abreviaturas, palabras reservadas y nombres de un solo carácter. Se permitirán identificadores de una letra únicamente en contadores de ciclos, excepciones capturadas y parámetros de eventos cuando su alcance sea menor o igual a tres líneas. También se permitirá el parámetro `e` cuando forme parte de la firma convencional de un manejador de eventos.
+Los identificadores deberán escribirse en inglés y describir claramente su propósito. Se priorizará la claridad sobre la brevedad y se evitarán abreviaturas, palabras reservadas y nombres de un solo carácter. Se permitirán identificadores de una letra únicamente en contadores de ciclos, excepciones capturadas y parámetros de eventos cuando su alcance sea menor o igual a tres líneas. También se permitirá el parámetro `e` cuando forme parte de la firma convencional de un manejador de eventos (Microsoft, 2026b).
 
-No se utilizarán dos guiones bajos consecutivos, ya que estos nombres están reservados para identificadores generados por el compilador.
+No se utilizarán dos guiones bajos consecutivos, ya que estos nombres están reservados para identificadores generados por el compilador (Microsoft, 2026b).
 
 C# utiliza principalmente:
 
@@ -111,9 +111,9 @@ Estas reglas corresponden a las convenciones oficiales para identificadores de C
 
 ### 4.1 Variables y parámetros
 
-Las variables locales y los parámetros deberán escribirse utilizando `camelCase`. Sus nombres deberán ser sustantivos o frases nominales que permitan comprender qué información almacenan.
+Las variables locales y los parámetros deberán escribirse utilizando `camelCase`. Sus nombres deberán ser sustantivos o frases nominales que permitan comprender qué información almacenan (Microsoft, 2026b).
 
-Se evitarán nombres de un solo carácter, excepto en contadores de ciclos simples como `i`, `j` o `k`, en excepciones capturadas como `e` y en parámetros de eventos convencionales, siempre que su alcance sea menor o igual a tres líneas.
+Se evitarán nombres de un solo carácter, excepto en contadores de ciclos simples como `i`, `j` o `k`, en excepciones capturadas como `ex` y en parámetros de eventos convencionales, siempre que su alcance sea menor o igual a tres líneas (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -127,7 +127,7 @@ int remainingLives = 3;
 int rl = 3;
 ```
 
-Los parámetros también deberán tener nombres descriptivos.
+Los parámetros también deberán tener nombres descriptivos (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -147,7 +147,7 @@ public void AddExperience(int exp)
 
 ### 4.2 Colecciones
 
-Las variables y propiedades que representen colecciones deberán utilizar nombres en plural para indicar que contienen varios elementos.
+Las variables y propiedades que representen colecciones deberán utilizar nombres en plural para indicar que contienen varios elementos (Microsoft, 2023a; Microsoft, 2026b).
 
 **Con estándar**
 
@@ -161,11 +161,11 @@ List<Enemy> activeEnemies = new();
 List<Enemy> activeEnemy = new();
 ```
 
-El nombre no deberá incluir palabras como `List`, `Collection` o `Dictionary` cuando el plural o el concepto de dominio ya permitan identificar claramente su contenido. El nombre deberá describir qué elementos contiene o qué relación representa, no la estructura concreta utilizada para almacenarlos.
+El nombre no deberá incluir palabras como `List`, `Collection` o `Dictionary` cuando el plural o el concepto de dominio ya permitan identificar claramente su contenido. El nombre deberá describir qué elementos contiene o qué relación representa, no la estructura concreta utilizada para almacenarlos (Microsoft, 2023a; Microsoft, 2026b).
 
 ### 4.3 Booleanos
 
-Los identificadores booleanos deberán expresar una condición afirmativa. Cuando ayude a comprender su significado, se utilizarán prefijos como `Is`, `Has` o `Can`, respetando el tipo de capitalización correspondiente.
+Los identificadores booleanos deberán expresar una condición afirmativa. Cuando ayude a comprender su significado, se utilizarán prefijos como `Is`, `Has` o `Can`, respetando el tipo de capitalización correspondiente (Microsoft, 2023a; Microsoft, 2026b).
 
 **Con estándar**
 
@@ -185,7 +185,7 @@ bool cannotAttack = false;
 
 ### 4.4 Declaración y sombreado de variables
 
-Se deberá declarar una sola variable por línea para mejorar la claridad del código.
+Se deberá declarar una sola variable por línea para mejorar la claridad del código (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -200,7 +200,7 @@ int enemyScore = 0;
 int playerScore = 0, enemyScore = 0;
 ```
 
-También deberá evitarse el sombreado, que ocurre cuando una variable local utiliza el mismo nombre que un campo de la clase.
+También deberá evitarse el sombreado, que ocurre cuando una variable local utiliza el mismo nombre que un campo de la clase (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -226,8 +226,7 @@ public void AddScore(int earnedPoints)
 ```
 
 #### 4.4.1 Uso de `var`
-// TODO entender esto
-Las variables locales deberán declarar su tipo de forma explícita. `var` solo podrá utilizarse cuando el lenguaje lo requiera, por ejemplo, para almacenar un tipo anónimo producido por una consulta LINQ. No se utilizará `var` con el resultado de un método, porque el tipo no puede determinarse únicamente al leer la asignación.
+Las variables locales deberán declarar su tipo de forma explícita. `var` solo podrá utilizarse cuando el lenguaje lo requiera, por ejemplo, para almacenar un tipo anónimo producido por una consulta LINQ. No se utilizará `var` con el resultado de un método, porque el tipo no puede determinarse únicamente al leer la asignación (Microsoft, 2025d; convención interna del equipo para restringir `var`).
 
 Microsoft permite `var` cuando el tipo es evidente en el lado derecho de la asignación y desaconseja usarlo cuando el lector tendría que inferirlo a partir del nombre de un método. (Microsoft, 2025d).
 
@@ -245,7 +244,7 @@ var damageResult = damageCalculator.Calculate(attack);
 
 ### 4.5 Campos privados e internos
 
-Todos los campos privados o internos deberán escribirse utilizando `_camelCase`, sin cambiar el prefijo por tratarse de un campo estático. Por lo tanto, no se utilizará la convención `s_camelCase`.
+Todos los campos privados o internos deberán escribirse utilizando `_camelCase`, sin cambiar el prefijo por tratarse de un campo estático. Por lo tanto, no se utilizará la convención `s_camelCase` (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -265,9 +264,9 @@ private static int s_activePlayers;
 
 ### 4.6 Propiedades
 
-Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado. No se agregarán los prefijos `Get` o `Set`, porque la lectura y la escritura ya se expresan mediante los accesores de la propiedad.
+Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado. No se agregarán los prefijos `Get` o `Set`, porque la lectura y la escritura ya se expresan mediante los accesores de la propiedad (Microsoft, 2023a; Microsoft, 2025f).
 
-Se utilizará la forma de acceso que corresponda al ciclo de vida del valor:
+Se utilizará la forma de acceso que corresponda al ciclo de vida del valor (Microsoft, 2024b; Microsoft, 2025f):
 
 - `{ get; set; }`: únicamente cuando cualquier consumidor autorizado pueda leer y modificar el valor, como en un DTO.
 - `{ get; private set; }`: cuando el valor pueda consultarse públicamente, pero solo la propia clase deba modificarlo.
@@ -299,7 +298,7 @@ Las propiedades booleanas deberán expresar condiciones afirmativas y las propie
 
 ### 4.6.1 Propiedades con campo de respaldo
 
-Cuando asignar un valor requiera una validación o transformación breve, la propiedad deberá utilizar un campo de respaldo explícito y accesores `get` y `set`. Los accesores no deberán ejecutar operaciones de dominio, emitir eventos, escribir logs ni realizar entrada o salida. Los cambios que representen acciones del juego deberán exponerse mediante métodos, como `ReceiveDamage` o `RestoreHealth`.
+Cuando asignar un valor requiera una validación o transformación breve, la propiedad deberá utilizar un campo de respaldo explícito y accesores `get` y `set`. Los accesores no deberán ejecutar operaciones de dominio, emitir eventos, escribir logs ni realizar entrada o salida. Los cambios que representen acciones del juego deberán exponerse mediante métodos, como `ReceiveDamage` o `RestoreHealth` (Microsoft, 2025f; convención interna del equipo sobre operaciones de dominio).
 
 El campo de respaldo deberá ser privado, utilizar `_camelCase` y no exponerse directamente. Las propiedades permiten ocultar la verificación del valor y restringir la accesibilidad de la escritura sin cambiar la forma en que el consumidor consulta el dato (Microsoft, 2025f).
 
@@ -344,7 +343,7 @@ public int CurrentHealth
 
 ### 4.7 Constantes
 
-Las constantes de C# deberán escribirse en `PascalCase`. Esta regla se aplicará tanto a constantes públicas como privadas y locales.
+Las constantes de C# deberán escribirse en `PascalCase`. Esta regla se aplicará tanto a constantes públicas como privadas y locales (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -358,11 +357,11 @@ private const int MaximumLives = 3;
 private const int MAXIMUM_LIVES = 3;
 ```
 
-Las constantes deberán representar valores que no cambien durante la ejecución.
+Las constantes deberán representar valores que no cambien durante la ejecución (Microsoft, 2025d).
 
 ### 4.8 Métodos
 
-Los métodos y las funciones locales deberán escribirse utilizando `PascalCase`. Sus nombres deberán ser verbos o frases verbales que indiquen claramente la acción que realizan.
+Los métodos y las funciones locales deberán escribirse utilizando `PascalCase`. Sus nombres deberán ser verbos o frases verbales que indiquen claramente la acción que realizan (Microsoft, 2023a; Microsoft, 2026b).
 
 **Con estándar**
 
@@ -402,7 +401,7 @@ public int calculateDamage(int baseDamage, int defensePoints)
 
 ### 4.9 Eventos
 
-Los eventos deberán escribirse utilizando `PascalCase` y nombrarse con verbos o frases verbales. Se utilizará el presente para eventos que ocurren antes de una acción y el pasado para los que ocurren después.
+Los eventos deberán escribirse utilizando `PascalCase` y nombrarse con verbos o frases verbales. Se utilizará el presente para eventos que ocurren antes de una acción y el pasado para los que ocurren después (Microsoft, 2023a).
 
 Por ejemplo:
 
@@ -435,20 +434,20 @@ Los métodos protegidos que disparen un evento deberán comenzar con `On`, segui
 
 ### 4.10 Métodos de prueba unitaria
 
-Los métodos de prueba deberán utilizar el siguiente formato:
+Los métodos de prueba deberán utilizar el siguiente formato (Microsoft, 2025b; convención interna del equipo):
 
 ```csharp
 Test_MethodName_Scenario_ExpectedResult
 ```
 
-Cada parte tendrá la siguiente función:
+Cada parte tendrá la siguiente función (Microsoft, 2025b; convención interna del equipo):
 
 - `Test`: prefijo obligatorio que identifica el método como una prueba.
 - `MethodName`: nombre exacto del método que se está probando.
 - `Scenario`: condición o escenario evaluado.
 - `ExpectedResult`: comportamiento observable esperado.
 
-Todas las partes del nombre deberán escribirse en inglés, utilizar `PascalCase` y separarse mediante guiones bajos.
+Todas las partes del nombre deberán escribirse en inglés, utilizar `PascalCase` y separarse mediante guiones bajos (Microsoft, 2025b; convención interna del equipo).
 
 **Con estándar**
 
@@ -470,7 +469,7 @@ Las partes `MethodName`, `Scenario` y `ExpectedResult` coinciden con la recomend
 
 ### 4.11 Clases, estructuras y registros
 
-Los nombres de clases, estructuras y registros deberán escribirse utilizando `PascalCase`. Deberán ser sustantivos o frases nominales que describan la entidad o concepto que representan.
+Los nombres de clases, estructuras y registros deberán escribirse utilizando `PascalCase`. Deberán ser sustantivos o frases nominales que describan la entidad o concepto que representan (Microsoft, 2025e; Microsoft, 2026b).
 
 **Con estándar**
 
@@ -498,7 +497,7 @@ public struct damage_result
 
 ### 4.12 Interfaces
 
-Las interfaces deberán escribirse utilizando `PascalCase` y comenzar con la letra mayúscula `I`.
+Las interfaces deberán escribirse utilizando `PascalCase` y comenzar con la letra mayúscula `I` (Microsoft, 2025e; Microsoft, 2026b).
 
 **Con estándar**
 
@@ -518,7 +517,7 @@ public interface EnemySpawnerInterface
 }
 ```
 
-Cuando una clase sea la implementación principal de una interfaz, sus nombres deberán diferenciarse únicamente por el prefijo `I`.
+Cuando una clase sea la implementación principal de una interfaz, sus nombres deberán diferenciarse únicamente por el prefijo `I` (Microsoft, 2025e).
 
 **Con estándar**
 
@@ -562,7 +561,7 @@ Las reglas para clases e interfaces están recogidas en las guías oficiales de 
 
 ### 4.13 Parámetros de tipo genérico
 
-Los parámetros genéricos deberán comenzar con la letra mayúscula `T`. Se podrá utilizar únicamente `T` cuando el significado sea evidente o un nombre descriptivo como `TEntity` cuando proporcione mayor claridad.
+Los parámetros genéricos deberán comenzar con la letra mayúscula `T`. Se podrá utilizar únicamente `T` cuando el significado sea evidente o un nombre descriptivo como `TEntity` cuando proporcione mayor claridad (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -582,9 +581,9 @@ public class ObjectPool<EntityType>
 
 ### 4.14 Enumeraciones
 
-Los nombres de las enumeraciones y sus valores deberán escribirse utilizando `PascalCase`.
+Los nombres de las enumeraciones y sus valores deberán escribirse utilizando `PascalCase` (Microsoft, 2025e; Microsoft, 2026b).
 
-Las enumeraciones normales deberán utilizar un nombre singular. Las enumeraciones que representen una combinación de indicadores deberán utilizar un nombre plural. No se agregarán los sufijos `Enum`,`Flag` o `Flags`.
+Las enumeraciones normales deberán utilizar un nombre singular. Las enumeraciones que representen una combinación de indicadores deberán utilizar un nombre plural. No se agregarán los sufijos `Enum`,`Flag` o `Flags` (Microsoft, 2025e).
 
 **Con estándar**
 
@@ -610,7 +609,7 @@ public enum EnemyStateEnum
 
 ### 4.15 Espacios de nombres
 
-Los espacios de nombres deberán utilizar `PascalCase`. Sus componentes se separarán mediante puntos y deberán representar de forma clara el proyecto y la funcionalidad agrupada.
+Los espacios de nombres deberán utilizar `PascalCase`. Sus componentes se separarán mediante puntos y deberán representar de forma clara el proyecto y la funcionalidad agrupada (Microsoft, 2026b).
 
 **Con estándar**
 
@@ -626,7 +625,7 @@ namespace company_name.game_name.combat;
 
 ### 4.16 Sufijos oficiales por responsabilidad
 
-Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la responsabilidad correspondiente:
+Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la responsabilidad correspondiente (Microsoft, 2025e):
 
 - `Exception`: excepciones personalizadas.
 - `EventArgs`: clases que contienen información de un evento.
@@ -634,7 +633,7 @@ Se utilizarán los siguientes sufijos cuando el tipo cumpla realmente con la res
 - `Attribute`: atributos personalizados.
 - `Stream`: tipos especializados de flujo de datos.
 
-No se agregarán los sufijos `Collection` o `Dictionary` únicamente para indicar la estructura de almacenamiento. Si se crea un tipo especializado, su nombre deberá expresar la responsabilidad de dominio, por ejemplo, `Inventory` o `EnemyRegistry`.
+No se agregarán los sufijos `Collection` o `Dictionary` únicamente para indicar la estructura de almacenamiento. Si se crea un tipo especializado, su nombre deberá expresar la responsabilidad de dominio, por ejemplo, `Inventory` o `EnemyRegistry` (Microsoft, 2025e).
 
 **Con estándar**
 
@@ -662,7 +661,7 @@ public sealed class DamageReceivedData : EventArgs
 
 ## 5 Estilo de código
 
-El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos.
+El código deberá mantener un formato uniforme que facilite su lectura, revisión y mantenimiento. Las reglas de esta sección se aplicarán a todos los archivos (Microsoft, 2025c; Microsoft, 2025d).
 
 Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, una instrucción por línea y líneas de continuación indentadas. Estas reglas toman como base las convenciones de código oficiales de C# (Microsoft, 2025d).
 
@@ -670,7 +669,7 @@ Se utilizarán cuatro espacios para la indentación, llaves con estilo Allman, u
 
 **Indentación de cuatro espacios**
 
-Por cada nivel de indentación se utilizarán cuatro espacios.
+Por cada nivel de indentación se utilizarán cuatro espacios (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -704,11 +703,11 @@ public sealed class EnemyController
 
 **Uso de espacios en lugar de tabuladores**
 
-La indentación deberá realizarse con espacios. No se utilizarán tabuladores, ya que su anchura puede cambiar entre editores.
+La indentación deberá realizarse con espacios. No se utilizarán tabuladores, ya que su anchura puede cambiar entre editores (Microsoft, 2025c; Microsoft, 2025d).
 
 **Colocación de llaves**
 
-Las llaves deberán seguir el estilo Allman. La llave de apertura y la llave de cierre se colocarán en líneas independientes y alineadas con la declaración correspondiente.
+Las llaves deberán seguir el estilo Allman. La llave de apertura y la llave de cierre se colocarán en líneas independientes y alineadas con la declaración correspondiente (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -729,7 +728,7 @@ public void HealPlayer() {
 
 **Una instrucción por línea**
 
-Cada línea deberá contener una sola instrucción.
+Cada línea deberá contener una sola instrucción (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -746,7 +745,7 @@ player.ReceiveDamage(damage); enemy.StartAttack();
 
 **Una declaración por línea**
 
-Cada variable deberá declararse en una línea independiente.
+Cada variable deberá declararse en una línea independiente (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -763,7 +762,7 @@ int currentHealth = player.Health, maximumHealth = player.MaximumHealth;
 
 **Límite de 120 caracteres**
 
-Ninguna línea deberá superar los 120 caracteres. Cuando una instrucción exceda el límite, deberá dividirse en varias líneas.
+Ninguna línea deberá superar los 120 caracteres. Cuando una instrucción exceda el límite, deberá dividirse en varias líneas (McConnell, 2004; convención interna del equipo para el límite de 120 caracteres).
 
 **Con estándar**
 
@@ -782,7 +781,7 @@ BattleResult battleResult = battleService.ResolveBattle(selectedDifficulty, curr
 
 **Indentación de líneas de continuación**
 
-Las líneas de continuación deberán indentarse cuatro espacios adicionales respecto de la línea original. Cuando una expresión se divida antes de un operador, todos los operadores deberán mantener la misma alineación.
+Las líneas de continuación deberán indentarse cuatro espacios adicionales respecto de la línea original. Cuando una expresión se divida antes de un operador, todos los operadores deberán mantener la misma alineación (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -802,7 +801,7 @@ int totalDamage = baseDamage
 
 **Distribución de argumentos**
 
-Cuando una llamada deba dividirse por superar el límite de columna, se colocará un argumento por línea. El paréntesis de cierre se alineará con el inicio de la instrucción.
+Cuando una llamada deba dividirse por superar el límite de columna, se colocará un argumento por línea. El paréntesis de cierre se alineará con el inicio de la instrucción (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -824,7 +823,7 @@ Enemy enemy = enemyFactory.Create(enemyType,
 
 **Separación entre secciones del archivo**
 
-Se dejará una línea en blanco entre el bloque de directivas `using`, la declaración del espacio de nombres y la declaración del tipo.
+Se dejará una línea en blanco entre el bloque de directivas `using`, la declaración del espacio de nombres y la declaración del tipo (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -850,7 +849,7 @@ public sealed class Player
 
 **Separación entre grupos de miembros**
 
-Se dejará una línea en blanco entre campos, constructores, propiedades y métodos cuando pertenezcan a grupos distintos.
+Se dejará una línea en blanco entre campos, constructores, propiedades y métodos cuando pertenezcan a grupos distintos (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -875,7 +874,7 @@ public Player(int initialHealth)
 
 **Separación entre métodos**
 
-Se dejará una línea en blanco entre dos métodos consecutivos.
+Se dejará una línea en blanco entre dos métodos consecutivos (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -906,7 +905,7 @@ public void Defend()
 
 **Separación de etapas lógicas**
 
-Dentro de un método se utilizará una línea en blanco cuando sea necesario distinguir dos etapas lógicas de una operación.
+Dentro de un método se utilizará una línea en blanco cuando sea necesario distinguir dos etapas lógicas de una operación (Microsoft, 2025d; McConnell, 2004).
 
 **Con estándar**
 
@@ -935,7 +934,7 @@ public void CompleteLevel()
 
 **Cantidad de líneas en blanco**
 
-No se utilizarán varias líneas en blanco consecutivas. Una sola línea será suficiente para separar bloques relacionados.
+No se utilizarán varias líneas en blanco consecutivas. Una sola línea será suficiente para separar bloques relacionados (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -969,7 +968,7 @@ public int Health
 
 **Espacio después de palabras clave**
 
-Se colocará un espacio después de las palabras clave `if`, `for`, `foreach`, `while`, `switch`, `catch` y `using` cuando estén seguidas de una expresión.
+Se colocará un espacio después de las palabras clave `if`, `for`, `foreach`, `while`, `switch`, `catch` y `using` cuando estén seguidas de una expresión (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -991,7 +990,7 @@ if(player.IsAlive)
 
 **Espacios alrededor de operadores binarios**
 
-Se colocará un espacio a cada lado de los operadores binarios, como `=`, `+`, `-`,`==`, `!=`, `&&` y `||`.
+Se colocará un espacio a cada lado de los operadores binarios, como `=`, `+`, `-`,`==`, `!=`, `&&` y `||` (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -1007,7 +1006,7 @@ int totalDamage=baseDamage+bonusDamage;
 
 **Espacio entre un método y su paréntesis**
 
-No se colocará un espacio entre el nombre de un método y el paréntesis de apertura.
+No se colocará un espacio entre el nombre de un método y el paréntesis de apertura (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -1023,7 +1022,7 @@ player.RestoreHealth ();
 
 **Espacios dentro de paréntesis**
 
-No se colocarán espacios inmediatamente después de un paréntesis de apertura ni antes de uno de cierre.
+No se colocarán espacios inmediatamente después de un paréntesis de apertura ni antes de uno de cierre (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -1039,7 +1038,7 @@ enemy.ReceiveDamage( damage );
 
 **Espacio después de comas**
 
-Se colocará un espacio después de cada coma que separe argumentos, parámetros o elementos.
+Se colocará un espacio después de cada coma que separe argumentos, parámetros o elementos (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -1055,7 +1054,7 @@ MovePlayer(horizontalDirection,verticalDirection);
 
 **Espaciado de operadores unarios**
 
-Los operadores unarios, como `!`, `++` y `--`, no se separarán de su operando.
+Los operadores unarios, como `!`, `++` y `--`, no se separarán de su operando (Microsoft, 2025c).
 
 **Con estándar**
 
@@ -1071,7 +1070,7 @@ remainingEnemies --;
 
 **Alineación manual con espacios**
 
-No se agregarán espacios adicionales para alinear declaraciones manualmente. Cada elemento deberá conservar únicamente el espacio requerido por la sintaxis.
+No se agregarán espacios adicionales para alinear declaraciones manualmente. Cada elemento deberá conservar únicamente el espacio requerido por la sintaxis (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1091,7 +1090,7 @@ string playerName    = player.Name;
 
 **Ubicación de las directivas `using`**
 
-Las directivas `using` deberán colocarse fuera de la declaración del espacio de nombres.
+Las directivas `using` deberán colocarse fuera de la declaración del espacio de nombres (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1120,7 +1119,7 @@ namespace AdventureGame.Inventory
 
 **Orden de las directivas `using`**
 
-Las directivas formarán un único bloque continuo, sin líneas en blanco entre ellas. Primero se colocarán los espacios de nombres del sistema, después los de bibliotecas externas y finalmente los pertenecientes al proyecto.
+Las directivas formarán un único bloque continuo, sin líneas en blanco entre ellas. Primero se colocarán los espacios de nombres del sistema, después los de bibliotecas externas y finalmente los pertenecientes al proyecto (Microsoft, 2025d; convención interna del equipo para la agrupación).
 
 **Con estándar**
 
@@ -1140,7 +1139,7 @@ using PathfindingLibrary;
 
 **Orden alfabético dentro de cada grupo**
 
-Las directivas `using` deberán ordenarse alfabéticamente dentro del grupo al que pertenezcan.
+Las directivas `using` deberán ordenarse alfabéticamente dentro del grupo al que pertenezcan (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1160,7 +1159,7 @@ using System.Collections.Generic;
 
 **Bloque continuo de directivas `using`**
 
-No se insertarán líneas en blanco dentro del bloque de directivas `using`.
+No se insertarán líneas en blanco dentro del bloque de directivas `using` (Microsoft, 2025d; convención interna del equipo).
 
 **Con estándar**
 
@@ -1182,7 +1181,7 @@ using AdventureGame.Characters;
 
 **Directivas duplicadas o sin utilizar**
 
-No se conservarán directivas `using` duplicadas ni directivas que no sean utilizadas por el archivo.
+No se conservarán directivas `using` duplicadas ni directivas que no sean utilizadas por el archivo (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1214,7 +1213,7 @@ public sealed class Inventory
 
 **Alias y directivas `using static`**
 
-Los alias y las directivas `using static` se colocarán después de las directivas ordinarias. Solo se utilizarán cuando eviten una ambigüedad o mejoren claramente la lectura.
+Los alias y las directivas `using static` se colocarán después de las directivas ordinarias. Solo se utilizarán cuando eviten una ambigüedad o mejoren claramente la lectura (Microsoft, 2025d; convención interna del equipo para el orden).
 
 **Con estándar**
 
@@ -1236,7 +1235,7 @@ using System;
 
 **Declaración del espacio de nombres**
 
-Se utilizará una declaración de espacio de nombres con ámbito de archivo para evitar un nivel de indentación innecesario.
+Se utilizará una declaración de espacio de nombres con ámbito de archivo para evitar un nivel de indentación innecesario (Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1261,7 +1260,7 @@ namespace AdventureGame.Characters
 
 **Cantidad de tipos públicos por archivo**
 
-Cada archivo deberá contener un único tipo público principal. El nombre del archivo deberá coincidir con el nombre de ese tipo.
+Cada archivo deberá contener un único tipo público principal. El nombre del archivo deberá coincidir con el nombre de ese tipo (Microsoft, 2025d; convención interna del equipo).
 
 **Con estándar — archivo `EnemyManager.cs`**
 
@@ -1289,7 +1288,7 @@ public sealed class EnemyFactory
 
 ### 5.4 Orden de miembros de la clase
 
-Los miembros de una clase deberán conservar el siguiente orden general:
+Los miembros de una clase deberán conservar el siguiente orden general (Microsoft, 2025d; convención interna del equipo):
 
 1. Constantes.
 2. Campos estáticos.
@@ -1302,7 +1301,7 @@ Los miembros de una clase deberán conservar el siguiente orden general:
 9. Métodos privados.
 10. Tipos anidados.
 
-Los ejemplos de esta regla deberán mostrar la clase completa para que el orden de todos los grupos pueda evaluarse en conjunto.
+Los ejemplos de esta regla deberán mostrar la clase completa para que el orden de todos los grupos pueda evaluarse en conjunto (Microsoft, 2025d; convención interna del equipo).
 
 **Con estándar**
 
@@ -1391,7 +1390,7 @@ public sealed class PlayerController
 
 ### 6.1 Llaves
 
-El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción.
+El uso de llaves será obligatorio en la totalidad de las estructuras de control (if, else, for, while, do-while, switch), sin excepción para bloques que contengan una única instrucción (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1413,7 +1412,7 @@ if (amount > 0)
 
 ### 6.2 Condicionales
 
-La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior.
+La palabra clave `if` y su expresión condicional deben ir en la misma línea. Cuando exista un `else` o `else if`, la palabra clave `else` se escribirá en su propia línea, nunca compartiendo línea con la llave de cierre del bloque anterior (Microsoft, 2025c; Microsoft, 2025d).
 
 **Con estándar**
 
@@ -1444,7 +1443,7 @@ if (_currentHealth <= 0)
 
 ### 6.3 Bucles
 
-La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas o colecciones nuevas en cada iteración cuando esas asignaciones puedan reutilizarse.
+La cláusula de inicialización de un bucle `for` no deberá declarar ni actualizar más de tres variables. Adicionalmente, un bucle que se ejecute una vez por cuadro o con alta frecuencia deberá evitar operaciones que creen objetos, cadenas o colecciones nuevas en cada iteración cuando esas asignaciones puedan reutilizarse (Martin, 2008; convención interna del equipo para el máximo de variables).
 
 **Con estándar**
 
@@ -1468,7 +1467,7 @@ for (int enemyIndex = 0, tickCount = 0, totalDamage = 0, poisonStacks = 0; enemy
 
 **Sentencia `switch`**
 
-Toda sentencia `switch` deberá incluir una etiqueta `default`. Cada sección con instrucciones deberá terminar explícitamente con `break`, `return`, `throw`. La etiqueta `default` obligatoria es una política de legibilidad del equipo.
+Toda sentencia `switch` deberá incluir una etiqueta `default`. Cada sección con instrucciones deberá terminar explícitamente con `break`, `return`, `throw`. La etiqueta `default` obligatoria es una política de legibilidad del equipo (Microsoft, 2026c; convención interna del equipo para la obligatoriedad de `default`).
 
 **Con estándar**
 
@@ -1502,7 +1501,7 @@ switch (currentGameState)
 
 ### 6.5 Operador ternario
 
-El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá utilizarse cuando la condición sea una única expresión booleana simple, sin más de un operador lógico. Ambas ramas deben ser expresiones del mismo tipo que retornen un valor; no se permite invocar métodos void en ninguna rama. Se prohíbe anidar operadores ternarios.
+El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá utilizarse cuando la condición sea una única expresión booleana simple, sin más de un operador lógico. Ambas ramas deben ser expresiones del mismo tipo que retornen un valor; no se permite invocar métodos void en ninguna rama. Se prohíbe anidar operadores ternarios (Microsoft, 2025d; convención interna del equipo para la complejidad permitida).
 
 **Con estándar**
 
@@ -1520,7 +1519,7 @@ string statusLabel = (_isGameOver && _livesRemaining <= 0 && !_isRespawning) ? "
 
 ### 7.1 Uso y selección de excepciones
 
-Las excepciones se utilizarán únicamente en servicios y componentes de infraestructura, donde una operación pueda fallar por una condición verdaderamente excepcional. Las entidades, objetos de valor y componentes de presentación no utilizarán excepciones para representar resultados esperados del juego, como un inventario lleno, una habilidad en enfriamiento o una acción no disponible; esos casos se comunicarán mediante valores de retorno o tipos de resultado.
+Las excepciones se utilizarán únicamente en servicios y componentes de infraestructura, donde una operación pueda fallar por una condición verdaderamente excepcional. Las entidades, objetos de valor y componentes de presentación no utilizarán excepciones para representar resultados esperados del juego, como un inventario lleno, una habilidad en enfriamiento o una acción no disponible; esos casos se comunicarán mediante valores de retorno o tipos de resultado (Microsoft, 2025a; convención interna del equipo para limitar las capas que lanzan excepciones).
 
 Antes de crear una excepción personalizada, se utilizará el tipo estándar que describa con mayor precisión el error. No se lanzarán excepciones para controlar el flujo normal. Microsoft recomienda evitar excepciones para condiciones frecuentes, seleccionar tipos predefinidos y reservar `try`/`catch` para errores de los que el código pueda recuperarse (Microsoft, 2025a; Microsoft, 2023b).
 
@@ -1620,11 +1619,11 @@ public class SaveError : ApplicationException
 
 ### 7.2 `try`, `catch`, `finally` y relanzamiento
 
-Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo más específico posible y las cláusulas se ordenarán desde la excepción más derivada hasta la menos derivada. Si el servicio no puede recuperarse, no deberá capturar la excepción. Una excepción capturada deberá manejarse, registrarse, relanzarse mediante `throw;` o envolverse conservando la excepción original en `InnerException`.
+Los bloques `catch` nunca deberán quedar vacíos. Se capturará el tipo más específico posible y las cláusulas se ordenarán desde la excepción más derivada hasta la menos derivada. Si el servicio no puede recuperarse, no deberá capturar la excepción. Una excepción capturada deberá manejarse, registrarse, relanzarse mediante `throw;` o envolverse conservando la excepción original en `InnerException` (Microsoft, 2025a; Microsoft, 2026a).
 
 No se capturarán `Exception` ni `SystemException` en servicios ordinarios. `Exception` solo podrá capturarse en el límite superior de la aplicación para registrar un fallo no controlado y terminar o propagar la operación de forma segura. `SystemException` no deberá capturarse de forma explícita. Para preservar la traza original se utilizará `throw;`, nunca `throw exception;` (Microsoft, 2025a; Microsoft, 2026a).
 
-Los recursos que implementen `IDisposable` se liberarán preferentemente mediante una declaración `using`. `finally` se reservará para limpieza imprescindible que no pueda expresarse mediante `using`.
+Los recursos que implementen `IDisposable` se liberarán preferentemente mediante una declaración `using`. `finally` se reservará para limpieza imprescindible que no pueda expresarse mediante `using` (Microsoft, 2025a).
 
 **Con estándar**
 
@@ -1685,7 +1684,7 @@ public sealed class LoadGameService
 
 ### 7.3 Null-checking (?., ??, tipos de referencia anulables)
 
-El proyecto habilita los tipos de referencia anulables (\<Nullable>enable\</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible.
+El proyecto habilita los tipos de referencia anulables (\<Nullable>enable\</Nullable>). Un campo o parámetro de tipo referencia que legítimamente puede estar ausente se declara con ? (por ejemplo, WeaponData? equippedWeapon), y se accede mediante los operadores ?. y ?? en lugar de comprobaciones explícitas de if (x != null) cuando sea posible (Microsoft, 2024a).
 
 Los tipos de referencia anulables permiten declarar qué variables pueden contener `null` y hacen que el compilador advierta cuando el uso del código no coincide con esa declaración, sin alterar el comportamiento en tiempo de ejecución. El contexto anulable se habilita mediante la opción `<Nullable>enable</Nullable>` del proyecto (Microsoft, 2024a).
 
@@ -1732,7 +1731,7 @@ La gestión de la complejidad en el código fuente es un pilar fundamental para 
 
 ### 8.1 Números mágicos
 
-Se prohíbe el uso de literales numéricos distintos de `0`, `1` y `-1` cuando se usen como valores triviales de inicialización, incremento o comparación de signo directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio, como umbrales de vida, cantidades de inventario, tiempos de aparición o identificadores de ranura, deberá declararse como una constante (`const`) o como un campo de solo lectura (`static readonly`) con un nombre descriptivo.
+Se prohíbe el uso de literales numéricos distintos de `0`, `1` y `-1` cuando se usen como valores triviales de inicialización, incremento o comparación de signo directamente dentro de una expresión o instrucción. Todo valor numérico con significado de negocio, como umbrales de vida, cantidades de inventario, tiempos de aparición o identificadores de ranura, deberá declararse como una constante (`const`) o como un campo de solo lectura (`static readonly`) con un nombre descriptivo (Martin, 2008; convención interna del equipo para las excepciones `0`, `1` y `-1`).
 
 
 **Con estándar**
@@ -1763,7 +1762,7 @@ public class HealthSystem
 
 ### 8.2 Complejidad ciclomática máxima
 
-Ningún método podrá superar una complejidad ciclomática de 10, medida como el número de caminos linealmente independientes en su grafo de flujo de control. 
+Ningún método podrá superar una complejidad ciclomática de 10, medida como el número de caminos linealmente independientes en su grafo de flujo de control (McCabe, 1976; convención interna del equipo para el límite de 10). 
 
 **Con estándar**
 
@@ -1874,7 +1873,7 @@ public class CombatResolver
 
 ### 8.3 Número máximo de parámetros por método
 
-Todo método podrá recibir como máximo tres parámetros. Cuando la operación requiera más datos de entrada, estos deberán agruparse en un tipo dedicado (struct o class según corresponda por la sección 10.7 de este estándar), en lugar de ampliar la firma del método.
+Todo método podrá recibir como máximo tres parámetros. Cuando la operación requiera más datos de entrada, estos deberán agruparse en un tipo dedicado (struct o class según corresponda por la sección 10.7 de este estándar), en lugar de ampliar la firma del método (McConnell, 2004; convención interna del equipo para el máximo de tres parámetros).
 
  McConnell (2004) reporta que las firmas de método extensas dificultan tanto la lectura en el punto de llamada como la comprobación del orden correcto de los argumentos, y recomienda agrupar parámetros relacionados en un objeto propio cuando su número crece. 
 
@@ -1902,7 +1901,7 @@ public Enemy Spawn(EnemyType type, float positionX, float positionY, float posit
 
 ### 8.4 Número máximo de operadores lógicos por expresión
 
-Ninguna expresión condicional podrá contener más de tres operadores lógicos o de comparación (&&, ||, ==, !=, <, >, <=, >=) combinados en una misma línea. Cuando una condición requiera evaluar más criterios, estos deberán descomponerse en variables booleanas intermedias con nombre descriptivo.
+Ninguna expresión condicional podrá contener más de tres operadores lógicos o de comparación (&&, ||, ==, !=, <, >, <=, >=) combinados en una misma línea. Cuando una condición requiera evaluar más criterios, estos deberán descomponerse en variables booleanas intermedias con nombre descriptivo (McCabe, 1976; Martin, 2008; convención interna del equipo para el máximo de tres operadores).
 
 **Con estándar**
 
@@ -1953,13 +1952,13 @@ public class SaveSystem
 
 ## 10. Comentarios y documentación
 
-Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente.
+Todo fragmento de código que se desvíe de una norma del estándar, que implemente una decisión de diseño no evidente o que resuelva un caso especial deberá estar acompañado de un comentario que explique el motivo de dicha decisión, no únicamente lo que hace el código. Los comentarios se escriben en inglés, por consistencia con el resto del código fuente (Microsoft, 2025d; Martin, 2008).
 
 ### 10.1 Comentarios de bloque
 
-Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 10.2.
+Los comentarios de bloque (`/* ... */`) se utilizarán de manera excepcional cuando una justificación necesite conservarse como un bloque breve de varias líneas. Se colocarán antes del código al que se refieren, precedidos por una línea en blanco y al mismo nivel de indentación. Cuando una sola línea sea suficiente, se utilizará el formato `//` definido en 10.2 (Microsoft, 2025d; convención interna del equipo sobre comentarios de bloque).
 
-Los comentarios de bloque nunca deberán utilizarse para construir separadores decorativos mediante líneas de asteriscos.
+Los comentarios de bloque nunca deberán utilizarse para construir separadores decorativos mediante líneas de asteriscos (Microsoft, 2025d; convención interna del equipo).
 
 Las convenciones de Microsoft utilizan comentarios `//` para explicaciones breves y desaconsejan los comentarios de bloque para explicaciones extensas. Por ello, `/* ... */` se mantiene como una excepción limitada del equipo y nunca se utilizará como separador decorativo (Microsoft, 2025d).
 
@@ -1984,7 +1983,7 @@ _saveSerializer.Write(saveData);
 
 ### 10.2 Comentarios de línea
 
-Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código.
+Los comentarios de una sola línea (`//`) inician con mayúscula, terminan con punto y llevan un espacio entre `//` y el texto. Se colocan en su propia línea, precedidos por una línea en blanco cuando aportan claridad; no se colocan al final de una línea de código (Microsoft, 2025d).
 
 Los comentarios de línea constituyen el formato habitual para justificar decisiones no evidentes. La convención oficial de C# indica que el comentario se coloca en una línea separada, inicia con mayúscula, termina con punto y lleva un espacio después del delimitador (Microsoft, 2025d).
 
@@ -2013,13 +2012,13 @@ if (_currentHealth > MinimumHealth) // skip regeneration once the player has alr
 
 ### 10.3 Comentarios de documentación XML (///)
 
-La documentación XML (`///`) se utilizará únicamente en las clases de servicio, las interfaces públicas de servicio y sus miembros públicos. Las entidades, objetos de valor, componentes internos y clases de prueba no deberán documentarse con XML salvo que formen parte de un contrato público. Esta delimitación es una decisión del equipo para evitar documentación repetitiva en miembros cuyo propósito ya es evidente.
+La documentación XML (`///`) se utilizará únicamente en las clases de servicio, las interfaces públicas de servicio y sus miembros públicos. Las entidades, objetos de valor, componentes internos y clases de prueba no deberán documentarse con XML salvo que formen parte de un contrato público. Esta delimitación es una decisión del equipo para evitar documentación repetitiva en miembros cuyo propósito ya es evidente (Microsoft, 2026e; convención interna del equipo sobre el alcance de la documentación).
 
 Todo servicio público deberá incluir como mínimo `<summary>`. Cada miembro documentado agregará las etiquetas que correspondan a su firma y comportamiento. El texto deberá escribirse en inglés, con oraciones completas, y colocarse inmediatamente antes del elemento, sin una línea en blanco. La documentación deberá ser XML bien formado (Microsoft, 2026e).
 
-Los ejemplos de este estándar podrán omitir la documentación XML cuando estén demostrando una regla diferente. Esta excepción editorial evita llenar los ejemplos con información ajena al punto evaluado; no se aplicará al código de producción.
+Los ejemplos de este estándar podrán omitir la documentación XML cuando estén demostrando una regla diferente. Esta excepción editorial evita llenar los ejemplos con información ajena al punto evaluado; no se aplicará al código de producción (Microsoft, 2026e; convención editorial interna del equipo).
 
-Las etiquetas oficiales se utilizarán de la siguiente manera:
+Las etiquetas oficiales se utilizarán de la siguiente manera (Microsoft, 2026e):
 
 | Etiqueta o atributo | Uso |
 | --- | --- |
@@ -2121,9 +2120,9 @@ public sealed class SaveGameService
 
 ### 10.4 Comentarios especiales (TODO, FIXME)
 
-`TODO` marca funcionalidad pendiente de implementar; `FIXME` marca un comportamiento incorrecto conocido que debe corregirse. Ambos se escriben en mayúsculas, se colocan inmediatamente antes de la sección de código correspondiente, y deben ir acompañados de una descripción clara del pendiente. Todo comentario `TODO` o `FIXME` debe resolverse antes de la entrega final.
+`TODO` marca funcionalidad pendiente de implementar; `FIXME` marca un comportamiento incorrecto conocido que debe corregirse. Ambos se escriben en mayúsculas, se colocan inmediatamente antes de la sección de código correspondiente, y deben ir acompañados de una descripción clara del pendiente. Todo comentario `TODO` o `FIXME` debe resolverse antes de la entrega final (Microsoft, 2025d; convención interna del equipo).
 
-El reconocimiento automático de estos tokens dependerá del editor utilizado. La obligación de resolverlos antes de la entrega se mantiene independientemente de que el editor los muestre en una lista de tareas.
+El reconocimiento automático de estos tokens dependerá del editor utilizado. La obligación de resolverlos antes de la entrega se mantiene independientemente de que el editor los muestre en una lista de tareas (Microsoft, 2025d; convención interna del equipo).
 
 **Con estándar**
 
@@ -2141,11 +2140,11 @@ ActivateSpecialAbility();
 
 ## 11. Manejo de logs y categorización de errores
 
-El registro de eventos (logging) es el mecanismo principal para diagnosticar el comportamiento de un videojuego una vez que ya no se está depurando paso a paso dentro del editor, especialmente en sistemas que se ejecutan por frame (spawn de enemigos, resolución de combate) o que involucran persistencia (guardado de partida). Esta sección regula la herramienta de logging a utilizar, los niveles disponibles, el criterio para elegir cada nivel, el formato del mensaje y la diferencia de comportamiento entre el editor y el build final.
+El registro de eventos (logging) es el mecanismo principal para diagnosticar el comportamiento de un videojuego una vez que ya no se está depurando paso a paso dentro del editor, especialmente en sistemas que se ejecutan por frame (spawn de enemigos, resolución de combate) o que involucran persistencia (guardado de partida). Esta sección regula la herramienta de logging a utilizar, los niveles disponibles, el criterio para elegir cada nivel, el formato del mensaje y la diferencia de comportamiento entre el editor y el build final (Chuvakin et al., 2013).
 
 ### 11.1 Sistema/herramienta de logging
 
-El proyecto utilizará `log4net` como biblioteca de logging. Debido a que el estándar también exige el nivel `Trace`, se utilizará la extensión oficial `log4net.Ext.Trace`, la cual agrega `ITraceLog` y `TraceLogManager` sobre los niveles principales de `log4net`.
+El proyecto utilizará `log4net` como biblioteca de logging. Debido a que el estándar también exige el nivel `Trace`, se utilizará la extensión oficial `log4net.Ext.Trace`, la cual agrega `ITraceLog` y `TraceLogManager` sobre los niveles principales de `log4net` (Apache Logging Services, s. f.-a, s. f.-b).
 
 Cada clase que necesite registrar eventos declarará un único logger privado, estático y de solo lectura. El campo se llamará `_logger`, de acuerdo con la regla 4.5, sin utilizar el prefijo `s_`. Queda prohibido utilizar `Console.WriteLine`, `Debug.WriteLine` o crear un sistema de niveles paralelo a `log4net`. Apache documenta `log4net.Ext.Trace` como la extensión que añade el nivel `Trace` y define `Debug`, `Info`, `Warn`, `Error` y `Fatal` como los niveles principales de `ILog` (Apache Logging Services, s. f.-a, s. f.-b).
 
@@ -2196,7 +2195,7 @@ public sealed class SaveGameService
 
 ### 11.2 Niveles de log: Trace, Debug, Info, Warn, Error y Fatal
 
-Se utilizarán seis niveles, ordenados de menor a mayor severidad: `Trace`, `Debug`, `Info`, `Warn`, `Error` y `Fatal`. En el código se escribirá `Warn`, no `Warning`, porque ese es el nombre del método expuesto por `log4net`. Los niveles `All` y `Off` se reservarán para configuración y filtrado; no se utilizarán para registrar eventos.
+Se utilizarán seis niveles, ordenados de menor a mayor severidad: `Trace`, `Debug`, `Info`, `Warn`, `Error` y `Fatal`. En el código se escribirá `Warn`, no `Warning`, porque ese es el nombre del método expuesto por `log4net`. Los niveles `All` y `Off` se reservarán para configuración y filtrado; no se utilizarán para registrar eventos (Apache Logging Services, s. f.-a, s. f.-b).
 
 La documentación de Apache establece el orden `Debug < Info < Warn < Error < Fatal`; `Trace` se incorpora por debajo de `Debug` mediante la extensión oficial (Apache Logging Services, s. f.-a, s. f.-b).
 
@@ -2219,7 +2218,7 @@ Console.WriteLine("Something happened.");
 
 ### 11.3 Criterio de aplicación por nivel (contexto de juego)
 
-Cada nivel deberá reservarse para el siguiente tipo de evento:
+Cada nivel deberá reservarse para el siguiente tipo de evento (Apache Logging Services, s. f.-a, s. f.-b; Chuvakin et al., 2013):
 
 - `Trace`: eventos de muy alta frecuencia usados solo para depuración fina (posición del jugador en cada ciclo de actualización, cada iteración de un bucle de física).
 - `Debug`: información de desarrollo no crítica (valores intermedios de una fórmula de daño, estado de una máquina de estados de un enemigo).
@@ -2269,9 +2268,9 @@ if (items.Count >= MaximumSlots)
 
 ### 11.4 Formato del mensaje
 
-Los mensajes se escribirán en inglés, iniciarán con mayúscula y terminarán con punto. Deberán describir un evento específico e incluir el contexto mínimo necesario para diagnosticarlo. El nombre del logger identificará la clase de origen, por lo que no se repetirá manualmente como categoría dentro del mensaje.
+Los mensajes se escribirán en inglés, iniciarán con mayúscula y terminarán con punto. Deberán describir un evento específico e incluir el contexto mínimo necesario para diagnosticarlo. El nombre del logger identificará la clase de origen, por lo que no se repetirá manualmente como categoría dentro del mensaje (Apache Logging Services, s. f.-b; Chuvakin et al., 2013).
 
-Los valores dinámicos se enviarán mediante los métodos terminados en `Format`, como `InfoFormat`, en vez de concatenar cadenas. Cuando se registre una excepción se utilizará la sobrecarga que recibe el mensaje y el objeto `Exception`, para conservar la traza. No se registrarán contraseñas, tokens, datos personales ni contenido completo de archivos de guardado.
+Los valores dinámicos se enviarán mediante los métodos terminados en `Format`, como `InfoFormat`, en vez de concatenar cadenas. Cuando se registre una excepción se utilizará la sobrecarga que recibe el mensaje y el objeto `Exception`, para conservar la traza. No se registrarán contraseñas, tokens, datos personales ni contenido completo de archivos de guardado (Apache Logging Services, s. f.-b; Chuvakin et al., 2013).
 
 **Con estándar**
 
@@ -2293,7 +2292,7 @@ _logger.Info("Enemy spawned: " + request.Type.ToString());
 
 ### 11.5 Logs en entornos de desarrollo y versiones finales
 
-Los niveles `Trace` y `Debug` se habilitarán únicamente en configuraciones de desarrollo. En las versiones finales, el umbral se configurará como mínimo en `Info`. Los niveles `Info`, `Warn`, `Error` y `Fatal` permanecerán disponibles en la versión final, y cada appender podrá aplicar un umbral más alto según su destino.
+Los niveles `Trace` y `Debug` se habilitarán únicamente en configuraciones de desarrollo. En las versiones finales, el umbral se configurará como mínimo en `Info`. Los niveles `Info`, `Warn`, `Error` y `Fatal` permanecerán disponibles en la versión final, y cada appender podrá aplicar un umbral más alto según su destino (Apache Logging Services, s. f.-b; Chuvakin et al., 2013).
 
 El filtrado se realizará en la configuración de `log4net`; no se agregarán condicionales de compilación o comprobaciones manuales alrededor de cada llamada. `log4net` habilita una solicitud cuando su nivel es igual o superior al umbral efectivo del logger (Apache Logging Services, s. f.-b).
 
@@ -2333,9 +2332,9 @@ El filtrado se realizará en la configuración de `log4net`; no se agregarán co
 
 ## 14. Pruebas unitarias
 
-Las pruebas unitarias deberán verificar comportamientos individuales del código de manera rápida, aislada, repetible y automática. No deberán depender de archivos reales, conexiones externas, servicios remotos, fechas del sistema ni otros recursos que puedan producir resultados variables.
+Las pruebas unitarias deberán verificar comportamientos individuales del código de manera rápida, aislada, repetible y automática. No deberán depender de archivos reales, conexiones externas, servicios remotos, fechas del sistema ni otros recursos que puedan producir resultados variables (Microsoft, 2025b).
 
-Las pruebas se escribirán utilizando NUnit como framework de referencia. Las dependencias podrán sustituirse mediante NSubstitute o Moq, pero el equipo deberá seleccionar una sola biblioteca de mocking y utilizarla consistentemente en todo el proyecto.
+Las pruebas se escribirán utilizando NUnit como framework de referencia. Las dependencias deberan sustituirse mediante NSubstitute (Microsoft, 2025b; NUnit Project, s. f.-c; NSubstitute, s. f.).
 
 Estas reglas se basan en las prácticas recomendadas para pruebas unitarias de .NET y en la documentación oficial de NUnit (Microsoft, 2025b; NUnit Project, s. f.-c).
 
@@ -2385,9 +2384,9 @@ public sealed class DamageCalculatorTests
 
 **Separación entre pruebas unitarias y de integración**
 
-Las pruebas unitarias y las pruebas de integración deberán almacenarse en proyectos o ensamblados separados.
+Las pruebas unitarias y las pruebas de integración deberán almacenarse en proyectos o ensamblados separados (Microsoft, 2025b; convención interna del equipo).
 
-Las pruebas unitarias se colocarán en `tests/AdventureGame.Tests.Unit`. Las pruebas de integración se colocarán en `tests/AdventureGame.Tests.Integration`.
+Las pruebas unitarias se colocarán en `tests/AdventureGame.Tests.Unit`. Las pruebas de integración se colocarán en `tests/AdventureGame.Tests.Integration` (Microsoft, 2025b; convención interna del equipo para las rutas).
 
 **Con estándar**
 
@@ -2407,7 +2406,7 @@ tests/Tests/SaveGameRepositoryTests.cs
 
 **Ubicación de pruebas unitarias**
 
-Las clases que prueben lógica aislada, cálculos, validaciones, reglas de combate o transformaciones de datos deberán colocarse dentro del proyecto de pruebas unitarias.
+Las clases que prueben lógica aislada, cálculos, validaciones, reglas de combate o transformaciones de datos deberán colocarse dentro del proyecto de pruebas unitarias (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2423,7 +2422,7 @@ tests/AdventureGame.Tests.Integration/Combat/DamageCalculatorTests.cs
 
 **Ubicación de pruebas de integración**
 
-Las pruebas que utilicen archivos reales, bases de datos, servicios externos o varios componentes concretos deberán colocarse dentro del proyecto de pruebas de integración.
+Las pruebas que utilicen archivos reales, bases de datos, servicios externos o varios componentes concretos deberán colocarse dentro del proyecto de pruebas de integración (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2439,7 +2438,7 @@ tests/AdventureGame.Tests.Unit/Saving/FileSaveGameRepositoryTests.cs
 
 **Correspondencia entre archivos y clases de prueba**
 
-Cada archivo deberá contener una sola clase de prueba. El nombre del archivo deberá coincidir con el nombre de la clase.
+Cada archivo deberá contener una sola clase de prueba. El nombre del archivo deberá coincidir con el nombre de la clase (Microsoft, 2025b; Microsoft, 2025d; convención interna del equipo).
 
 **Con estándar — archivo `PlayerTests.cs`**
 
@@ -2507,13 +2506,13 @@ public void Test_CalculateDamage_DifferentValues_ReturnsSomething()
 
 ### 14.2 Estructura Arrange-Act-Assert
 
-Cada prueba deberá seguir el patrón Arrange-Act-Assert:
+Cada prueba deberá seguir el patrón Arrange-Act-Assert (Microsoft, 2025b):
 
 1. **Arrange:** crea y configura los datos, dependencias y objeto probado.
 2. **Act:** ejecuta una sola operación sobre el objeto probado.
 3. **Assert:** comprueba un único resultado observable.
 
-Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura.
+Las tres etapas deberán separarse mediante una línea en blanco. No será necesario agregar comentarios `// Arrange`, `// Act` y `// Assert` cuando la separación y los nombres hagan evidente la estructura (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2548,7 +2547,7 @@ public void Test_CalculateDamage_EnemyHasDefense_ReturnsReducedDamage()
 
 **Contenido de Arrange**
 
-La etapa Arrange deberá contener únicamente la creación y configuración necesarias para el comportamiento probado. No se configurarán propiedades o dependencias que no influyan en el resultado.
+La etapa Arrange deberá contener únicamente la creación y configuración necesarias para el comportamiento probado. No se configurarán propiedades o dependencias que no influyan en el resultado (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2588,7 +2587,7 @@ public void Test_IsAlive_HealthIsPositive_ReturnsTrue()
 
 **Una operación en Act**
 
-La etapa Act deberá contener una sola operación principal. Si una prueba necesita ejecutar varias acciones independientes, deberá dividirse en pruebas separadas.
+La etapa Act deberá contener una sola operación principal. Si una prueba necesita ejecutar varias acciones independientes, deberá dividirse en pruebas separadas (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2624,7 +2623,7 @@ public void Test_PlayerActions_ValidValues_UpdatePlayer()
 
 **Separación de Act y Assert**
 
-La operación probada no deberá ejecutarse directamente dentro del assert. Su resultado deberá almacenarse en una variable con un nombre descriptivo.
+La operación probada no deberá ejecutarse directamente dentro del assert. Su resultado deberá almacenarse en una variable con un nombre descriptivo (Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2664,7 +2663,7 @@ Cuando se pruebe una excepción, la operación se representará mediante un dele
 
 Cada prueba deberá contener un solo assert. Esta es una política del equipo que busca que cada método verifique un único comportamiento y permita identificar con precisión la causa de un fallo. NUnit recomienda intentar mantener un assert por prueba, aunque el framework también admite la agrupación de varias comprobaciones (NUnit Project, s. f.-b).
 
-Una verificación de NSubstitute mediante `Received()` o de Moq mediante `Verify()` contará como el único assert de la prueba.
+Una verificación de NSubstitute mediante `Received()` contará como el único assert de la prueba (NSubstitute, s. f.; convención interna del equipo).
 
 **Con estándar**
 
@@ -2701,7 +2700,7 @@ public void Test_ReceiveDamage_ValidDamage_UpdatesPlayer()
 
 **Separación de comportamientos**
 
-Si una operación produce varios resultados que deben comprobarse por separado, se escribirá una prueba para cada comportamiento.
+Si una operación produce varios resultados que deben comprobarse por separado, se escribirá una prueba para cada comportamiento (Microsoft, 2025b; NUnit Project, s. f.-b).
 
 **Con estándar**
 
@@ -2739,7 +2738,7 @@ public void Test_ReceiveFatalDamage_DamageExceedsHealth_UpdatesEverything()
 
 **Excepciones esperadas**
 
-Cuando se espere una excepción, `Assert.Throws<TException>()` será el único assert de la prueba.
+Cuando se espere una excepción, `Assert.Throws<TException>()` será el único assert de la prueba (NUnit Project, s. f.-a; NUnit Project, s. f.-b).
 
 **Con estándar**
 
@@ -2773,15 +2772,15 @@ public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
 
 ### 14.4 Mocking de dependencias
 
-Los mocks deberán utilizarse únicamente para reemplazar dependencias externas o colaboradores cuyo comportamiento necesite controlarse durante una prueba.
+Los mocks deberán utilizarse únicamente para reemplazar dependencias externas o colaboradores cuyo comportamiento necesite controlarse durante una prueba (Microsoft, 2025b; NSubstitute, s. f.).
 
-El código de producción deberá depender de interfaces recibidas mediante el constructor. No deberá crear internamente implementaciones concretas de sus dependencias.
+El código de producción deberá depender de interfaces recibidas mediante el constructor. No deberá crear internamente implementaciones concretas de sus dependencias (Martin, 2008; Microsoft, 2025b).
 
 El proyecto utilizará exclusivamente NSubstitute como biblioteca de mocking. Las dependencias se configurarán mediante `Returns()` y las interacciones se verificarán mediante `Received()` (NSubstitute, s. f.).
 
 **Dependencias mediante interfaces**
 
-Las dependencias sustituibles deberán representarse mediante interfaces y recibirse mediante el constructor.
+Las dependencias sustituibles deberán representarse mediante interfaces y recibirse mediante el constructor (Martin, 2008; Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2823,7 +2822,7 @@ public sealed class RewardService
 
 **Biblioteca de mocking**
 
-Todos los proyectos de pruebas deberán importar NSubstitute junto con NUnit. No se incluirán otras bibliotecas de mocking.
+Todos los proyectos de pruebas deberán importar NSubstitute junto con NUnit. No se incluirán otras bibliotecas de mocking (NSubstitute, s. f.; NUnit Project, s. f.-c; convención interna del equipo).
 
 **Con estándar**
 
@@ -2842,7 +2841,7 @@ using OtherMockingLibrary;
 
 **Configuración mediante NSubstitute**
 
-Las dependencias deberán crearse mediante `Substitute.For<T>()`. Cuando sea necesario controlar el valor devuelto por un miembro, este se configurará mediante `Returns()`.
+Las dependencias deberán crearse mediante `Substitute.For<T>()`. Cuando sea necesario controlar el valor devuelto por un miembro, este se configurará mediante `Returns()` (NSubstitute, s. f.).
 
 **Con estándar**
 
@@ -2882,7 +2881,7 @@ public void Test_LoadPlayer_SaveExists_ReturnsStoredPlayer()
 
 **Verificación mediante NSubstitute**
 
-Cuando se compruebe una interacción, `Received()` será la única verificación de la prueba. Se deberán especificar tanto la cantidad esperada de llamadas como los argumentos exactos.
+Cuando se compruebe una interacción, `Received()` será la única verificación de la prueba. Se deberán especificar tanto la cantidad esperada de llamadas como los argumentos exactos (NSubstitute, s. f.; convención interna del equipo sobre cantidad y argumentos).
 
 **Con estándar**
 
@@ -2919,7 +2918,7 @@ public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 
 **Objetos que no deben sustituirse**
 
-No se crearán mocks de entidades, objetos de valor ni de la clase que se está probando. Estos objetos deberán construirse directamente o mediante builders.
+No se crearán mocks de entidades, objetos de valor ni de la clase que se está probando. Estos objetos deberán construirse directamente o mediante builders (Microsoft, 2025b; NSubstitute, s. f.).
 
 **Con estándar**
 
@@ -2938,13 +2937,13 @@ player.Health.Returns(InitialHealth);
 
 ### 14.5 Métodos builder para objetos de prueba complejos
 
-Los builders de prueba se utilizarán para crear objetos complejos con valores válidos por defecto. Su propósito será reducir la repetición y permitir que cada prueba sobrescriba únicamente los valores relevantes para el escenario evaluado.
+Los builders de prueba se utilizarán para crear objetos complejos con valores válidos por defecto. Su propósito será reducir la repetición y permitir que cada prueba sobrescriba únicamente los valores relevantes para el escenario evaluado (Fowler, 2018; Microsoft, 2025b).
 
-Los builders se almacenarán dentro de `tests/AdventureGame.Tests.Unit/Builders`. Su nombre deberá terminar con el sufijo `Builder`.
+Los builders se almacenarán dentro de `tests/AdventureGame.Tests.Unit/Builders`. Su nombre deberá terminar con el sufijo `Builder` (Fowler, 2018; convención interna del equipo para la ruta).
 
 **Uso de builders para objetos complejos**
 
-Se utilizará un builder cuando la creación directa de un objeto necesite varios parámetros o configuraciones.
+Se utilizará un builder cuando la creación directa de un objeto necesite varios parámetros o configuraciones (Fowler, 2018; Microsoft, 2025b).
 
 **Con estándar**
 
@@ -2973,7 +2972,7 @@ Player player = new Player(
 
 **Nomenclatura de builders**
 
-La clase deberá utilizar el nombre del objeto construido y el sufijo `Builder`. Los métodos de configuración deberán utilizar el prefijo `With` y escribirse en `PascalCase`.
+La clase deberá utilizar el nombre del objeto construido y el sufijo `Builder`. Los métodos de configuración deberán utilizar el prefijo `With` y escribirse en `PascalCase` (Fowler, 2018; Microsoft, 2026b; convención interna del equipo).
 
 **Con estándar**
 
@@ -3003,7 +3002,7 @@ public sealed class PlayerMaker
 
 **Valores válidos por defecto**
 
-Un builder deberá producir un objeto válido aunque no se invoque ningún método `With`. Los valores predeterminados deberán representar el caso más común y neutral.
+Un builder deberá producir un objeto válido aunque no se invoque ningún método `With`. Los valores predeterminados deberán representar el caso más común y neutral (Fowler, 2018; Microsoft, 2025b).
 
 **Con estándar**
 
@@ -3053,7 +3052,7 @@ public sealed class PlayerBuilder
 
 **Modificación de una propiedad por método**
 
-Cada método `With` deberá modificar una sola característica del objeto. No se utilizará un método para configurar varias propiedades sin relación directa.
+Cada método `With` deberá modificar una sola característica del objeto. No se utilizará un método para configurar varias propiedades sin relación directa (Fowler, 2018; Martin, 2008).
 
 **Con estándar**
 
@@ -3082,7 +3081,7 @@ public PlayerBuilder WithCombatValues(
 
 **Retorno del propio builder**
 
-Los métodos `With` deberán devolver la instancia actual mediante `return this;` para permitir el encadenamiento de llamadas.
+Los métodos `With` deberán devolver la instancia actual mediante `return this;` para permitir el encadenamiento de llamadas (Fowler, 2018).
 
 **Con estándar**
 
@@ -3106,7 +3105,7 @@ public void WithLevel(int level)
 
 **Creación de una instancia nueva**
 
-El método `Build()` deberá devolver una nueva instancia en cada llamada. No deberá reutilizar un objeto mutable construido anteriormente.
+El método `Build()` deberá devolver una nueva instancia en cada llamada. No deberá reutilizar un objeto mutable construido anteriormente (Fowler, 2018; Microsoft, 2025b).
 
 **Con estándar**
 
@@ -3141,7 +3140,7 @@ public Player Build()
 
 **Ausencia de validaciones y asserts**
 
-Los builders no deberán contener asserts ni reglas de prueba. Su única responsabilidad será construir objetos.
+Los builders no deberán contener asserts ni reglas de prueba. Su única responsabilidad será construir objetos (Fowler, 2018; Microsoft, 2025b).
 
 **Con estándar**
 
@@ -3175,7 +3174,7 @@ public Player Build()
 
 **Configuración mínima dentro de la prueba**
 
-Cada prueba deberá modificar únicamente las propiedades necesarias para representar su escenario.
+Cada prueba deberá modificar únicamente las propiedades necesarias para representar su escenario (Microsoft, 2025b; Fowler, 2018).
 
 **Con estándar**
 
@@ -3225,6 +3224,8 @@ public void Test_IsAlive_HealthIsZero_ReturnsFalse()
 | `log4net.Ext.Trace` | Incorporación del nivel `Trace` requerido por este estándar. |
 | `NUnit` | Escritura y ejecución de pruebas unitarias y de integración. |
 | `NSubstitute` | Sustitución de dependencias en pruebas. |
+
+Los usos asignados a estas dependencias corresponden con la documentación de sus respectivos proyectos (Apache Logging Services, s. f.-a, s. f.-b; NSubstitute, s. f.; NUnit Project, s. f.-c).
 
 ### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
 
