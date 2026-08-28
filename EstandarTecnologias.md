@@ -2314,6 +2314,80 @@ El filtrado se realizará en la configuración de `log4net`; no se agregarán co
 </root>
 ```
 
+### 11.6 Criterio para loggear una excepción
+
+No toda excepción capturada se registrará en el punto donde se captura. Una excepción se registrará únicamente en el punto donde se resuelve de forma definitiva dentro de la pila de llamadas: donde se maneja sin relanzarla, o donde se captura en el límite superior de la aplicación conforme a la regla 7.2. Si un bloque `catch` relanza la excepción mediante `throw`; o la envuelve en una excepción de dominio conservando la excepción original en `InnerException`, ese punto no registrará el evento, ya que el registro corresponde al nivel donde el flujo finalmente se detiene o se recupera. Esto evita que un mismo fallo aparezca duplicado en varios niveles de la pila, lo cual dificulta la auditoría en lugar de facilitarla.
+
+El nivel del registro se seleccionará con los criterios ya definidos en la sección 11.3: `Warn` si la operación se degrada pero el sistema continúa sin intervención del jugador, `Error` si la operación falla y afecta al jugador pero la aplicación permanece estable, y `Fatal` si compromete la continuidad segura de la aplicación. Un `catch` que maneje una condición esperada del flujo normal del juego no constituye una excepción registrable en este nivel de severidad, en congruencia con la regla 7.1, que reserva las excepciones para condiciones verdaderamente excepcionales.(Microsoft, 2025a; Microsoft, 2026a).
+
+**Con estándar**
+
+```xml
+
+public sealed class GameBootstrapper
+{
+    private static readonly ITraceLog _logger =
+        TraceLogManager.GetLogger(typeof(GameBootstrapper));
+
+    private readonly LoadGameService _loadGameService;
+
+    public GameBootstrapper(LoadGameService loadGameService)
+    {
+        _loadGameService = loadGameService;
+    }
+
+    public void StartGame(string checkpointPath)
+    {
+        try
+        {
+            SaveData saveData = _loadGameService.LoadCheckpoint(checkpointPath);
+        }
+        catch (SaveGameException exception)
+        {
+            _logger.Error(
+                "The game could not start from the checkpoint.",
+                exception);
+        }
+    }
+}
+```
+
+**Sin estándar**
+
+```xml
+
+public sealed class LoadGameService
+{
+    private static readonly ITraceLog _logger =
+        TraceLogManager.GetLogger(typeof(LoadGameService));
+
+    private readonly ISaveSerializer _saveSerializer;
+
+    public LoadGameService(ISaveSerializer saveSerializer)
+    {
+        _saveSerializer = saveSerializer;
+    }
+
+    public SaveData LoadCheckpoint(string checkpointPath)
+    {
+        try
+        {
+            return _saveSerializer.Read(checkpointPath);
+        }
+        catch (IOException exception)
+        {
+            _logger.Error(
+                "The checkpoint file could not be read.",
+                exception);
+
+            throw new SaveGameException(
+                "The checkpoint file could not be read.",
+                exception);
+        }
+    }
+}
+```
+
 ## 12. Gestión de estados, pantallas y UI
 
 ### 12.1 Navegación centralizada entre estados o pantallas
