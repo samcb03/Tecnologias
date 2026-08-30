@@ -341,6 +341,43 @@ public int CurrentHealth
 }
 ```
 
+### 4.6.2 Propiedades calculadas
+
+Cuando el valor de una propiedad se derive por completo de otros campos o propiedades, en lugar de almacenarse por sí mismo, se declarará como una propiedad de solo lectura sin campo de respaldo, utilizando un cuerpo de expresión (=>). Este tipo de propiedad no deberá tener accesor set, init ni backing field propio, ya que su valor siempre se recalcula a partir del estado existente.
+
+Una propiedad calculada nunca deberá ejecutar operaciones costosas, de entrada/salida, ni con efectos secundarios, dado que puede evaluarse en cualquier momento y un número indeterminado de veces. Si el cálculo requiere una operación costosa, deberá exponerse como un método en lugar de una propiedad (Microsoft, 2025f).
+
+**Con estándar**
+
+```csharp
+private const int MinimumHealth = 0;
+
+private int _currentHealth;
+
+public bool IsAlive => _currentHealth > MinimumHealth;
+````
+
+**Sin estándar**
+
+```csharp
+
+private int _currentHealth;
+private bool _isAlive;
+
+public bool IsAlive
+{
+    get
+    {
+        return _isAlive;
+    }
+    set
+    {
+        _isAlive = value;
+    }
+}
+
+```
+
 ### 4.7 Constantes
 
 Las constantes de C# deberán escribirse en `PascalCase`. Esta regla se aplicará tanto a constantes públicas como privadas y locales (Microsoft, 2026b).
@@ -657,6 +694,37 @@ public sealed class InsufficientManaError : Exception
 public sealed class DamageReceivedData : EventArgs 
 { 
 }
+```
+
+## 4.17 
+
+Los nombres de tablas, columnas, vistas, procedimientos almacenados y demás objetos de la base de datos se escribirán en inglés, manteniendo consistencia con el resto de los identificadores del proyecto definidos en la sección 1.3. Los nombres deberán ser claros y describir el dato o la entidad que representan, evitando abreviaturas innecesarias.
+
+Las tablas se nombrarán en PascalCase y en plural, siguiendo el mismo criterio utilizado para las colecciones en la sección 4.2. Las columnas se nombrarán en PascalCase y en singular, salvo que representen por sí mismas una colección de valores.
+
+**Con estándar**
+
+```sql
+
+CREATE TABLE Players
+(
+    PlayerId INT PRIMARY KEY,
+    PlayerName NVARCHAR(50) NOT NULL,
+    CurrentHealth INT NOT NULL
+);
+```
+
+**Sin estándar**
+
+```sql
+
+CREATE TABLE jugadores
+(
+    id_jugador INT PRIMARY KEY,
+    nombre_jugador NVARCHAR(50) NOT NULL,
+    vida_actual INT NOT NULL
+);
+
 ```
 
 ## 5 Estilo de código
@@ -3303,11 +3371,160 @@ Los usos asignados a estas dependencias corresponden con la documentación de su
 
 ### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
 
-## 16. Declaración de uso de inteligencia artificial
+
+## 16 Comunicación en red y operaciones asíncronas
+
+El proyecto utiliza una arquitectura cliente-servidor (ver STK-07, Programador de red), por lo que toda operación que dependa de la red — enviar una jugada, sincronizar el estado de la partida, autenticar a un jugador — se ejecutará de forma asíncrona y no deberá bloquear el hilo principal del juego. Esta sección define cómo se estructuran esas llamadas, cómo se exponen sus resultados mediante callbacks o async/await, y cómo se integran con el manejo de errores ya definido en la sección 7 (Microsoft, s. f.-a; Microsoft, s. f.-b)
+
+### 16.1 Patrón de llamadas asíncronas (async/await)
+
+Toda operación de red se expondrá mediante métodos async que devuelvan Task o Task<TResult>. No se utilizará async void, salvo en manejadores de eventos de UI, donde es la única forma admitida por la firma del delegado. El sufijo Async se agregará al nombre del método, de acuerdo con las convenciones oficiales para el patrón basado en tareas (Microsoft, s. f.-a; Microsoft, s. f.-c)
+
+**Con estándar**
+
+```csharp
+
+public sealed class MatchmakingService
+{
+    private readonly IMatchmakingClient _matchmakingClient;
+
+    public MatchmakingService(IMatchmakingClient matchmakingClient)
+    {
+        _matchmakingClient = matchmakingClient;
+    }
+
+    public async Task<MatchResult> JoinMatchAsync(string playerId)
+    {
+        MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+
+        return matchResult;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+
+public sealed class MatchmakingService
+{
+    public async void JoinMatch(string playerId)
+    {
+        MatchResult matchResult = await matchmakingClient.RequestMatch(playerId);
+    }
+}
+````
+
+### 16.2 Callbacks y manejadores de eventos de red
+
+Cuando una operación de red deba notificar un resultado fuera del flujo async/await (por ejemplo, un mensaje entrante del servidor que no fue solicitado directamente por el cliente), se expondrá mediante un evento siguiendo las reglas ya definidas en la sección 4.9, no mediante un delegado Action<T> suelto ni un callback pasado como parámetro.
+
+**Con estándar**
+
+```csharp
+
+public sealed class GameConnection
+{
+    public event EventHandler<OpponentMoveReceivedEventArgs>? OpponentMoveReceived;
+
+    protected virtual void OnOpponentMoveReceived(OpponentMoveReceivedEventArgs e)
+    {
+        OpponentMoveReceived?.Invoke(this, e);
+    }
+}
+````
+
+**Sin estándar**
+
+```csharp
+
+public sealed class GameConnection
+{
+    public Action<Move>? OnMoveReceived;
+}
+````
+
+### 16.3 Manejo de errores en operaciones de red
+
+Las excepciones producidas por fallas de red (tiempo de espera agotado, conexión perdida, respuesta inválida del servidor) se manejarán siguiendo las reglas generales de la sección 7. Los servicios de red podrán lanzar TimeoutException u OperationCanceledException conforme a la tabla de la sección 7.1, o envolver el fallo en una excepción de dominio propia (por ejemplo, ConnectionLostException) cuando el consumidor necesite distinguir ese caso de un error genérico.
+
+**Con estándar**
+
+```csharp
+
+public async Task<MatchResult> JoinMatchAsync(string playerId)
+{
+    try
+    {
+        MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+
+        return matchResult;
+    }
+    catch (TaskCanceledException exception)
+    {
+        throw new ConnectionLostException(
+            "The matchmaking request timed out.",
+            exception);
+    }
+}
+````
+
+**Sin estándar**
+
+```csharp
+
+public async Task<MatchResult> JoinMatchAsync(string playerId)
+{
+    try
+    {
+        return await _matchmakingClient.RequestMatchAsync(playerId);
+    }
+    catch
+    {
+        return null;
+    }
+}
+````
+
+## 16.4 Cancelación de operaciones asíncronas
+
+Toda operación de red de larga duración deberá aceptar un parámetro CancellationToken como último parámetro del método, para permitir que el llamador cancele la operación cuando el jugador abandone la partida o cierre la aplicación (Microsoft, s. f.-a).
+
+**Con estándar**
+
+```csharp
+
+public async Task<MatchResult> JoinMatchAsync(
+    string playerId,
+    CancellationToken cancellationToken)
+{
+    MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(
+        playerId,
+        cancellationToken);
+
+    return matchResult;
+}
+````
+
+**Sin estándar**
+
+```csharp
+
+public async Task<MatchResult> JoinMatchAsync(string playerId)
+{
+    MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+
+    return matchResult;
+}
+````
+
+
+## 17. Declaración de uso de inteligencia artificial
+
 
 <div style="page-break-after: always;"></div>
 
-## 17. Referencias
+## 18. Referencias
 
 - Apache Logging Services. (s. f.-a). *Apache log4net release notes*. Recuperado el 25 de agosto de 2026, de [https://logging.apache.org/log4net/log4net-3.0.0/release/release-notes.html](https://logging.apache.org/log4net/log4net-3.0.0/release/release-notes.html)
 
@@ -3368,3 +3585,11 @@ Los usos asignados a estas dependencias corresponden con la documentación de su
 - McConnell, S. (2004). Code complete (2nd ed.). Microsoft Press.
 
 - Chuvakin, A., Schmidt, K., & Phillips, C. (2013). Logging and log management: The authoritative guide to understanding the concepts surrounding logging and log management. Syngress.
+
+- Microsoft. (s. f.-a). Asynchronous programming with async and await. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/
+
+- Microsoft. (s. f.-b). Task asynchronous programming model. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/task-asynchronous-programming-model
+
+- Microsoft. (s. f.-c). Task-based Asynchronous Pattern (TAP). Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap
+
+- Microsoft. (s. f.-d). Event-based Asynchronous Pattern (EAP) overview. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/event-based-asynchronous-pattern-eap-overview
