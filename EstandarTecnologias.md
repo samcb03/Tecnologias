@@ -29,8 +29,9 @@
 13. [Validación de entradas y seguridad](#13-validación-de-entradas-y-seguridad)
 14. [Pruebas unitarias](#14-pruebas-unitarias)
 15. [Dependencias externas](#15-dependencias-externas)
-16. [Declaración de uso de inteligencia artificial](#16-declaración-de-uso-de-inteligencia-artificial)
-17. [Referencias](#17-referencias)
+16. [Comunicación en red y operaciones asíncronas](#16-comunicación-en-red-y-operaciones-asíncronas)
+17. [Declaración de uso de inteligencia artificial](#17-declaración-de-uso-de-inteligencia-artificial)
+18. [Referencias](#18-referencias)
 
 <div style="page-break-after: always;"></div>
 
@@ -262,6 +263,47 @@ private string PlayerName;
 private static int s_activePlayers;
 ```
 
+### 4.5.1 Inicialización de campos y métodos estáticos
+
+Un campo estático solo se inicializará con un valor fijo, inmutable y conocido en tiempo de compilación mediante su declaración. Cuando la inicialización dependa de una operación (lectura de configuración, cálculo, acceso a otro tipo), se realizará dentro de un constructor estático (`static` sin modificador de acceso), nunca dentro de un constructor de instancia ni de un método público invocado manualmente para "inicializar" la clase.
+
+Un constructor estático solo se justificará cuando el estado estático represente una responsabilidad genuinamente compartida por todas las instancias del tipo (un contador global, una caché compartida, un catálogo cargado una sola vez). Si el estado estático existe únicamente por conveniencia de acceso, deberá reconsiderarse el diseño e inyectar la dependencia en su lugar (Microsoft, s. f.-e; convención interna del equipo para justificar el estado estático).
+
+**Con estándar**
+
+```csharp
+
+public sealed class EnemyCatalog
+{
+    private static readonly IReadOnlyDictionary<EnemyType, EnemyDefinition> _definitions;
+
+    static EnemyCatalog()
+    {
+        _definitions = EnemyDefinitionLoader.LoadAll();
+    }
+
+    public static EnemyDefinition GetDefinition(EnemyType type)
+    {
+        return _definitions[type];
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+
+public sealed class EnemyCatalog
+{
+    private static IReadOnlyDictionary<EnemyType, EnemyDefinition> _definitions;
+
+    public EnemyCatalog()
+    {
+        _definitions = EnemyDefinitionLoader.LoadAll();
+    }
+}
+```
+
 ### 4.6 Propiedades
 
 Los nombres de las propiedades deberán escribirse en `PascalCase` y utilizar sustantivos, frases nominales o adjetivos que describan el dato representado. No se agregarán los prefijos `Get` o `Set`, porque la lectura y la escritura ya se expresan mediante los accesores de la propiedad (Microsoft, 2023a; Microsoft, 2025f).
@@ -295,6 +337,72 @@ public Guid GetPlayerId { get; set; }
 ```
 
 Las propiedades booleanas deberán expresar condiciones afirmativas y las propiedades de colecciones deberán utilizar nombres en plural. Estas recomendaciones aparecen en las convenciones oficiales para miembros de tipos (Microsoft, 2023a).
+
+**Propiedades automáticas**
+
+Una propiedad se declarará como autoimplementada ({ get; set; } sin cuerpo) cuando no requiera validación, transformación ni reacción al cambio de valor. En cuanto la propiedad necesite cualquiera de esos comportamientos, dejará de ser autoimplementada y pasará a seguir la regla 4.6.1 (campo de respaldo explícito). No se creará un campo de respaldo manual para una propiedad que no lo necesite, ya que duplica código que el compilador genera automáticamente (Microsoft, s. f.-g).
+
+**Con estándar**
+
+```csharp
+public sealed class WeaponData
+{
+    public string Name { get; init; }
+    public int DamageMultiplier { get; init; }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class WeaponData
+{
+    private string _name;
+    private int _damageMultiplier;
+
+    public string Name
+    {
+        get { return _name; }
+        init { _name = value; }
+    }
+
+    public int DamageMultiplier
+    {
+        get { return _damageMultiplier; }
+        init { _damageMultiplier = value; }
+    }
+}
+```
+
+**Propiedades privadas**
+
+Una propiedad podrá declararse private cuando exponga una conveniencia de solo lectura o de acceso interno para la propia clase (por ejemplo, derivar un valor reutilizado varias veces dentro de la clase), sin que forme parte del contrato público del tipo. Una propiedad privada seguirá las mismas reglas de nombrado, PascalCase, que una propiedad pública; no se confundirá con un campo privado, que usa _camelCase según la regla 4.5 (Microsoft, s. f.-g).
+
+**Con estándar**
+
+```csharp
+public sealed class DamageCalculator
+{
+    private int TotalModifiers => _criticalBonus + _elementalBonus;
+
+    private readonly int _criticalBonus;
+    private readonly int _elementalBonus;
+
+    public int Calculate(int baseDamage)
+    {
+        return baseDamage + TotalModifiers;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class DamageCalculator
+{
+    private int _totalModifiers => _criticalBonus + _elementalBonus;
+}
+```
 
 ### 4.6.1 Propiedades con campo de respaldo
 
@@ -693,6 +801,39 @@ public sealed class InsufficientManaError : Exception
 
 public sealed class DamageReceivedData : EventArgs 
 { 
+}
+```
+
+**Sufijos arquitectónicos**
+
+Además de los sufijos por responsabilidad técnica ya definidos, se utilizarán los siguientes sufijos para identificar la capa arquitectónica de un tipo, siempre que el tipo cumpla realmente con esa responsabilidad:
+
+- `Service`: orquesta lógica de aplicación, coordinando entidades y repositorios.
+- `Repository`: encapsula el acceso a datos persistentes de un agregado.
+- `Factory`: encapsula la creación de instancias complejas.
+- `Manager`: coordina el ciclo de vida de un conjunto de objetos relacionados en tiempo de ejecución (por ejemplo, EnemyManager).
+- `Controller`: coordina la entrada del jugador o de la red hacia el dominio, sin contener lógica de negocio propia.
+- `Provider`: expone un valor o recurso obtenido de una fuente externa o configurable.
+
+No se combinarán dos sufijos arquitectónicos en el mismo nombre (por ejemplo, `PlayerServiceManager`), ya que indica que la clase tiene más de una responsabilidad (Martin, 2008).
+
+**Con estándar**
+
+```csharp
+public sealed class SaveGameService
+{
+}
+
+public sealed class SaveGameRepository : ISaveGameRepository
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class SaveGameServiceManager
+{
 }
 ```
 
@@ -1793,6 +1934,63 @@ private int GetEquippedAmmo()
 }
 ```
 
+### 7.4 Salidas anticipadas(early exit) en validaciones
+
+Un método podrá retornar antes de completar su flujo normal cuando el objetivo sea evitar anidamiento innecesario al validar precondiciones (guard clauses), siguiendo el mismo principio de la regla 4.4 sobre claridad del código. Esta práctica no se adoptará por conveniencia del equipo, sino como una decisión arquitectónica orientada a mantener la complejidad ciclomática dentro del límite de la sección 8.2 y el anidamiento dentro del límite de la sección 8.5.
+
+Cuando una salida anticipada no sea evidente por sí misma —por ejemplo, porque interrumpe un flujo que a primera vista parecería continuar, o porque responde a una regla de negocio específica del dominio del juego—, deberá acompañarse de un comentario de línea conforme a la regla 10.2, explicando la razón de la interrupción y no solo la condición evaluada (Martin, 2008; convención interna del equipo).
+
+**Con estándar**
+
+```csharp
+public bool TryEquipWeapon(Player player, WeaponData weapon)
+{
+    if (!player.IsAlive)
+    {
+        return false;
+    }
+
+    if (player.Inventory.IsFull)
+    {
+        return false;
+    }
+
+    // A weapon above the player's level would be unusable until
+    // leveling up, so equipping it early is rejected outright.
+    if (weapon.RequiredLevel > player.Level)
+    {
+        return false;
+    }
+
+    player.Equip(weapon);
+
+    return true;
+}
+```
+
+**Sin estándar**
+
+```csharp
+public bool TryEquipWeapon(Player player, WeaponData weapon)
+{
+    bool wasEquipped = false;
+
+    if (player.IsAlive)
+    {
+        if (!player.Inventory.IsFull)
+        {
+            if (weapon.RequiredLevel <= player.Level)
+            {
+                player.Equip(weapon);
+                wasEquipped = true;
+            }
+        }
+    }
+
+    return wasEquipped;
+}
+```
+
 ## 8. Complejidad
 
 La gestión de la complejidad en el código fuente es un pilar fundamental para asegurar la mantenibilidad, escalabilidad y la detección temprana de defectos en el desarrollo de software (Martin, 2008). En el contexto del desarrollo de videojuegos, donde los bucles lógicos se ejecutan decenas de veces por segundo, mantener una baja complejidad reduce drásticamente los cuellos de botella en el procesamiento y facilita la creación de pruebas unitarias efectivas.
@@ -2002,6 +2200,57 @@ public class SaveSystem
 }
 ```
 
+### 8.5 Máximo de niveles de anidamiento
+
+Ningún bloque de código podrá anidarse más de tres niveles de profundidad dentro de un mismo método, contando estructuras de control (`if`, `for`, `foreach`, `while`, `switch`) y bloques `try`. Cuando una operación requiera un nivel adicional, se extraerá a un método privado con nombre descriptivo, o se aplicará una salida anticipada conforme a la regla 7.4 (McCabe, 1976; Martin, 2008; convención interna del equipo para el límite de tres niveles).
+
+**Con estándar**
+
+```csharp
+public void ApplyAreaDamage(IEnumerable<Enemy> enemies, int damage)
+{
+    foreach (Enemy enemy in enemies)
+    {
+        if (!enemy.IsAlive)
+        {
+            continue;
+        }
+
+        ApplyDamageIfInRange(enemy, damage);
+    }
+}
+
+private void ApplyDamageIfInRange(Enemy enemy, int damage)
+{
+    if (enemy.IsInRange)
+    {
+        enemy.ReceiveDamage(damage);
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public void ApplyAreaDamage(IEnumerable<Enemy> enemies, int damage)
+{
+    foreach (Enemy enemy in enemies)
+    {
+        if (enemy.IsAlive)
+        {
+            if (enemy.IsInRange)
+            {
+                if (damage > 0)
+                {
+                    enemy.ReceiveDamage(damage);
+                }
+            }
+        }
+    }
+}
+```
+
+
 ## 9. Prácticas específicas de C#
 
 ### 9.1 Propiedades vs. campos públicos
@@ -2017,6 +2266,38 @@ public class SaveSystem
 ### 9.6 Eventos (`event`, `EventHandler` y `Action`)
 
 ### 9.7 Structs vs. classes vs. records (posiciones, stats, DTOs de guardado)
+
+Se utilizará record (o record struct) cuando el tipo represente datos inmutables cuya igualdad deba compararse por valor: DTOs de guardado, mensajes de red, y snapshots de estado enviados entre sistemas. Se utilizará class cuando el tipo tenga identidad propia, comportamiento con efectos secundarios, o un ciclo de vida mutable gestionado por el propio sistema de juego (entidades como Player o Enemy). Se utilizará struct únicamente para datos pequeños, inmutables y de alta frecuencia de creación donde el costo de asignación en el heap sea relevante, como vectores o posiciones (Microsoft, s. f.-f; convención interna del equipo).
+
+**Con estándar**
+
+```csharp
+public sealed record SaveGameDto(
+    string PlayerName,
+    int CurrentHealth,
+    int Level);
+
+public sealed class Player
+{
+    public int CurrentHealth { get; private set; }
+
+    public void ReceiveDamage(int amount)
+    {
+        CurrentHealth -= amount;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class SaveGameDto
+{
+    public string PlayerName { get; set; }
+    public int CurrentHealth { get; set; }
+    public int Level { get; set; }
+}
+```
 
 ## 10. Comentarios y documentación
 
@@ -2461,6 +2742,38 @@ public sealed class LoadGameService
 ### 12.1 Navegación centralizada entre estados o pantallas
 
 ### 12.2 Mensajes/feedback al jugador (HUD, popups, pantallas de carga)
+
+### 12.3 Recursos de traducción y textos centralizados
+
+Todo texto visible para el jugador (diálogos, etiquetas de UI, mensajes de error mostrados en pantalla) se almacenará en archivos de recursos (.resx) organizados por idioma, y se accederá mediante una clase de recursos generada automáticamente, nunca mediante cadenas de texto escritas directamente en el código de UI. Esto permite cambiar el idioma del juego sin recompilar ni modificar lógica, conforme al soporte español/inglés previsto para el proyecto (Microsoft, s. f.-h; convención interna del equipo).
+
+Los mensajes de log (sección 11) y las excepciones (sección 7) no se traducirán y permanecerán en inglés, ya que están dirigidos al equipo de desarrollo, no al jugador; esta regla aplica exclusivamente a texto dirigido al usuario final.
+
+**Con estándar**
+
+```csharp
+
+public sealed class MainMenuView
+{
+    public string GetPlayButtonLabel()
+    {
+        return UiStrings.PlayButtonLabel;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+
+public sealed class MainMenuView
+{
+    public string GetPlayButtonLabel()
+    {
+        return "Jugar";
+    }
+}
+```
 
 ## 13. Validación de entradas y seguridad
 
@@ -3486,7 +3799,7 @@ public async Task<MatchResult> JoinMatchAsync(string playerId)
 }
 ````
 
-## 16.4 Cancelación de operaciones asíncronas
+### 16.4 Cancelación de operaciones asíncronas
 
 Toda operación de red de larga duración deberá aceptar un parámetro CancellationToken como último parámetro del método, para permitir que el llamador cancele la operación cuando el jugador abandone la partida o cierre la aplicación (Microsoft, s. f.-a).
 
@@ -3593,3 +3906,11 @@ public async Task<MatchResult> JoinMatchAsync(string playerId)
 - Microsoft. (s. f.-c). Task-based Asynchronous Pattern (TAP). Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap
 
 - Microsoft. (s. f.-d). Event-based Asynchronous Pattern (EAP) overview. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/event-based-asynchronous-pattern-eap-overview
+  
+- Microsoft. (s. f.-e). Static constructors. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/static-constructors
+
+- Microsoft. (s. f.-f). Records. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records
+
+- Microsoft. (s. f.-g). Auto-implemented properties. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties
+
+- Microsoft. (s. f.-h). Resources in .NET apps. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/core/extensions/resources-and-localization
