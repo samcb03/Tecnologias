@@ -696,7 +696,7 @@ public sealed class DamageReceivedData : EventArgs
 }
 ```
 
-## 4.17 
+### 4.17 Nombrado de la base de datos 
 
 Los nombres de tablas, columnas, vistas, procedimientos almacenados y demás objetos de la base de datos se escribirán en inglés, manteniendo consistencia con el resto de los identificadores del proyecto definidos en la sección 1.3. Los nombres deberán ser claros y describir el dato o la entidad que representan, evitando abreviaturas innecesarias.
 
