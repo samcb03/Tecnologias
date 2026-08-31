@@ -4647,6 +4647,8 @@ Estas restricciones son decisiones arquitectónicas del equipo. Su objetivo es m
 
 ## 17. Declaración de uso de inteligencia artificial
 
+Se utilizaron las herramientas de IA ChatGPT y Claude, se les pidio correcciones de gramatica y estilo de escritura, ademas se utilizaron para un apoyo en las auditorias para que ningun ejemplo rompiera ninguna regla establecida en el mismo estandar
+
 
 <div style="page-break-after: always;"></div>
 
