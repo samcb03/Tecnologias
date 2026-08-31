@@ -148,21 +148,79 @@ public void AddExperience(int exp)
 
 ### 4.2 Colecciones
 
-Las variables y propiedades que representen colecciones deberán utilizar nombres en plural para indicar que contienen varios elementos (Microsoft, 2023a; Microsoft, 2026b).
+Las variables, campos y propiedades que representen varios elementos deberán escribirse en plural. Su nombre deberá describir los elementos almacenados o la relación existente entre ellos, sin indicar la estructura concreta utilizada internamente (Microsoft, 2023a).
+
+No se agregarán palabras como `List`, `Collection` o `Dictionary` a los nombres de variables, campos o propiedades únicamente para indicar su tipo. Esto permite cambiar la estructura utilizada para almacenar los elementos sin tener que modificar el nombre del miembro.
+
+Cuando una colección represente una relación entre claves y valores, el nombre deberá expresar dicha relación mediante expresiones como `ById`, `ByName` o `ByType`.
+
+Esta regla se aplica exclusivamente a variables, campos y propiedades. Los nombres de tipos especializados deberán seguir las reglas definidas en la sección 4.16.1.
 
 **Con estándar**
 
 ```csharp
-List<Enemy> activeEnemies = new();
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyTracker
+{
+    private readonly List<Enemy> _activeEnemies = new List<Enemy>();
+    private readonly Dictionary<Guid, Enemy> _enemiesById =
+        new Dictionary<Guid, Enemy>();
+
+    public IReadOnlyList<Enemy> ActiveEnemies
+    {
+        get
+        {
+            return _activeEnemies;
+        }
+    }
+
+    public IReadOnlyDictionary<Guid, Enemy> EnemiesById
+    {
+        get
+        {
+            return _enemiesById;
+        }
+    }
+}
 ```
 
 **Sin estándar**
 
 ```csharp
-List<Enemy> activeEnemy = new();
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyTracker
+{
+    private readonly List<Enemy> _activeEnemyList = new List<Enemy>();
+    private readonly Dictionary<Guid, Enemy> _enemyDictionary =
+        new Dictionary<Guid, Enemy>();
+
+    public IReadOnlyList<Enemy> ActiveEnemyCollection
+    {
+        get
+        {
+            return _activeEnemyList;
+        }
+    }
+
+    public IReadOnlyDictionary<Guid, Enemy> EnemyDictionary
+    {
+        get
+        {
+            return _enemyDictionary;
+        }
+    }
+}
 ```
 
-El nombre no deberá incluir palabras como `List`, `Collection` o `Dictionary` cuando el plural o el concepto de dominio ya permitan identificar claramente su contenido. El nombre deberá describir qué elementos contiene o qué relación representa, no la estructura concreta utilizada para almacenarlos (Microsoft, 2023a; Microsoft, 2026b).
+
 
 ### 4.3 Booleanos
 
@@ -622,20 +680,12 @@ Los nombres de clases, estructuras y registros deberán escribirse utilizando `P
 public class PlayerInventory 
 { 
 }
-
-public struct DamageResult 
-{ 
-}
 ```
 
 **Sin estándar**
 
 ```csharp
 public class player_inventory 
-{ 
-}
-
-public struct damage_result 
 { 
 }
 ```
@@ -836,6 +886,74 @@ public sealed class SaveGameServiceManager
 {
 }
 ```
+
+### 4.16.1 Sufijos `Collection` y `Dictionary`
+
+Los sufijos `Collection` y `Dictionary` se utilizarán únicamente en los nombres de tipos cuya responsabilidad principal sea representar públicamente una colección especializada (Microsoft, 2025e).
+
+Se deberán aplicar las siguientes reglas:
+
+- Un tipo que implemente o derive de `IEnumerable`, `ICollection`, `IList` o sus versiones genéricas y cuya responsabilidad principal sea representar un conjunto de elementos deberá terminar con el sufijo `Collection`.
+- Un tipo que implemente o derive de `IDictionary<TKey, TValue>` y cuya responsabilidad principal sea representar una relación entre claves y valores deberá terminar con el sufijo `Dictionary`.
+- Los sufijos `Collection` y `Dictionary` no se utilizarán en variables, campos ni propiedades, de acuerdo con la sección 4.2.
+- Un tipo de dominio como `Inventory` o `EnemyRegistry` no utilizará estos sufijos cuando su responsabilidad principal sea aplicar reglas del juego y solamente utilice una colección de manera interna.
+- No se utilizarán nombres como `List`, `Map`, `Group` o `Container` para sustituir los sufijos oficiales cuando el tipo represente públicamente una colección o un diccionario.
+- No se agregará el sufijo `Collection` o `Dictionary` a un tipo que no implemente realmente la abstracción correspondiente.
+
+Esta separación evita confundir el nombre de un miembro con el nombre de un tipo especializado. Por ejemplo, una propiedad podrá llamarse `Enemies`, mientras que el tipo especializado utilizado para representarla podrá llamarse `EnemyCollection`.
+
+**Con estándar — archivo `EnemyCollection.cs`**
+
+```csharp
+using System.Collections.ObjectModel;
+
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyCollection : Collection<Enemy>
+{
+}
+```
+
+**Con estándar — archivo `PlayerDictionary.cs`**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Players;
+
+public sealed class PlayerDictionary : Dictionary<Guid, Player>
+{
+}
+```
+
+**Sin estándar — archivo `EnemyGroup.cs`**
+
+```csharp
+using System.Collections.ObjectModel;
+
+namespace AdventureGame.Enemies;
+
+public sealed class EnemyGroup : Collection<Enemy>
+{
+}
+```
+
+**Sin estándar — archivo `PlayerMap.cs`**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Players;
+
+public sealed class PlayerMap : Dictionary<Guid, Player>
+{
+}
+```
+
+Por lo tanto, los sufijos `Collection` y `Dictionary` se eliminarán de los nombres de variables, campos y propiedades, pero se mantendrán en los nombres de tipos especializados cuando la colección o el diccionario constituyan su responsabilidad pública principal.
+
 
 ### 4.17 Nombrado de la base de datos 
 
@@ -1955,8 +2073,7 @@ public bool TryEquipWeapon(Player player, WeaponData weapon)
         return false;
     }
 
-    // A weapon above the player's level would be unusable until
-    // leveling up, so equipping it early is rejected outright.
+    // A weapon above the player's level would be unusable until leveling up.
     if (weapon.RequiredLevel > player.Level)
     {
         return false;
@@ -1990,6 +2107,314 @@ public bool TryEquipWeapon(Player player, WeaponData weapon)
     return wasEquipped;
 }
 ```
+
+### 7.5 Prácticas oficiales complementarias para excepciones
+
+Las siguientes reglas complementan la selección de excepciones, el uso de `try` y `catch`, y las validaciones definidas en las secciones anteriores. Su propósito es asegurar que las excepciones proporcionen información útil, conserven el estado válido de la aplicación y se comporten correctamente en operaciones síncronas y asíncronas (Microsoft, 2025a; Microsoft, 2023b).
+
+#### 7.5.1 Mensajes y parámetros de las excepciones
+
+Los mensajes de excepción deberán explicar de manera clara la causa del error. Se escribirán en inglés, utilizarán oraciones completas y terminarán con punto. No deberán contener contraseñas, tokens, datos personales, rutas sensibles ni otra información que pueda comprometer la seguridad del sistema (Microsoft, 2025a; Microsoft, 2023b).
+
+Los mensajes de excepción estarán dirigidos al equipo de desarrollo y no deberán mostrarse directamente al jugador. Los mensajes visibles en la interfaz deberán obtenerse de los recursos de traducción definidos en la sección 12.3.
+
+Cuando se lance una excepción derivada de `ArgumentException`, deberá proporcionarse el nombre del parámetro que ocasionó el error mediante `nameof`. En el setter de una propiedad, el nombre del parámetro deberá representarse mediante `nameof(value)`.
+
+Las excepciones que formen parte del contrato de un método público deberán documentarse mediante la etiqueta XML `<exception>`, siguiendo la sección 10.3.
+
+**Con estándar**
+
+```csharp
+namespace AdventureGame.Players;
+
+public sealed class PlayerRegistrationService
+{
+    public void Register(string playerName)
+    {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            throw new ArgumentException(
+                "The player name cannot be empty.",
+                nameof(playerName));
+        }
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+namespace AdventureGame.Players;
+
+public sealed class PlayerRegistrationService
+{
+    public void Register(string playerName)
+    {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            throw new Exception("Bad name");
+        }
+    }
+}
+```
+
+#### 7.5.2 Condiciones esperadas y métodos auxiliares `ThrowIf`
+
+Antes de lanzar una excepción, se deberá determinar si la condición representa un fallo excepcional o una situación esperada durante la ejecución normal.
+
+Las condiciones que puedan ocurrir frecuentemente deberán manejarse mediante validaciones, valores de retorno o métodos con el prefijo `Try`, en lugar de lanzar y capturar excepciones. Por ejemplo, se utilizarán `TryParse`, `TryGetValue` o métodos equivalentes cuando la ausencia de un resultado sea una posibilidad normal (Microsoft, 2025a).
+
+Cuando la versión de .NET utilizada por el proyecto proporcione métodos auxiliares para lanzar excepciones, deberán preferirse sobre comprobaciones manuales equivalentes. Entre los métodos permitidos se encuentran:
+
+- `ArgumentNullException.ThrowIfNull`.
+- `ArgumentException.ThrowIfNullOrEmpty`.
+- `ArgumentException.ThrowIfNullOrWhiteSpace`.
+- `ArgumentOutOfRangeException.ThrowIfNegative`.
+- `ArgumentOutOfRangeException.ThrowIfNegativeOrZero`.
+- `ArgumentOutOfRangeException.ThrowIfZero`.
+- `ObjectDisposedException.ThrowIf`.
+- `CancellationToken.ThrowIfCancellationRequested`.
+
+Cuando una misma excepción personalizada deba construirse en distintos puntos de una clase, se podrá utilizar un método privado que cree y devuelva la excepción. Este método evitará duplicar mensajes y deberá tener un nombre que describa el error construido.
+
+**Con estándar**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Players;
+
+public sealed class PlayerLookupService
+{
+    private readonly IReadOnlyDictionary<Guid, Player> _playersById;
+
+    public PlayerLookupService(
+        IReadOnlyDictionary<Guid, Player> playersById)
+    {
+        ArgumentNullException.ThrowIfNull(playersById);
+        _playersById = playersById;
+    }
+
+    public bool TryFindPlayer(Guid playerId, out Player? player)
+    {
+        bool wasFound = _playersById.TryGetValue(playerId, out player);
+
+        return wasFound;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace AdventureGame.Players;
+
+public sealed class PlayerLookupService
+{
+    private readonly IReadOnlyDictionary<Guid, Player> _playersById;
+
+    public PlayerLookupService(
+        IReadOnlyDictionary<Guid, Player> playersById)
+    {
+        _playersById = playersById;
+    }
+
+    public Player? FindPlayer(Guid playerId)
+    {
+        Player? player = null;
+
+        try
+        {
+            player = _playersById[playerId];
+        }
+        catch (KeyNotFoundException)
+        {
+        }
+
+        return player;
+    }
+}
+```
+
+#### 7.5.3 Estado consistente y bloque `finally`
+
+Cuando una operación no pueda completarse debido a una excepción, el objeto deberá permanecer en un estado válido. Los cambios parciales deberán revertirse cuando sean necesarios para evitar datos corruptos o estados imposibles (Microsoft, 2025a).
+
+El bloque `finally` se utilizará exclusivamente para liberar recursos o restaurar estados que deban corregirse independientemente del resultado de la operación. No se lanzarán excepciones directamente desde un bloque `finally`, porque podrían ocultar la excepción original.
+
+Los métodos `Equals`, `GetHashCode` y `ToString`, los finalizadores, los constructores estáticos y los operadores de igualdad no deberán lanzar excepciones de manera intencional, debido a que pueden ser invocados automáticamente por el entorno de ejecución desde lugares donde el consumidor no espera controlar un fallo (Microsoft, 2025a).
+
+**Con estándar**
+
+```csharp
+namespace AdventureGame.Saving;
+
+public sealed class SaveGameService
+{
+    private readonly ISaveGameRepository _saveGameRepository;
+    private bool _isSaving;
+
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        ArgumentNullException.ThrowIfNull(saveGameRepository);
+        _saveGameRepository = saveGameRepository;
+    }
+
+    public void Save(PlayerState playerState)
+    {
+        ArgumentNullException.ThrowIfNull(playerState);
+        _isSaving = true;
+
+        try
+        {
+            _saveGameRepository.Save(playerState);
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+namespace AdventureGame.Saving;
+
+public sealed class SaveGameService
+{
+    private readonly ISaveGameRepository _saveGameRepository;
+
+    public SaveGameService(ISaveGameRepository saveGameRepository)
+    {
+        _saveGameRepository = saveGameRepository;
+    }
+
+    public void Save(PlayerState playerState)
+    {
+        try
+        {
+            _saveGameRepository.Save(playerState);
+        }
+        finally
+        {
+            throw new InvalidOperationException(
+                "The save operation did not finish.");
+        }
+    }
+}
+```
+
+#### 7.5.4 Excepciones en métodos asíncronos
+
+Los métodos que devuelvan `Task` o `Task<TResult>` deberán validar sus argumentos antes de iniciar la parte asíncrona de la operación. Esto permite que las excepciones de uso, como `ArgumentException` o `ArgumentNullException`, se produzcan de manera síncrona antes de crear o esperar la tarea (Microsoft, 2025a; Microsoft, 2023b).
+
+Cuando sea necesario garantizar esta validación síncrona, el método público realizará las validaciones y delegará el trabajo asíncrono a un método privado.
+
+Las excepciones generadas durante la ejecución asíncrona se almacenarán en la tarea y se propagarán cuando se utilice `await`. Por esta razón, toda tarea iniciada deberá esperarse o devolverse al llamador.
+
+Las operaciones cancelables deberán aplicar las siguientes reglas:
+
+- Recibirán un `CancellationToken` como último parámetro.
+- Propagarán el token a todas las operaciones asíncronas que lo acepten.
+- Utilizarán `CancellationToken.ThrowIfCancellationRequested` para reconocer una cancelación.
+- Se capturará `OperationCanceledException` en lugar de `TaskCanceledException` cuando sea necesario manejar una cancelación.
+- Una cancelación solicitada por el usuario no se registrará como `Error` o `Fatal`.
+- Una cancelación no se envolverá en una excepción de pérdida de conexión.
+- Un tiempo de espera deberá distinguirse de una cancelación solicitada por el jugador antes de convertirse en `TimeoutException` o en una excepción de dominio.
+
+**Con estándar**
+
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace AdventureGame.Networking;
+
+public sealed class MatchmakingService
+{
+    private readonly IMatchmakingClient _matchmakingClient;
+
+    public MatchmakingService(IMatchmakingClient matchmakingClient)
+    {
+        ArgumentNullException.ThrowIfNull(matchmakingClient);
+        _matchmakingClient = matchmakingClient;
+    }
+
+    public Task<MatchResult> JoinMatchAsync(
+        string playerId,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(playerId);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        Task<MatchResult> joinTask = JoinMatchCoreAsync(
+            playerId,
+            cancellationToken);
+
+        return joinTask;
+    }
+
+    private async Task<MatchResult> JoinMatchCoreAsync(
+        string playerId,
+        CancellationToken cancellationToken)
+    {
+        MatchResult matchResult =
+            await _matchmakingClient.RequestMatchAsync(
+                playerId,
+                cancellationToken);
+
+        return matchResult;
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace AdventureGame.Networking;
+
+public sealed class MatchmakingService
+{
+    private readonly IMatchmakingClient _matchmakingClient;
+
+    public MatchmakingService(IMatchmakingClient matchmakingClient)
+    {
+        _matchmakingClient = matchmakingClient;
+    }
+
+    public async Task<MatchResult> JoinMatchAsync(
+        string playerId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            MatchResult matchResult =
+                await _matchmakingClient.RequestMatchAsync(
+                    playerId,
+                    cancellationToken);
+
+            return matchResult;
+        }
+        catch (TaskCanceledException exception)
+        {
+            throw new ConnectionLostException(
+                "The connection was lost.",
+                exception);
+        }
+    }
+}
+```
+
+La cancelación cooperativa mediante `CancellationToken` permite detener una tarea sin tratar la solicitud de cancelación como un fallo inesperado. Cuando una tarea reconoce correctamente la cancelación, su estado cambia a `Canceled` y no a `Faulted` (Microsoft, 2025g).
 
 ## 8. Complejidad
 
@@ -3567,12 +3992,12 @@ El método `Build()` deberá devolver una nueva instancia en cada llamada. No de
 ```csharp
 public Player Build()
 {
-    List<Item> inventoryCopy = new List<Item>(_items);
+    List<Item> copiedItems = new List<Item>(_items);
     Player player = new Player(
         _name,
         _health,
         _level,
-        inventoryCopy);
+        copiedItems);
 
     return player;
 }
@@ -3685,32 +4110,65 @@ Los usos asignados a estas dependencias corresponden con la documentación de su
 ### 15.2 Vulnerabilidades conocidas (formato CVE, aplica/no aplica)
 
 
-## 16 Comunicación en red y operaciones asíncronas
+## 16. Comunicación en red mediante WCF y TCP
 
-El proyecto utiliza una arquitectura cliente-servidor (ver STK-07, Programador de red), por lo que toda operación que dependa de la red — enviar una jugada, sincronizar el estado de la partida, autenticar a un jugador — se ejecutará de forma asíncrona y no deberá bloquear el hilo principal del juego. Esta sección define cómo se estructuran esas llamadas, cómo se exponen sus resultados mediante callbacks o async/await, y cómo se integran con el manejo de errores ya definido en la sección 7 (Microsoft, s. f.-a; Microsoft, s. f.-b)
+El videojuego utilizará una arquitectura cliente-servidor centralizada. La comunicación entre los clientes y el servidor se implementará mediante Windows Communication Foundation (WCF), utilizando `NetTcpBinding` como binding de transporte.
 
-### 16.1 Patrón de llamadas asíncronas (async/await)
+`NetTcpBinding` permite que las aplicaciones WCF se comuniquen mediante TCP y proporciona una conexión bidireccional apropiada para operaciones de solicitud-respuesta y callbacks del servidor hacia los clientes (Microsoft, s. f.-i; Microsoft, 2019).
 
-Toda operación de red se expondrá mediante métodos async que devuelvan Task o Task<TResult>. No se utilizará async void, salvo en manejadores de eventos de UI, donde es la única forma admitida por la firma del delegado. El sufijo Async se agregará al nombre del método, de acuerdo con las convenciones oficiales para el patrón basado en tareas (Microsoft, s. f.-a; Microsoft, s. f.-c)
+El servidor será responsable de mantener el estado autoritativo de la partida, validar las jugadas y comunicar los cambios a los jugadores conectados. Los clientes no modificarán directamente el estado compartido sin recibir la confirmación correspondiente del servidor.
+
+No se utilizarán WebSockets, `NetHttpBinding`, `ClientWebSocket`, direcciones `ws://` o `wss://`, ni otras tecnologías basadas en WebSockets.
+
+El término `NetPsP` o `PSP` no se utilizará en el proyecto porque no corresponde a la tecnología seleccionada. Cualquier referencia anterior a esos términos deberá sustituirse por `NetTcpBinding` o comunicación mediante TCP, según corresponda.
+
+Tampoco se utilizará `NetPeerTcpBinding`, debido a que el proyecto no tendrá una arquitectura peer-to-peer. Todos los clientes se comunicarán con un servidor central mediante TCP.
+
+### 16.1 Configuración de `NetTcpBinding`
+
+Todos los endpoints de red del videojuego utilizarán `NetTcpBinding`. Las direcciones deberán utilizar el esquema `net.tcp://` y se obtendrán desde un archivo de configuración, una variable de entorno o un objeto de configuración, sin escribirse directamente dentro de las clases de dominio.
+
+La configuración del binding deberá centralizarse en una fábrica para evitar que cada servicio establezca valores diferentes.
+
+Se configurarán explícitamente los siguientes valores:
+
+- Tiempo máximo para abrir una conexión.
+- Tiempo máximo para cerrar una conexión.
+- Tiempo máximo para enviar una solicitud.
+- Tiempo máximo durante el cual una sesión puede permanecer inactiva.
+- Tamaño máximo permitido para los mensajes.
+- Modo de seguridad del transporte.
+
+Los valores deberán declararse mediante constantes o configuración externa. No se utilizarán números mágicos dentro de la creación del binding.
+
+La seguridad de TCP no deberá desactivarse en versiones finales. El proyecto utilizará `SecurityMode.Transport`, salvo que una decisión arquitectónica posterior documente otro mecanismo equivalente.
 
 **Con estándar**
 
 ```csharp
+using System;
+using System.ServiceModel;
 
-public sealed class MatchmakingService
+namespace AdventureGame.Networking;
+
+public static class GameTcpBindingFactory
 {
-    private readonly IMatchmakingClient _matchmakingClient;
+    private const int DefaultTimeoutSeconds = 30;
 
-    public MatchmakingService(IMatchmakingClient matchmakingClient)
+    public static NetTcpBinding Create()
     {
-        _matchmakingClient = matchmakingClient;
-    }
+        TimeSpan defaultTimeout =
+            TimeSpan.FromSeconds(DefaultTimeoutSeconds);
 
-    public async Task<MatchResult> JoinMatchAsync(string playerId)
-    {
-        MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+        NetTcpBinding binding =
+            new NetTcpBinding(SecurityMode.Transport);
 
-        return matchResult;
+        binding.OpenTimeout = defaultTimeout;
+        binding.CloseTimeout = defaultTimeout;
+        binding.SendTimeout = defaultTimeout;
+        binding.ReceiveTimeout = defaultTimeout;
+
+        return binding;
     }
 }
 ```
@@ -3718,119 +4176,401 @@ public sealed class MatchmakingService
 **Sin estándar**
 
 ```csharp
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
-public sealed class MatchmakingService
+namespace AdventureGame.Networking;
+
+public static class GameWebSocketBindingFactory
 {
-    public async void JoinMatch(string playerId)
+    public static NetHttpBinding Create()
     {
-        MatchResult matchResult = await matchmakingClient.RequestMatch(playerId);
+        NetHttpBinding binding = new NetHttpBinding();
+
+        binding.WebSocketSettings.TransportUsage =
+            WebSocketTransportUsage.Always;
+
+        return binding;
     }
 }
-````
+```
 
-### 16.2 Callbacks y manejadores de eventos de red
+### 16.2 Contratos de servicio y callbacks
 
-Cuando una operación de red deba notificar un resultado fuera del flujo async/await (por ejemplo, un mensaje entrante del servidor que no fue solicitado directamente por el cliente), se expondrá mediante un evento siguiendo las reglas ya definidas en la sección 4.9, no mediante un delegado Action<T> suelto ni un callback pasado como parámetro.
+Las operaciones disponibles para los clientes deberán definirse mediante interfaces marcadas con `[ServiceContract]`. Cada operación expuesta por el servidor deberá marcarse con `[OperationContract]`.
 
-**Con estándar**
+La comunicación será dúplex. El contrato principal declarará un contrato de callback mediante la propiedad `CallbackContract`. Esto permitirá que el servidor notifique a los clientes cuando otro jugador realice una jugada, cuando cambie el turno o cuando finalice la partida (Microsoft, 2019).
+
+Cada contrato de servicio tendrá como máximo un contrato de callback. Los contratos principales y los contratos de callback deberán colocarse en archivos separados.
+
+Los callbacks que solamente notifiquen un evento utilizarán `IsOneWay = true`. Estas operaciones deberán devolver `void` y no podrán contener parámetros `out` o `ref`.
+
+Los errores de negocio que deban comunicarse al cliente se declararán mediante `[FaultContract]`. No se enviarán directamente excepciones internas, trazas o información sensible del servidor.
+
+**Con estándar — archivo `IGameClientCallback.cs`**
 
 ```csharp
+using System.ServiceModel;
 
-public sealed class GameConnection
+namespace AdventureGame.Networking.Contracts;
+
+[ServiceContract]
+public interface IGameClientCallback
 {
-    public event EventHandler<OpponentMoveReceivedEventArgs>? OpponentMoveReceived;
+    [OperationContract(IsOneWay = true)]
+    void OnOpponentMove(OpponentMoveMessage message);
 
-    protected virtual void OnOpponentMoveReceived(OpponentMoveReceivedEventArgs e)
-    {
-        OpponentMoveReceived?.Invoke(this, e);
-    }
+    [OperationContract(IsOneWay = true)]
+    void OnTurnChanged(TurnChangedMessage message);
+
+    [OperationContract(IsOneWay = true)]
+    void OnGameFinished(GameFinishedMessage message);
 }
-````
+```
+
+**Con estándar — archivo `IGameSessionService.cs`**
+
+```csharp
+using System.ServiceModel;
+using System.Threading.Tasks;
+
+namespace AdventureGame.Networking.Contracts;
+
+[ServiceContract(
+    CallbackContract = typeof(IGameClientCallback),
+    SessionMode = SessionMode.Required)]
+public interface IGameSessionService
+{
+    [OperationContract]
+    [FaultContract(typeof(GameServiceFault))]
+    Task<JoinMatchResult> JoinMatchAsync(
+        JoinMatchRequest request);
+
+    [OperationContract]
+    [FaultContract(typeof(GameServiceFault))]
+    Task<MoveResult> PlayTileAsync(
+        PlayTileRequest request);
+
+    [OperationContract]
+    Task LeaveMatchAsync(
+        LeaveMatchRequest request);
+}
+```
 
 **Sin estándar**
 
 ```csharp
+using System;
 
-public sealed class GameConnection
+namespace AdventureGame.Networking.Contracts;
+
+public interface IGameService
 {
-    public Action<Move>? OnMoveReceived;
+    void JoinMatch(
+        string playerName,
+        Action<OpponentMoveMessage> callback);
+
+    MoveResult PlayTile(
+        PlayTileRequest request);
 }
-````
+```
 
-### 16.3 Manejo de errores en operaciones de red
+### 16.3 Implementación de callbacks
 
-Las excepciones producidas por fallas de red (tiempo de espera agotado, conexión perdida, respuesta inválida del servidor) se manejarán siguiendo las reglas generales de la sección 7. Los servicios de red podrán lanzar TimeoutException u OperationCanceledException conforme a la tabla de la sección 7.1, o envolver el fallo en una excepción de dominio propia (por ejemplo, ConnectionLostException) cuando el consumidor necesite distinguir ese caso de un error genérico.
+La clase encargada de recibir callbacks deberá implementar `IGameClientCallback`. Los callbacks deberán terminar rápidamente y no realizar operaciones costosas, acceso a archivos, consultas a la base de datos ni procesamiento prolongado.
+
+Un callback no modificará directamente la interfaz gráfica ni el estado de dominio de la partida. Su responsabilidad será convertir el mensaje recibido en un evento o colocarlo en una cola para que el componente correspondiente lo procese de manera segura.
+
+Los eventos generados a partir de callbacks seguirán las reglas de la sección 4.9. La clase deberá comprobar que el mensaje recibido no sea `null` antes de publicarlo.
+
+Los consumidores deberán cancelar su suscripción a los eventos cuando finalice la conexión para evitar referencias innecesarias.
 
 **Con estándar**
 
 ```csharp
+using System;
 
-public async Task<MatchResult> JoinMatchAsync(string playerId)
+namespace AdventureGame.Networking.Callbacks;
+
+public sealed class GameClientCallback : IGameClientCallback
 {
-    try
-    {
-        MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+    public event EventHandler<OpponentMoveReceivedEventArgs>?
+        OpponentMoveReceived;
 
-        return matchResult;
-    }
-    catch (TaskCanceledException exception)
+    public event EventHandler<TurnChangedEventArgs>?
+        TurnChanged;
+
+    public event EventHandler<GameFinishedEventArgs>?
+        GameFinished;
+
+    public void OnOpponentMove(OpponentMoveMessage message)
     {
-        throw new ConnectionLostException(
-            "The matchmaking request timed out.",
-            exception);
+        ArgumentNullException.ThrowIfNull(message);
+
+        EventHandler<OpponentMoveReceivedEventArgs>? handler =
+            OpponentMoveReceived;
+
+        if (handler is not null)
+        {
+            OpponentMoveReceivedEventArgs eventArgs =
+                new OpponentMoveReceivedEventArgs(message);
+
+            handler(this, eventArgs);
+        }
+    }
+
+    public void OnTurnChanged(TurnChangedMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        EventHandler<TurnChangedEventArgs>? handler =
+            TurnChanged;
+
+        if (handler is not null)
+        {
+            TurnChangedEventArgs eventArgs =
+                new TurnChangedEventArgs(message);
+
+            handler(this, eventArgs);
+        }
+    }
+
+    public void OnGameFinished(GameFinishedMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        EventHandler<GameFinishedEventArgs>? handler =
+            GameFinished;
+
+        if (handler is not null)
+        {
+            GameFinishedEventArgs eventArgs =
+                new GameFinishedEventArgs(message);
+
+            handler(this, eventArgs);
+        }
     }
 }
-````
+```
 
 **Sin estándar**
 
 ```csharp
+namespace AdventureGame.Networking.Callbacks;
 
-public async Task<MatchResult> JoinMatchAsync(string playerId)
+public sealed class GameClientCallback : IGameClientCallback
 {
-    try
+    public void OnOpponentMove(OpponentMoveMessage message)
     {
-        return await _matchmakingClient.RequestMatchAsync(playerId);
+        gameBoard.ApplyMove(message.Move);
+        gameWindow.Refresh();
+        saveGameRepository.Save();
     }
-    catch
+
+    public void OnTurnChanged(TurnChangedMessage message)
     {
-        return null;
+        gameWindow.ChangeTurn(message.PlayerId);
+    }
+
+    public void OnGameFinished(GameFinishedMessage message)
+    {
+        gameWindow.ShowWinner(message.WinnerId);
     }
 }
-````
+```
 
-### 16.4 Cancelación de operaciones asíncronas
+### 16.4 Operaciones asíncronas
 
-Toda operación de red de larga duración deberá aceptar un parámetro CancellationToken como último parámetro del método, para permitir que el llamador cancele la operación cuando el jugador abandone la partida o cierre la aplicación (Microsoft, s. f.-a).
+Las operaciones de red deberán seguir el patrón basado en tareas. Los métodos asíncronos devolverán `Task` o `Task<TResult>` y terminarán con el sufijo `Async` (Microsoft, 2021a).
+
+No se utilizará `async void`, excepto cuando la firma de un manejador de eventos lo exija. Tampoco se utilizarán `.Result`, `.Wait()` o `.GetAwaiter().GetResult()` para esperar una operación de red, debido a que pueden bloquear el hilo principal del videojuego.
+
+La ejecución asíncrona deberá mantenerse a lo largo de toda la cadena de llamadas. Un método que invoque una operación de red asíncrona deberá esperarla mediante `await` o devolver la tarea al llamador.
+
+Las operaciones que devuelvan un resultado deberán utilizar `Task<TResult>`. Las operaciones que únicamente notifiquen una acción deberán utilizar `Task`.
 
 **Con estándar**
 
 ```csharp
+using System;
+using System.Threading.Tasks;
 
-public async Task<MatchResult> JoinMatchAsync(
-    string playerId,
-    CancellationToken cancellationToken)
+namespace AdventureGame.Networking;
+
+public sealed class GameNetworkClient
 {
-    MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(
-        playerId,
-        cancellationToken);
+    private readonly IGameSessionService _gameSessionService;
 
-    return matchResult;
+    public GameNetworkClient(
+        IGameSessionService gameSessionService)
+    {
+        ArgumentNullException.ThrowIfNull(gameSessionService);
+        _gameSessionService = gameSessionService;
+    }
+
+    public Task<MoveResult> PlayTileAsync(
+        PlayTileRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        Task<MoveResult> operation =
+            _gameSessionService.PlayTileAsync(request);
+
+        return operation;
+    }
 }
-````
+```
 
 **Sin estándar**
 
 ```csharp
+using System;
 
-public async Task<MatchResult> JoinMatchAsync(string playerId)
+namespace AdventureGame.Networking;
+
+public sealed class GameNetworkClient
 {
-    MatchResult matchResult = await _matchmakingClient.RequestMatchAsync(playerId);
+    private readonly IGameSessionService _gameSessionService;
 
-    return matchResult;
+    public GameNetworkClient(
+        IGameSessionService gameSessionService)
+    {
+        _gameSessionService = gameSessionService;
+    }
+
+    public MoveResult PlayTile(
+        PlayTileRequest request)
+    {
+        MoveResult result =
+            _gameSessionService
+                .PlayTileAsync(request)
+                .Result;
+
+        return result;
+    }
 }
-````
+```
 
+### 16.5 Cancelación de operaciones
+
+Un `CancellationToken` utilizado por la aplicación permitirá que el cliente deje de esperar una operación o abandone una pantalla de forma controlada. Una cancelación local no deberá interpretarse automáticamente como pérdida de conexión.
+
+El `CancellationToken` no se agregará al contrato WCF como si pudiera cancelar automáticamente la operación que ya se está ejecutando en el servidor.
+
+Cuando una operación necesite ser cancelada también en el servidor, el contrato deberá definir una operación explícita de cancelación que reciba un identificador de la operación original.
+
+Una cancelación solicitada por el jugador deberá conservarse como `OperationCanceledException`. No deberá convertirse en `TimeoutException`, `CommunicationException` ni `ConnectionLostException`.
+
+Las cancelaciones esperadas no se registrarán mediante los niveles `Error` o `Fatal`.
+
+### 16.6 Errores de comunicación y estado del canal
+
+Los errores producidos por WCF deberán manejarse mediante los tipos de excepción más específicos disponibles.
+
+Se considerarán principalmente las siguientes excepciones:
+
+| Excepción | Uso |
+| --- | --- |
+| `FaultException<TDetail>` | El servidor comunicó un error de negocio definido mediante `FaultContract`. |
+| `TimeoutException` | Se superó uno de los tiempos configurados para abrir, cerrar, enviar o recibir. |
+| `CommunicationException` | Se produjo un error en el canal o en la comunicación WCF. |
+| `OperationCanceledException` | El llamador canceló la espera de la operación. |
+| `ObjectDisposedException` | Se intentó utilizar un canal que ya había sido cerrado o liberado. |
+
+Un canal cuyo estado sea `Faulted` no deberá volver a utilizarse. Deberá abortarse, liberarse y sustituirse por una nueva conexión.
+
+El canal se cerrará mediante `Close()` cuando se encuentre en un estado válido. Si se encuentra en estado `Faulted`, o si `Close()` produce `TimeoutException` o `CommunicationException`, deberá utilizarse `Abort()`.
+
+Los bloques `catch` no deberán quedar vacíos. Los errores seguirán las reglas generales de las secciones 7 y 11.
+
+**Con estándar**
+
+```csharp
+using System;
+using System.ServiceModel;
+
+namespace AdventureGame.Networking;
+
+public sealed class GameChannelCloser
+{
+    public void Close(ICommunicationObject channel)
+    {
+        ArgumentNullException.ThrowIfNull(channel);
+
+        try
+        {
+            if (channel.State == CommunicationState.Faulted)
+            {
+                channel.Abort();
+            }
+            else
+            {
+                channel.Close();
+            }
+        }
+        catch (TimeoutException)
+        {
+            channel.Abort();
+        }
+        catch (CommunicationException)
+        {
+            channel.Abort();
+        }
+    }
+}
+```
+
+**Sin estándar**
+
+```csharp
+using System.ServiceModel;
+
+namespace AdventureGame.Networking;
+
+public sealed class GameChannelCloser
+{
+    public void Close(ICommunicationObject channel)
+    {
+        try
+        {
+            channel.Close();
+        }
+        catch
+        {
+        }
+    }
+}
+```
+
+### 16.7 Concurrencia y estado autoritativo
+
+El servidor será la única autoridad para validar las jugadas y modificar el estado compartido de la partida.
+
+Los clientes enviarán solicitudes al servidor, pero no considerarán una jugada como confirmada hasta recibir el resultado correspondiente.
+
+Los callbacks recibidos podrán ejecutarse en un hilo diferente al utilizado por la presentación. Por lo tanto, no deberán modificar directamente controles gráficos, colecciones compartidas o entidades del dominio.
+
+Los mensajes recibidos se transferirán a una cola o a un componente de coordinación antes de aplicarse al estado local.
+
+El acceso concurrente a partidas, jugadores y conexiones deberá protegerse mediante mecanismos de sincronización o estructuras diseñadas para concurrencia. No se crearán hilos manualmente para cada operación; se utilizarán tareas y operaciones asíncronas.
+
+### 16.8 Tecnologías de red no permitidas
+
+El proyecto adopta las siguientes restricciones:
+
+- Se utilizará WCF mediante `NetTcpBinding`.
+- El transporte será TCP.
+- Las direcciones utilizarán el esquema `net.tcp://`.
+- No se utilizará `NetHttpBinding`.
+- No se utilizará `ClientWebSocket`.
+- No se utilizarán direcciones `ws://` o `wss://`.
+- No se utilizarán WebSockets.
+- No se utilizará `NetPeerTcpBinding`.
+- No se utilizará una arquitectura peer-to-peer.
+- No se utilizarán los términos `NetPsP` o `PSP` para describir la comunicación.
+- No se mezclarán distintos bindings para una misma sesión de juego.
+
+Estas restricciones son decisiones arquitectónicas del equipo. Su objetivo es mantener un único mecanismo de comunicación y evitar que los clientes utilicen configuraciones incompatibles.
 
 ## 17. Declaración de uso de inteligencia artificial
 
@@ -3914,3 +4654,13 @@ public async Task<MatchResult> JoinMatchAsync(string playerId)
 - Microsoft. (s. f.-g). Auto-implemented properties. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties
 
 - Microsoft. (s. f.-h). Resources in .NET apps. Microsoft Learn. Recuperado el 29 de agosto de 2026, de https://learn.microsoft.com/en-us/dotnet/core/extensions/resources-and-localization
+
+- Microsoft. (2025g, 20 de octubre). *Task cancellation*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-cancellation](https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-cancellation)
+
+- Microsoft. (2019, 6 de octubre). *WCF: Working with one-way calls, callbacks, and events*. Microsoft Learn. [https://learn.microsoft.com/en-us/archive/msdn-magazine/2006/october/wcf-working-with-one-way-calls-callbacks-and-events](https://learn.microsoft.com/en-us/archive/msdn-magazine/2006/october/wcf-working-with-one-way-calls-callbacks-and-events)
+
+- Microsoft. (2021a, 15 de septiembre). *Synchronous and asynchronous operations*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/framework/wcf/synchronous-and-asynchronous-operations](https://learn.microsoft.com/en-us/dotnet/framework/wcf/synchronous-and-asynchronous-operations)
+
+- Microsoft. (2021b, 15 de septiembre). *Configuring timeout values on a binding*. Microsoft Learn. [https://learn.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-timeout-values-on-a-binding](https://learn.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-timeout-values-on-a-binding)
+
+- Microsoft. (s. f.-i). *NetTcpBinding class*. Microsoft Learn. Recuperado el 31 de agosto de 2026, de [https://learn.microsoft.com/en-us/dotnet/api/system.servicemodel.nettcpbinding](https://learn.microsoft.com/en-us/dotnet/api/system.servicemodel.nettcpbinding)
