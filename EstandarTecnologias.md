@@ -119,7 +119,11 @@ Se evitarán nombres de un solo carácter, excepto en contadores de ciclos simpl
 **Con estándar**
 
 ```csharp
-int remainingLives = 3;
+public void ResetLives()
+{
+    const int InitialLives = 3;
+    int remainingLives = InitialLives;
+}
 ```
 
 **Sin estándar**
@@ -405,7 +409,7 @@ Una propiedad se declarará como autoimplementada ({ get; set; } sin cuerpo) cua
 ```csharp
 public sealed class WeaponData
 {
-    public string Name { get; init; }
+    public required string Name { get; init; }
     public int DamageMultiplier { get; init; }
 }
 ```
@@ -441,10 +445,18 @@ Una propiedad podrá declararse private cuando exponga una conveniencia de solo 
 ```csharp
 public sealed class DamageCalculator
 {
-    private int TotalModifiers => _criticalBonus + _elementalBonus;
+    private const int NoBonus = 0;
 
     private readonly int _criticalBonus;
     private readonly int _elementalBonus;
+
+    private int TotalModifiers => _criticalBonus + _elementalBonus;
+
+    public DamageCalculator()
+    {
+        _criticalBonus = NoBonus;
+        _elementalBonus = NoBonus;
+    }
 
     public int Calculate(int baseDamage)
     {
@@ -717,11 +729,6 @@ Cuando una clase sea la implementación principal de una interfaz, sus nombres d
 **Con estándar**
 
 ```csharp
-public interface IEnemySpawner 
-{
-    Enemy Spawn(EnemySpawnRequest request);
-}
-
 public class EnemySpawner : IEnemySpawner 
 {
     public Enemy Spawn(EnemySpawnRequest request)
@@ -833,12 +840,21 @@ No se agregarán los sufijos `Collection` o `Dictionary` únicamente para indica
 **Con estándar**
 
 ```csharp
-public sealed class InsufficientManaException : Exception 
-{ 
-}
+public sealed class InsufficientManaException : Exception
+{
+    public InsufficientManaException()
+    {
+    }
 
-public sealed class DamageReceivedEventArgs : EventArgs 
-{ 
+    public InsufficientManaException(string message) : base(message)
+    {
+    }
+
+    public InsufficientManaException(
+        string message,
+        Exception innerException) : base(message, innerException)
+    {
+    }
 }
 ```
 
@@ -873,10 +889,6 @@ No se combinarán dos sufijos arquitectónicos en el mismo nombre (por ejemplo, 
 public sealed class SaveGameService
 {
 }
-
-public sealed class SaveGameRepository : ISaveGameRepository
-{
-}
 ```
 
 **Sin estándar**
@@ -886,6 +898,23 @@ public sealed class SaveGameServiceManager
 {
 }
 ```
+
+**Con estándar**
+
+```csharp
+public sealed class SaveGameRepository : ISaveGameRepository
+{
+}
+```
+
+**Sin estándar**
+
+```csharp
+public sealed class SaveGameServiceManager : SaveGameServiceManager
+{
+}
+```
+
 
 ### 4.16.1 Sufijos `Collection` y `Dictionary`
 
@@ -1633,7 +1662,7 @@ Los ejemplos de esta regla deberán mostrar la clase completa para que el orden 
 **Con estándar**
 
 ```csharp
-public sealed class PlayerController
+public class PlayerController
 {
     private const int DefaultHealth = 100;
 
@@ -1833,7 +1862,7 @@ El operador ternario (condición ? valorSiVerdadero : valorSiFalso) solo podrá 
 **Con estándar**
 
 ```csharp
-string statusLabel = _isGameOver ? "Game Over" : "Playing";
+string statusLabel = _isGameOver ? UiStrings.GameOverLabel : UiStrings.PlayingLabel;
 ```
 
 **Sin estándar**
@@ -2573,7 +2602,7 @@ Todo método podrá recibir como máximo tres parámetros. Cuando la operación 
 ```csharp
 public Enemy Spawn(EnemySpawnRequest request)
 {
-    Enemy enemy = enemyFactory.Create(request.Type, request.Position);
+    Enemy enemy = _enemyFactory.Create(request.Type, request.Position);
     enemy.Configure(request.Level, request.Faction);
     return enemy;
 }
@@ -2606,9 +2635,9 @@ public class SaveSystem
         bool hasMinimumProgress = level.ProgressPercent >= MinimumProgressPercent;
         bool isInSafeZone = level.CurrentZone.IsSafe;
         bool isPlayerAlive = state.IsAlive;
-        bool isNotInCutscene = !level.IsPlayingCutscene;
+        bool isInCutscene = level.IsPlayingCutscene;
 
-        return hasMinimumProgress && isInSafeZone && isPlayerAlive && isNotInCutscene;
+        return hasMinimumProgress && isInSafeZone && isPlayerAlive && !isInCutscene;
     }
 }
 ```
@@ -2694,14 +2723,18 @@ public void ApplyAreaDamage(IEnumerable<Enemy> enemies, int damage)
 
 Se utilizará record (o record struct) cuando el tipo represente datos inmutables cuya igualdad deba compararse por valor: DTOs de guardado, mensajes de red, y snapshots de estado enviados entre sistemas. Se utilizará class cuando el tipo tenga identidad propia, comportamiento con efectos secundarios, o un ciclo de vida mutable gestionado por el propio sistema de juego (entidades como Player o Enemy). Se utilizará struct únicamente para datos pequeños, inmutables y de alta frecuencia de creación donde el costo de asignación en el heap sea relevante, como vectores o posiciones (Microsoft, s. f.-f; convención interna del equipo).
 
-**Con estándar**
+**Con estándar-`archivo SaveGameDto.cs`**
 
 ```csharp
 public sealed record SaveGameDto(
     string PlayerName,
     int CurrentHealth,
     int Level);
+````
 
+**Con estándar — `archivo Player.cs`**
+
+```csharp
 public sealed class Player
 {
     public int CurrentHealth { get; private set; }
@@ -2929,10 +2962,14 @@ using log4net.Ext.Trace;
 
 public sealed class SaveGameService
 {
-    private static readonly ITraceLog _logger =
-        TraceLogManager.GetLogger(typeof(SaveGameService));
+    private static readonly ITraceLog _logger;
 
     private readonly ISaveGameRepository _saveGameRepository;
+
+    static SaveGameService()
+    {
+        _logger = TraceLogManager.GetLogger(typeof(SaveGameService));
+    }
 
     public SaveGameService(ISaveGameRepository saveGameRepository)
     {
@@ -3008,8 +3045,12 @@ public sealed class InventoryService
 {
     private const int MaximumSlots = 20;
 
-    private static readonly ITraceLog _logger =
-        TraceLogManager.GetLogger(typeof(InventoryService));
+    private static readonly ITraceLog _logger;
+
+    static InventoryService()
+    {
+        _logger = TraceLogManager.GetLogger(typeof(InventoryService));
+    }
 
     public bool AddItem(ICollection<Item> items, Item item)
     {
@@ -3096,14 +3137,18 @@ El nivel del registro se seleccionará con los criterios ya definidos en la secc
 
 **Con estándar**
 
-```xml
+```csharp
 
 public sealed class GameBootstrapper
 {
-    private static readonly ITraceLog _logger =
-        TraceLogManager.GetLogger(typeof(GameBootstrapper));
+    private static readonly ITraceLog _logger;
 
     private readonly LoadGameService _loadGameService;
+
+    static GameBootstrapper()
+    {
+        _logger = TraceLogManager.GetLogger(typeof(GameBootstrapper));
+    }
 
     public GameBootstrapper(LoadGameService loadGameService)
     {
@@ -3227,25 +3272,30 @@ Las pruebas se escribirán utilizando NUnit. Por convención del equipo, las cla
 **Con estándar**
 
 ```csharp
-using NUnit.Framework;
 
-[TestFixture]
-public sealed class DamageCalculatorTests
+private const int AttackPower = 30;
+private const int LowDefense = 10;
+private const int MediumDefense = 20;
+private const int DefenseEqualToAttack = 30;
+private const int DamageAfterLowDefense = 20;
+private const int DamageAfterMediumDefense = 10;
+private const int DamageAfterDefenseEqualToAttack = 0;
+
+[TestCase(AttackPower, LowDefense, DamageAfterLowDefense)]
+[TestCase(AttackPower, MediumDefense, DamageAfterMediumDefense)]
+[TestCase(AttackPower, DefenseEqualToAttack, DamageAfterDefenseEqualToAttack)]
+public void Test_CalculateDamage_DifferentDefense_ReturnsExpectedDamage(
+    int attackPower,
+    int defense,
+    int expectedDamage)
 {
-    [Test]
-    public void Test_CalculateDamage_AttackExceedsDefense_ReturnsDamageAfterDefense()
-    {
-        const int AttackPower = 30;
-        const int Defense = 10;
-        const int ExpectedDamage = 20;
-        DamageCalculator damageCalculator = new DamageCalculator();
+    DamageCalculator damageCalculator = new DamageCalculator();
 
-        int actualDamage = damageCalculator.CalculateDamage(
-            AttackPower,
-            Defense);
+    int actualDamage = damageCalculator.CalculateDamage(
+        attackPower,
+        defense);
 
-        Assert.That(actualDamage, Is.EqualTo(ExpectedDamage));
-    }
+    Assert.That(actualDamage, Is.EqualTo(expectedDamage));
 }
 ```
 
@@ -3549,44 +3599,7 @@ Una verificación de NSubstitute mediante `Received()` contará como el único a
 
 ```csharp
 [Test]
-public void Test_ReceiveDamage_DamageIsPositive_ReducesHealth()
-{
-    Player player = new PlayerBuilder()
-        .WithHealth(InitialHealth)
-        .Build();
-
-    player.ReceiveDamage(ReceivedDamage);
-
-    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
-}
-```
-
-**Sin estándar**
-
-```csharp
-[Test]
-public void Test_ReceiveDamage_ValidDamage_UpdatesPlayer()
-{
-    Player player = new PlayerBuilder()
-        .WithHealth(InitialHealth)
-        .Build();
-
-    player.ReceiveDamage(ReceivedDamage);
-
-    Assert.That(player.Health, Is.EqualTo(ExpectedHealth));
-    Assert.That(player.IsAlive, Is.True);
-}
-```
-
-**Separación de comportamientos**
-
-Si una operación produce varios resultados que deben comprobarse por separado, se escribirá una prueba para cada comportamiento (Microsoft, 2025b; NUnit Project, s. f.-b).
-
-**Con estándar**
-
-```csharp
-[Test]
-public void Test_ReceiveFatalDamage_DamageExceedsHealth_SetsIsAliveToFalse()
+public void Test_ReceiveDamage_FatalDamage_SetsIsAliveToFalse()
 {
     Player player = new PlayerBuilder()
         .WithHealth(InitialHealth)
@@ -3602,7 +3615,7 @@ public void Test_ReceiveFatalDamage_DamageExceedsHealth_SetsIsAliveToFalse()
 
 ```csharp
 [Test]
-public void Test_ReceiveFatalDamage_DamageExceedsHealth_UpdatesEverything()
+public void Test_ReceiveDamage_FatalDamage_UpdatesEverything()
 {
     Player player = new PlayerBuilder()
         .WithHealth(InitialHealth)
@@ -3616,6 +3629,43 @@ public void Test_ReceiveFatalDamage_DamageExceedsHealth_UpdatesEverything()
 }
 ```
 
+**Separación de comportamientos**
+
+Si una operación produce varios resultados que deben comprobarse por separado, se escribirá una prueba para cada comportamiento (Microsoft, 2025b; NUnit Project, s. f.-b).
+
+**Con estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_FatalDamage_SetsHealthToMinimum()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(FatalDamage);
+
+    Assert.That(player.Health, Is.EqualTo(MinimumHealth));
+}
+```
+
+**Sin estándar**
+
+```csharp
+[Test]
+public void Test_ReceiveDamage_FatalDamage_UpdatesAliveAndHealth()
+{
+    Player player = new PlayerBuilder()
+        .WithHealth(InitialHealth)
+        .Build();
+
+    player.ReceiveDamage(FatalDamage);
+
+    Assert.That(player.IsAlive, Is.False);
+    Assert.That(player.Health, Is.EqualTo(MinimumHealth));
+}
+```
+
 **Excepciones esperadas**
 
 Cuando se espere una excepción, `Assert.Throws<TException>()` será el único assert de la prueba (NUnit Project, s. f.-a; NUnit Project, s. f.-b).
@@ -3624,15 +3674,16 @@ Cuando se espere una excepción, `Assert.Throws<TException>()` será el único a
 
 ```csharp
 [Test]
-public void Test_ReceiveDamage_DamageIsNegative_ThrowsArgumentOutOfRangeException()
+public void Test_ApplyDamage_DamageIsNegative_ThrowsArgumentOutOfRangeException()
 {
     Player player = new PlayerBuilder().Build();
+    DamageService damageService = new DamageService();
 
-    TestDelegate receiveNegativeDamage = () =>
-        player.ReceiveDamage(NegativeDamage);
+    TestDelegate applyNegativeDamage = () =>
+        damageService.ApplyDamage(player, NegativeDamage);
 
     Assert.Throws<ArgumentOutOfRangeException>(
-        receiveNegativeDamage);
+        applyNegativeDamage);
 }
 ```
 
@@ -3640,12 +3691,13 @@ public void Test_ReceiveDamage_DamageIsNegative_ThrowsArgumentOutOfRangeExceptio
 
 ```csharp
 [Test]
-public void Test_ReceiveDamage_DamageIsNegative_ThrowsAndPreservesHealth()
+public void Test_ApplyDamage_DamageIsNegative_ThrowsAndPreservesHealth()
 {
     Player player = new PlayerBuilder().Build();
+    DamageService damageService = new DamageService();
 
     Assert.Throws<ArgumentOutOfRangeException>(
-        () => player.ReceiveDamage(NegativeDamage));
+        () => damageService.ApplyDamage(player, NegativeDamage));
     Assert.That(player.Health, Is.EqualTo(DefaultHealth));
 }
 ```
@@ -3662,14 +3714,17 @@ El proyecto utilizará exclusivamente NSubstitute como biblioteca de mocking. La
 
 Las dependencias sustituibles deberán representarse mediante interfaces y recibirse mediante el constructor (Martin, 2008; Microsoft, 2025b).
 
-**Con estándar**
+**Con estándar — `archivo IInventory.cs`**
 
 ```csharp
 public interface IInventory
 {
     void Add(Item item);
 }
+```
+**Con estándar — `archivo RewardService.cs`**
 
+``csharp
 public sealed class RewardService
 {
     private readonly IInventory _inventory;
@@ -3766,6 +3821,8 @@ Cuando se compruebe una interacción, `Received()` será la única verificación
 **Con estándar**
 
 ```csharp
+private const int ExpectedCallCount = 1;
+
 [Test]
 public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 {
@@ -3775,7 +3832,7 @@ public void Test_GrantReward_RewardIsNotNull_AddsItemToInventory()
 
     rewardService.GrantReward(reward);
 
-    inventory.Received(1).Add(reward);
+    inventory.Received(ExpectedCallCount).Add(reward);
 }
 ```
 
@@ -4154,6 +4211,7 @@ namespace AdventureGame.Networking;
 public static class GameTcpBindingFactory
 {
     private const int DefaultTimeoutSeconds = 30;
+    private const long MaxMessageSizeBytes = 65536;
 
     public static NetTcpBinding Create()
     {
@@ -4167,6 +4225,7 @@ public static class GameTcpBindingFactory
         binding.CloseTimeout = defaultTimeout;
         binding.SendTimeout = defaultTimeout;
         binding.ReceiveTimeout = defaultTimeout;
+        binding.MaxReceivedMessageSize = MaxMessageSizeBytes;
 
         return binding;
     }
@@ -4488,11 +4547,19 @@ Los bloques `catch` no deberán quedar vacíos. Los errores seguirán las reglas
 ```csharp
 using System;
 using System.ServiceModel;
+using log4net.Ext.Trace;
 
 namespace AdventureGame.Networking;
 
 public sealed class GameChannelCloser
 {
+    private static readonly ITraceLog _logger;
+
+    static GameChannelCloser()
+    {
+        _logger = TraceLogManager.GetLogger(typeof(GameChannelCloser));
+    }
+
     public void Close(ICommunicationObject channel)
     {
         ArgumentNullException.ThrowIfNull(channel);
@@ -4508,12 +4575,18 @@ public sealed class GameChannelCloser
                 channel.Close();
             }
         }
-        catch (TimeoutException)
+        catch (TimeoutException exception)
         {
+            _logger.Warn(
+                "The communication channel could not close before the configured timeout; it was aborted instead.",
+                exception);
             channel.Abort();
         }
-        catch (CommunicationException)
+        catch (CommunicationException exception)
         {
+            _logger.Warn(
+                "The communication channel failed to close due to a communication error; it was aborted instead.",
+                exception);
             channel.Abort();
         }
     }
